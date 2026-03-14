@@ -825,20 +825,9 @@ body {
   margin-top: 15px;
 }
 
-.subscribe-form {
-  display: flex;
-  margin-top: 8px;
-}
-
-.subscribe-form input {
-  flex: 1;
-  padding: 8px;
-  border: 1px solid #ddd;
-}
-
 .subscribe-form button {
   background: #ff6a00;
-  border: none;
+  /* border: none; */
   color: #fff;
   padding: 8px 15px;
 }
