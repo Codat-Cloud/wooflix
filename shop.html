@@ -57,7 +57,10 @@
                   📍 <span id="userPincode">560034</span>
                 </button>
 
-                <div class="dropdown-menu dropdown-menu-end location-menu" style="width: 300px;">
+                <div
+                  class="dropdown-menu dropdown-menu-end location-menu"
+                  style="width: 300px"
+                >
                   <h6 class="text-center">
                     Enter your pincode to Choose a delivery location to check
                     product availability
@@ -352,462 +355,82 @@
       </div>
     </div>
 
-    <!-- MOBILE BOTTOM NAV -->
+    <!-- Breadcrumbs -->
+    <nav aria-label="breadcrumb" class="breadcrumb-wrapper">
+      <div class="container-xxl">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="/">Home</a>
+          </li>
 
-    <div class="mobile-bottom-nav d-lg-none">
-      <a href="#" class="active">
-        <div>🏠</div>
-        <span>Home</span>
-      </a>
+          <li class="breadcrumb-item">
+            <a href="/dogs">Dogs</a>
+          </li>
 
-      <a href="#">
-        <div>⬜</div>
-        <span>Category</span>
-      </a>
+          <li class="breadcrumb-item active" aria-current="page">Dog Toys</li>
+        </ol>
+      </div>
+    </nav>
 
-      <a href="#">
-        <div>🐶</div>
-        <span>HUFT Hub</span>
-      </a>
+    <!-- Filters -->
+    <div class="shop-topbar">
+      <div class="container-xxl">
+        <div class="shop-topbar-inner">
+          <h5 class="shop-category">Dog Toys</h5>
 
-      <a href="#">
-        <div>🛒</div>
-        <span>Cart</span>
-      </a>
+          <div class="sort-scroll">
+            <button
+              class="filter-btn d-lg-none"
+              data-bs-toggle="offcanvas"
+              data-bs-target="#filterDrawer"
+            >
+              Filter
+            </button>
 
-      <a href="#">
-        <div>👤</div>
-        <span>Account</span>
-      </a>
+            <button class="sort-btn active">Best Seller</button>
+            <button class="sort-btn">Price: Low to High</button>
+            <button class="sort-btn">Price: High to Low</button>
+            <button class="sort-btn">Newest</button>
+            <button class="sort-btn">Rating</button>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Hero Section -->
+    <div class="container-xxl">
+      <div class="row">
+        <!-- DESKTOP FILTER -->
 
-    <section class="hero-banner">
-      <div
-        id="heroSlider"
-        class="carousel slide"
-        data-bs-ride="carousel"
-        data-bs-interval="4000"
-      >
-        <div class="carousel-inner">
-          <!-- Slide 1 -->
+        <div class="col-lg-3 d-none d-lg-block">
+          <div class="filter-sidebar">
+            <h6>Brands</h6>
 
-          <div class="carousel-item active">
-            <a href="#">
-              <picture>
-                <!-- Mobile banner -->
+            <label><input type="checkbox" /> Pedigree</label>
+            <label><input type="checkbox" /> Royal Canin</label>
+            <label><input type="checkbox" /> Heads Up For Tails</label>
 
-                <source
-                  media="(max-width: 768px)"
-                  srcset="assets/images/mb1.webp"
-                />
+            <hr />
 
-                <!-- Desktop banner -->
+            <h6>Category</h6>
 
-                <img
-                  src="assets/images/1.webp"
-                  class="d-block w-100"
-                  alt="Banner"
-                />
-              </picture>
-            </a>
-          </div>
+            <label><input type="checkbox" /> Chew Toys</label>
+            <label><input type="checkbox" /> Plush Toys</label>
+            <label><input type="checkbox" /> Rope Toys</label>
 
-          <!-- Slide 2 -->
+            <hr />
 
-          <div class="carousel-item">
-            <a href="#">
-              <picture>
-                <source
-                  media="(max-width: 768px)"
-                  srcset="assets/images/mb2.webp"
-                />
+            <h6>Price</h6>
 
-                <img
-                  src="assets/images/2.webp"
-                  class="d-block w-100"
-                  alt="Banner"
-                />
-              </picture>
-            </a>
-          </div>
-
-          <!-- Slide 3 -->
-
-          <div class="carousel-item">
-            <a href="#">
-              <picture>
-                <source
-                  media="(max-width: 768px)"
-                  srcset="assets/images/mb3.webp"
-                />
-
-                <img
-                  src="assets/images/3.webp"
-                  class="d-block w-100"
-                  alt="Banner"
-                />
-              </picture>
-            </a>
+            <label><input type="checkbox" /> ₹0 - ₹500</label>
+            <label><input type="checkbox" /> ₹500 - ₹1000</label>
           </div>
         </div>
 
-        <!-- arrows -->
+        <!-- PRODUCT GRID -->
 
-        <button
-          class="carousel-control-prev"
-          type="button"
-          data-bs-target="#heroSlider"
-          data-bs-slide="prev"
-        >
-          <span class="carousel-control-prev-icon"></span>
-        </button>
-
-        <button
-          class="carousel-control-next"
-          type="button"
-          data-bs-target="#heroSlider"
-          data-bs-slide="next"
-        >
-          <span class="carousel-control-next-icon"></span>
-        </button>
-      </div>
-    </section>
-
-    <!-- Offer Cards -->
-
-    <section class="offer-section">
-      <div class="container-xxl">
-        <div class="offer-scroll d-flex flex-nowrap flex-lg-wrap">
-          <a href="#" class="offer-item">
-            <img src="assets/images/c1.webp" alt="Dog Food" />
-          </a>
-
-          <a href="#" class="offer-item">
-            <img src="assets/images/c2.webp" alt="Cat Wet Food" />
-          </a>
-
-          <a href="#" class="offer-item">
-            <img src="assets/images/c3.webp" alt="Cat Treats" />
-          </a>
-
-          <a href="#" class="offer-item">
-            <img src="assets/images/c4.webp" alt="Dog Treats" />
-          </a>
-
-          <a href="#" class="offer-item">
-            <img src="assets/images/c5.webp" alt="Cat Dry Food" />
-          </a>
-
-          <a href="#" class="offer-item">
-            <img src="assets/images/c6.webp" alt="Dog Toys" />
-          </a>
-
-          <a href="#" class="offer-item">
-            <img src="assets/images/c7.webp" alt="Cat Toys" />
-          </a>
-
-          <a href="#" class="offer-item">
-            <img src="assets/images/c8.webp" alt="Cat Litter" />
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- categories -->
-    <section class="categories">
-      <div class="container-xxl">
-        <h2 class="fw-bold">Try Yum Nums</h2>
-        <p class="category-subtitle">Soft Chews: For ₹199</p>
-
-        <div class="category-scroll">
-          <a href="#" class="category-item">
-            <div class="category-card shadow">
-              <img src="assets/images/p1.avif" alt="Shop Now" />
-            </div>
-
-            <div class="category-title">Shop Now</div>
-          </a>
-
-          <a href="#" class="category-item">
-            <div class="category-card shadow">
-              <img src="assets/images/p2.avif" alt="Banana & Real Chicken" />
-            </div>
-
-            <div class="category-title">Banana & Real Chicken</div>
-          </a>
-
-          <a href="#" class="category-item">
-            <div class="category-card shadow">
-              <img src="assets/images/p3.avif" alt="Blueberry & Real Chicken" />
-            </div>
-
-            <div class="category-title">Blueberry & Real Chicken</div>
-          </a>
-
-          <a href="#" class="category-item">
-            <div class="category-card shadow">
-              <img src="assets/images/p4.avif" alt="Carrot & Real Chicken" />
-            </div>
-
-            <div class="category-title">Carrot & Real Chicken</div>
-          </a>
-
-          <a href="#" class="category-item">
-            <div class="category-card shadow">
-              <img src="assets/images/p5.avif" alt="Real Chicken" />
-            </div>
-
-            <div class="category-title">Real Chicken</div>
-          </a>
-
-          <a href="#" class="category-item">
-            <div class="category-card shadow">
-              <img src="assets/images/p6.avif" alt="Pumpkin & Real Chicken" />
-            </div>
-
-            <div class="category-title">Pumpkin & Real Chicken</div>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- categories -->
-    <section class="categories">
-      <div class="container-xxl">
-        <h2 class="fw-bold">Sara’s Wholesome Food by HUFT</h2>
-        <p class="category-subtitle">Expert Nutrition starting at ₹99</p>
-
-        <div class="category-scroll">
-          <a href="#" class="category-item">
-            <div class="category-card shadow">
-              <img src="assets/images/c9.avif" alt="Shop Now" />
-            </div>
-
-            <div class="category-title">Shop Now</div>
-          </a>
-
-          <a href="#" class="category-item">
-            <div class="category-card shadow">
-              <img src="assets/images/c14.webp" alt="Banana & Real Chicken" />
-            </div>
-
-            <div class="category-title">Banana & Real Chicken</div>
-          </a>
-
-          <a href="#" class="category-item">
-            <div class="category-card shadow">
-              <img
-                src="assets/images/c13.webp"
-                alt="Blueberry & Real Chicken"
-              />
-            </div>
-
-            <div class="category-title">Blueberry & Real Chicken</div>
-          </a>
-
-          <a href="#" class="category-item">
-            <div class="category-card shadow">
-              <img src="assets/images/c12.avif" alt="Carrot & Real Chicken" />
-            </div>
-
-            <div class="category-title">Carrot & Real Chicken</div>
-          </a>
-
-          <a href="#" class="category-item">
-            <div class="category-card shadow">
-              <img src="assets/images/c11.avif" alt="Real Chicken" />
-            </div>
-
-            <div class="category-title">Real Chicken</div>
-          </a>
-
-          <a href="#" class="category-item">
-            <div class="category-card shadow">
-              <img src="assets/images/c10.avif" alt="Pumpkin & Real Chicken" />
-            </div>
-
-            <div class="category-title">Pumpkin & Real Chicken</div>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- Brand  -->
-    <section class="brand-section mt-5">
-      <div class="container-xxl">
-        <h2 class="fw-bold">Global Brands, Great Deals!</h2>
-        <p class="section-subtitle">Around the world with HUFT</p>
-
-        <div class="row g-4">
-          <div class="col-6 col-md-6 col-lg-2">
-            <a href="#" class="brand-card text-decoration-none">
-              <img
-                src="assets/images/b1.avif"
-                class="w-100"
-                alt="Complete Wet Meals"
-              />
-
-              <div class="text-center brand-card-text">Code</div>
-            </a>
-          </div>
-
-          <div class="col-6 col-md-6 col-lg-2">
-            <a href="#" class="brand-card text-decoration-none">
-              <img src="assets/images/b2.avif" class="w-100" alt="Broth" />
-
-              <div class="text-center brand-card-text">
-                Broth | ₹129 onwards
-              </div>
-            </a>
-          </div>
-
-          <div class="col-6 col-md-6 col-lg-2">
-            <a href="#" class="brand-card text-decoration-none">
-              <img src="assets/images/b3.avif" class="w-100" alt="Mousse" />
-
-              <div class="text-center brand-card-text">
-                Mousse | ₹129 onwards
-              </div>
-            </a>
-          </div>
-
-          <div class="col-6 col-md-6 col-lg-2">
-            <a href="#" class="brand-card text-decoration-none">
-              <img src="assets/images/b4.avif" class="w-100" alt="Pate" />
-
-              <div class="text-center brand-card-text">Pâté | ₹129 onwards</div>
-            </a>
-          </div>
-          <div class="col-6 col-md-6 col-lg-2">
-            <a href="#" class="brand-card text-decoration-none">
-              <img src="assets/images/b5.avif" class="w-100" alt="Pate" />
-
-              <div class="text-center brand-card-text">Pâté | ₹129 onwards</div>
-            </a>
-          </div>
-          <div class="col-6 col-md-6 col-lg-2">
-            <a href="#" class="brand-card text-decoration-none">
-              <img src="assets/images/b6.avif" class="w-100" alt="Pate" />
-
-              <div class="text-center brand-card-text">Pâté | ₹129 onwards</div>
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Category  -->
-    <section class="brand-section mt-5">
-      <div class="container-xxl">
-        <h2 class="fw-bold">Changing-Season Essentials</h2>
-        <p class="section-subtitle">Not winter, not summer… just perfect!</p>
-
-        <div class="row g-4">
-          <div class="col-6 col-md-6 col-lg-3">
-            <a href="#" class="brand-card text-decoration-none">
-              <img
-                src="assets/images/s1.webp"
-                class="w-100"
-                alt="Complete Wet Meals"
-              />
-
-              <div class="text-center brand-card-text">Code</div>
-            </a>
-          </div>
-
-          <div class="col-6 col-md-6 col-lg-3">
-            <a href="#" class="brand-card text-decoration-none">
-              <img src="assets/images/s2.webp" class="w-100" alt="Broth" />
-
-              <div class="text-center brand-card-text">
-                Broth | ₹129 onwards
-              </div>
-            </a>
-          </div>
-
-          <div class="col-6 col-md-6 col-lg-3">
-            <a href="#" class="brand-card text-decoration-none">
-              <img src="assets/images/s3.webp" class="w-100" alt="Mousse" />
-
-              <div class="text-center brand-card-text">
-                Mousse | ₹129 onwards
-              </div>
-            </a>
-          </div>
-
-          <div class="col-6 col-md-6 col-lg-3">
-            <a href="#" class="brand-card text-decoration-none">
-              <img src="assets/images/s4.webp" class="w-100" alt="Pate" />
-
-              <div class="text-center brand-card-text">Pâté | ₹129 onwards</div>
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Product Slider -->
-    <section class="deals-section">
-      <div class="container-xxl">
-        <h2>Deals to Buy for!</h2>
-        <p class="deals-subtitle">These should’ve been in your cart already</p>
-
-        <!-- Category Tabs -->
-        <ul class="nav deals-tabs" role="tablist">
-          <li class="nav-item">
-            <button
-              class="nav-link active"
-              data-category="cat-toys"
-              data-bs-toggle="tab"
-              data-bs-target="#cat-toys"
-            >
-              🧶 Cat Toys
-            </button>
-          </li>
-          <li class="nav-item">
-            <button
-              class="nav-link"
-              data-category="toilet-trays"
-              data-bs-toggle="tab"
-              data-bs-target="#toilet-trays"
-            >
-              🚽 Toilet Trays
-            </button>
-          </li>
-          <li class="nav-item">
-            <button
-              class="nav-link"
-              data-category="cat-treats"
-              data-bs-toggle="tab"
-              data-bs-target="#cat-treats"
-            >
-              🍡 Cat Treats
-            </button>
-          </li>
-          <li class="nav-item">
-            <button
-              class="nav-link"
-              data-category="cat-beds"
-              data-bs-toggle="tab"
-              data-bs-target="#cat-beds"
-            >
-              🐈 Cat Beds
-            </button>
-          </li>
-        </ul>
-      </div>
-
-      <!-- Tab Panels -->
-      <div class="tab-content">
-        <!-- Initial category rendered immediately -->
-        <div class="tab-pane fade show active" id="cat-toys">
-          <div class="deals-wrapper">
-            <button class="deals-arrow left">❮</button>
-
-            <div class="deals-scroll">
-              <!-- Example product card -->
+        <div class="col-lg-9">
+          <div class="row g-4">
+            <div class="col-6 col-md-4 col-lg-3">
               <div class="product-card">
                 <div class="product-image">
                   <span class="product-badge">10% OFF</span>
@@ -839,12 +462,13 @@
                   </div>
                 </div>
               </div>
-              <!-- Example product card -->
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
               <div class="product-card">
                 <div class="product-image">
                   <span class="product-badge">10% OFF</span>
 
-                  <img src="assets/images/p2.webp" alt="Product" />
+                  <img src="assets/images/p1.webp" alt="Product" />
 
                   <span class="product-rating">⭐ 5.0</span>
                 </div>
@@ -857,23 +481,27 @@
                   </p>
 
                   <div class="product-price">
-                    <span class="price">₹174.30</span>
+                    <div>
+                      <span class="price">₹174.30</span>
 
-                    <span class="old-price">₹249</span>
+                      <span class="old-price">₹249</span>
 
-                    <span class="discount">(30%)</span>
+                      <span class="discount">(30%)</span>
+                    </div>
+
                     <div class="product-action">
                       <button class="add-btn">Add</button>
                     </div>
                   </div>
                 </div>
               </div>
-              <!-- Example product card -->
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
               <div class="product-card">
                 <div class="product-image">
                   <span class="product-badge">10% OFF</span>
 
-                  <img src="assets/images/p3.webp" alt="Product" />
+                  <img src="assets/images/p1.webp" alt="Product" />
 
                   <span class="product-rating">⭐ 5.0</span>
                 </div>
@@ -886,24 +514,27 @@
                   </p>
 
                   <div class="product-price">
-                    <span class="price">₹174.30</span>
+                    <div>
+                      <span class="price">₹174.30</span>
 
-                    <span class="old-price">₹249</span>
+                      <span class="old-price">₹249</span>
 
-                    <span class="discount">(30%)</span>
+                      <span class="discount">(30%)</span>
+                    </div>
+
                     <div class="product-action">
                       <button class="add-btn">Add</button>
                     </div>
                   </div>
                 </div>
               </div>
-
-              <!-- Example product card -->
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
               <div class="product-card">
                 <div class="product-image">
                   <span class="product-badge">10% OFF</span>
 
-                  <img src="assets/images/p4.webp" alt="Product" />
+                  <img src="assets/images/p1.webp" alt="Product" />
 
                   <span class="product-rating">⭐ 5.0</span>
                 </div>
@@ -916,24 +547,27 @@
                   </p>
 
                   <div class="product-price">
-                    <span class="price">₹174.30</span>
+                    <div>
+                      <span class="price">₹174.30</span>
 
-                    <span class="old-price">₹249</span>
+                      <span class="old-price">₹249</span>
 
-                    <span class="discount">(30%)</span>
+                      <span class="discount">(30%)</span>
+                    </div>
+
                     <div class="product-action">
                       <button class="add-btn">Add</button>
                     </div>
                   </div>
                 </div>
               </div>
-
-              <!-- Example product card -->
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
               <div class="product-card">
                 <div class="product-image">
-                  <!-- <span class="product-badge">10% OFF</span> -->
+                  <span class="product-badge">10% OFF</span>
 
-                  <img src="assets/images/p5.webp" alt="Product" />
+                  <img src="assets/images/p1.webp" alt="Product" />
 
                   <span class="product-rating">⭐ 5.0</span>
                 </div>
@@ -946,11 +580,146 @@
                   </p>
 
                   <div class="product-price">
-                    <span class="price">₹174.30</span>
+                    <div>
+                      <span class="price">₹174.30</span>
 
-                    <span class="old-price">₹249</span>
+                      <span class="old-price">₹249</span>
 
-                    <span class="discount">(30%)</span>
+                      <span class="discount">(30%)</span>
+                    </div>
+
+                    <div class="product-action">
+                      <button class="add-btn">Add</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+              <div class="product-card">
+                <div class="product-image">
+                  <span class="product-badge">10% OFF</span>
+
+                  <img src="assets/images/p1.webp" alt="Product" />
+
+                  <span class="product-rating">⭐ 5.0</span>
+                </div>
+
+                <div class="product-info">
+                  <h6 class="product-brand">Heads Up For Tails</h6>
+
+                  <p class="product-title">
+                    HUFT Lady Buggs Plush With Catnip Toy
+                  </p>
+
+                  <div class="product-price">
+                    <div>
+                      <span class="price">₹174.30</span>
+
+                      <span class="old-price">₹249</span>
+
+                      <span class="discount">(30%)</span>
+                    </div>
+
+                    <div class="product-action">
+                      <button class="add-btn">Add</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+              <div class="product-card">
+                <div class="product-image">
+                  <span class="product-badge">10% OFF</span>
+
+                  <img src="assets/images/p1.webp" alt="Product" />
+
+                  <span class="product-rating">⭐ 5.0</span>
+                </div>
+
+                <div class="product-info">
+                  <h6 class="product-brand">Heads Up For Tails</h6>
+
+                  <p class="product-title">
+                    HUFT Lady Buggs Plush With Catnip Toy
+                  </p>
+
+                  <div class="product-price">
+                    <div>
+                      <span class="price">₹174.30</span>
+
+                      <span class="old-price">₹249</span>
+
+                      <span class="discount">(30%)</span>
+                    </div>
+
+                    <div class="product-action">
+                      <button class="add-btn">Add</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+              <div class="product-card">
+                <div class="product-image">
+                  <span class="product-badge">10% OFF</span>
+
+                  <img src="assets/images/p1.webp" alt="Product" />
+
+                  <span class="product-rating">⭐ 5.0</span>
+                </div>
+
+                <div class="product-info">
+                  <h6 class="product-brand">Heads Up For Tails</h6>
+
+                  <p class="product-title">
+                    HUFT Lady Buggs Plush With Catnip Toy
+                  </p>
+
+                  <div class="product-price">
+                    <div>
+                      <span class="price">₹174.30</span>
+
+                      <span class="old-price">₹249</span>
+
+                      <span class="discount">(30%)</span>
+                    </div>
+
+                    <div class="product-action">
+                      <button class="add-btn">Add</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+              <div class="product-card">
+                <div class="product-image">
+                  <span class="product-badge">10% OFF</span>
+
+                  <img src="assets/images/p1.webp" alt="Product" />
+
+                  <span class="product-rating">⭐ 5.0</span>
+                </div>
+
+                <div class="product-info">
+                  <h6 class="product-brand">Heads Up For Tails</h6>
+
+                  <p class="product-title">
+                    HUFT Lady Buggs Plush With Catnip Toy
+                  </p>
+
+                  <div class="product-price">
+                    <div>
+                      <span class="price">₹174.30</span>
+
+                      <span class="old-price">₹249</span>
+
+                      <span class="discount">(30%)</span>
+                    </div>
+
                     <div class="product-action">
                       <button class="add-btn">Add</button>
                     </div>
@@ -959,129 +728,71 @@
               </div>
             </div>
 
-            <button class="deals-arrow right">❯</button>
-          </div>
-        </div>
-
-        <!-- Other tabs load later -->
-        <div
-          class="tab-pane fade"
-          id="toilet-trays"
-          data-endpoint="/api/deals/toilet-trays"
-        ></div>
-        <div
-          class="tab-pane fade"
-          id="cat-treats"
-          data-endpoint="/api/deals/cat-treats"
-        ></div>
-        <div
-          class="tab-pane fade"
-          id="cat-beds"
-          data-endpoint="/api/deals/cat-beds"
-        ></div>
-      </div>
-    </section>
-
-    <!-- Single Category Banner -->
-    <section class="promo-section">
-      <div class="">
-        <div class="row g-0 promo-wrapper">
-          <div class="col-lg-6">
-            <div class="promo-image">
-              <img src="assets/images/promo.jpg" alt="Pet With Toy" />
-            </div>
-          </div>
-
-          <div class="col-lg-6">
-            <div class="promo-content">
-              <h3>
-                GET UP TO 25% OFF ON ALL MEDICINES<br />
-                FOR YOUR PET WITH WOOFLIX PHARMACY
-              </h3>
-
-              <p>
-                VACCINATIONS | DEWORMING | AND MANY MORE<br />
-                HEALTH SUPPLEMENTS ARE ALSO AVAILABLE
-              </p>
-
-              <a href="#" class="promo-btn"> SHOP NOW </a>
-            </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
 
-    <!-- Blog Section -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="filterDrawer">
+      <div class="offcanvas-header">
+        <h5>Filters</h5>
 
-    <section class="blog-section">
-      <div class="container-xxl">
-        <h2 class="section-title">Explore the World of HUFT</h2>
-
-        <p class="section-subtitle">
-          Bringing joy to pets and families, one home at a time!
-        </p>
-
-        <div class="row g-4">
-          <div class="col-6 col-md-3">
-            <a href="/blog/post-1" class="blog-card">
-              <div class="blog-image">
-                <img
-                  src="assets/images/b1.webp"
-                  class="img-fluid"
-                  alt="HUFTians react"
-                />
-              </div>
-
-              <p class="blog-title">HUFTians react to your pets</p>
-            </a>
-          </div>
-
-          <div class="col-6 col-md-3">
-            <a href="/blog/post-2" class="blog-card">
-              <div class="blog-image">
-                <img
-                  src="assets/images/b2.webp"
-                  class="img-fluid"
-                  alt="Shopping approved"
-                />
-              </div>
-
-              <p class="blog-title">
-                Every shopping has to be approved by them!
-              </p>
-            </a>
-          </div>
-
-          <div class="col-6 col-md-3">
-            <a href="/blog/post-3" class="blog-card">
-              <div class="blog-image">
-                <img
-                  src="assets/images/b3.webp"
-                  class="img-fluid"
-                  alt="Dog feelings"
-                />
-              </div>
-
-              <p class="blog-title">Things dogs wish we knew</p>
-            </a>
-          </div>
-
-          <div class="col-6 col-md-3">
-            <a href="/blog/post-4" class="blog-card">
-              <div class="blog-image">
-                <img
-                  src="assets/images/b4.webp"
-                  class="img-fluid"
-                  alt="Groomers"
-                />
-              </div>
-
-              <p class="blog-title">Our groomers go the extra mile</p>
-            </a>
-          </div>
-        </div>
+        <button class="btn-close" data-bs-dismiss="offcanvas"></button>
       </div>
-    </section>
+
+      <div class="offcanvas-body">
+        <h6>Brands</h6>
+
+        <label><input type="checkbox" /> Pedigree</label>
+        <label><input type="checkbox" /> Royal Canin</label>
+        <label><input type="checkbox" /> HUFT</label>
+
+        <hr />
+
+        <h6>Category</h6>
+
+        <label><input type="checkbox" /> Chew Toys</label>
+        <label><input type="checkbox" /> Plush Toys</label>
+
+        <hr />
+
+        <h6>Price</h6>
+
+        <label><input type="checkbox" /> ₹0 - ₹500</label>
+        <label><input type="checkbox" /> ₹500 - ₹1000</label>
+
+        <button class="btn btn-orange w-100 mt-3">Apply Filters</button>
+      </div>
+    </div>
+
+    <!-- MOBILE BOTTOM NAV -->
+
+    <div class="mobile-bottom-nav d-lg-none">
+      <a href="#" class="active">
+        <div>🏠</div>
+        <span>Home</span>
+      </a>
+
+      <a href="#">
+        <div>⬜</div>
+        <span>Category</span>
+      </a>
+
+      <a href="#">
+        <div>🐶</div>
+        <span>HUFT Hub</span>
+      </a>
+
+      <a href="#">
+        <div>🛒</div>
+        <span>Cart</span>
+      </a>
+
+      <a href="#">
+        <div>👤</div>
+        <span>Account</span>
+      </a>
+    </div>
 
     <!-- USP Section -->
     <section class="usp-section">
@@ -1208,7 +919,9 @@
                 />
               </div>
 
-              <button type="submit" class="btn btn-orange w-100 mt-1">Submit</button>
+              <button type="submit" class="btn btn-orange w-100 mt-1">
+                Submit
+              </button>
             </form>
           </div>
         </div>
@@ -1278,8 +991,7 @@
         <span>HUFT Hub</span>
       </a>
 
-      <a href="#" data-bs-toggle="offcanvas"
-                data-bs-target="#cartDrawer">
+      <a href="#">
         <div>🛒</div>
         <span>Cart</span>
       </a>
@@ -1289,6 +1001,27 @@
         <span>Account</span>
       </a>
     </div>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://example.com"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Dogs",
+            "item": "https://example.com/dogs"
+          }
+        ]
+      }
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
