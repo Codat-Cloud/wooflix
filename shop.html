@@ -403,28 +403,237 @@
 
         <div class="col-lg-3 d-none d-lg-block">
           <div class="filter-sidebar">
-            <h6>Brands</h6>
+            <div class="filter-header">
+              <h5>Filters</h5>
 
-            <label><input type="checkbox" /> Pedigree</label>
-            <label><input type="checkbox" /> Royal Canin</label>
-            <label><input type="checkbox" /> Heads Up For Tails</label>
+              <button class="clear-filters">Clear All</button>
+            </div>
 
-            <hr />
+            <!-- ACTIVE FILTERS -->
 
-            <h6>Category</h6>
+            <div class="active-filters">
+              <span class="filter-chip"> Pedigree ✕ </span>
 
-            <label><input type="checkbox" /> Chew Toys</label>
-            <label><input type="checkbox" /> Plush Toys</label>
-            <label><input type="checkbox" /> Rope Toys</label>
+              <span class="filter-chip"> ₹0-₹500 ✕ </span>
+            </div>
 
-            <hr />
+            <!-- BRANDS -->
 
-            <h6>Price</h6>
+            <div class="filter-group">
+              <button class="filter-toggle">
+                Brands
 
-            <label><input type="checkbox" /> ₹0 - ₹500</label>
-            <label><input type="checkbox" /> ₹500 - ₹1000</label>
+                <span class="arrow">⌄</span>
+              </button>
+
+              <div class="filter-content">
+                <label class="filter-option">
+                  <input type="checkbox" />
+
+                  <span class="checkmark"></span>
+
+                  Pedigree <span class="count">(42)</span>
+                </label>
+
+                <label class="filter-option">
+                  <input type="checkbox" />
+
+                  <span class="checkmark"></span>
+
+                  Royal Canin <span class="count">(19)</span>
+                </label>
+
+                <label class="filter-option">
+                  <input type="checkbox" />
+
+                  <span class="checkmark"></span>
+
+                  Heads Up For Tails <span class="count">(12)</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- CATEGORY -->
+
+            <div class="filter-group">
+              <button class="filter-toggle">
+                Category
+
+                <span class="arrow">⌄</span>
+              </button>
+
+              <div class="filter-content">
+                <label class="filter-option">
+                  <input type="checkbox" />
+
+                  <span class="checkmark"></span>
+
+                  Chew Toys <span class="count">(22)</span>
+                </label>
+
+                <label class="filter-option">
+                  <input type="checkbox" />
+
+                  <span class="checkmark"></span>
+
+                  Plush Toys <span class="count">(18)</span>
+                </label>
+
+                <label class="filter-option">
+                  <input type="checkbox" />
+
+                  <span class="checkmark"></span>
+
+                  Rope Toys <span class="count">(9)</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- PRICE -->
+
+            <div class="filter-group">
+              <button class="filter-toggle">
+                Price
+
+                <span class="arrow">⌄</span>
+              </button>
+
+              <div class="filter-content">
+                <input
+                  type="range"
+                  min="0"
+                  max="2000"
+                  value="500"
+                  class="price-slider"
+                />
+
+                <div class="price-range">₹0 — ₹500</div>
+              </div>
+            </div>
           </div>
         </div>
+
+        <div class="offcanvas offcanvas-start" tabindex="-1" id="filterDrawer">
+      <div class="offcanvas-header">
+        <h5>Filters</h5>
+
+        <button class="btn-close" data-bs-dismiss="offcanvas"></button>
+      </div>
+
+      <!-- Mobile Filters -->
+      <div class="offcanvas-body">
+        <div class="filter-sidebar" style="position: static; top: 0; padding: 0px 10px;">
+          <div class="filter-header">
+            <!-- <h5>Filters</h5> -->
+
+            <button class="clear-filters">Clear All</button>
+          </div>
+
+          <!-- ACTIVE FILTERS -->
+
+          <div class="active-filters">
+            <span class="filter-chip"> Pedigree ✕ </span>
+
+            <span class="filter-chip"> ₹0-₹500 ✕ </span>
+          </div>
+
+          <!-- BRANDS -->
+
+          <div class="filter-group">
+            <button class="filter-toggle">
+              Brands
+
+              <span class="arrow">⌄</span>
+            </button>
+
+            <div class="filter-content">
+              <label class="filter-option">
+                <input type="checkbox" />
+
+                <span class="checkmark"></span>
+
+                Pedigree <span class="count">(42)</span>
+              </label>
+
+              <label class="filter-option">
+                <input type="checkbox" />
+
+                <span class="checkmark"></span>
+
+                Royal Canin <span class="count">(19)</span>
+              </label>
+
+              <label class="filter-option">
+                <input type="checkbox" />
+
+                <span class="checkmark"></span>
+
+                Heads Up For Tails <span class="count">(12)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- CATEGORY -->
+
+          <div class="filter-group">
+            <button class="filter-toggle">
+              Category
+
+              <span class="arrow">⌄</span>
+            </button>
+
+            <div class="filter-content">
+              <label class="filter-option">
+                <input type="checkbox" />
+
+                <span class="checkmark"></span>
+
+                Chew Toys <span class="count">(22)</span>
+              </label>
+
+              <label class="filter-option">
+                <input type="checkbox" />
+
+                <span class="checkmark"></span>
+
+                Plush Toys <span class="count">(18)</span>
+              </label>
+
+              <label class="filter-option">
+                <input type="checkbox" />
+
+                <span class="checkmark"></span>
+
+                Rope Toys <span class="count">(9)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- PRICE -->
+
+          <div class="filter-group">
+            <button class="filter-toggle">
+              Price
+
+              <span class="arrow">⌄</span>
+            </button>
+
+            <div class="filter-content">
+              <input
+                type="range"
+                min="0"
+                max="2000"
+                value="500"
+                class="price-slider"
+              />
+
+              <div class="price-range">₹0 — ₹500</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
 
         <!-- PRODUCT GRID -->
 
@@ -727,71 +936,35 @@
                 </div>
               </div>
             </div>
+          </div>
 
+          <!-- <div class="loading-state text-center py-5">
+
+          <div class="spinner-border text-warning" role="status"></div>
+
+          <p class="mt-3">Loading products...</p>
+
+          </div> -->
+
+          <div class="row g-4 loading-products mt-2 mb-5">
+            <div class="col-6 col-md-4 col-lg-3">
+              <div class="product-skeleton"></div>
+            </div>
+
+            <div class="col-6 col-md-4 col-lg-3">
+              <div class="product-skeleton"></div>
+            </div>
+
+            <div class="col-6 col-md-4 col-lg-3">
+              <div class="product-skeleton"></div>
+            </div>
+
+            <div class="col-6 col-md-4 col-lg-3">
+              <div class="product-skeleton"></div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="filterDrawer">
-      <div class="offcanvas-header">
-        <h5>Filters</h5>
-
-        <button class="btn-close" data-bs-dismiss="offcanvas"></button>
-      </div>
-
-      <div class="offcanvas-body">
-        <h6>Brands</h6>
-
-        <label><input type="checkbox" /> Pedigree</label>
-        <label><input type="checkbox" /> Royal Canin</label>
-        <label><input type="checkbox" /> HUFT</label>
-
-        <hr />
-
-        <h6>Category</h6>
-
-        <label><input type="checkbox" /> Chew Toys</label>
-        <label><input type="checkbox" /> Plush Toys</label>
-
-        <hr />
-
-        <h6>Price</h6>
-
-        <label><input type="checkbox" /> ₹0 - ₹500</label>
-        <label><input type="checkbox" /> ₹500 - ₹1000</label>
-
-        <button class="btn btn-orange w-100 mt-3">Apply Filters</button>
-      </div>
-    </div>
-
-    <!-- MOBILE BOTTOM NAV -->
-
-    <div class="mobile-bottom-nav d-lg-none">
-      <a href="#" class="active">
-        <div>🏠</div>
-        <span>Home</span>
-      </a>
-
-      <a href="#">
-        <div>⬜</div>
-        <span>Category</span>
-      </a>
-
-      <a href="#">
-        <div>🐶</div>
-        <span>HUFT Hub</span>
-      </a>
-
-      <a href="#">
-        <div>🛒</div>
-        <span>Cart</span>
-      </a>
-
-      <a href="#">
-        <div>👤</div>
-        <span>Account</span>
-      </a>
     </div>
 
     <!-- USP Section -->

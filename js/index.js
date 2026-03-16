@@ -76,3 +76,11 @@ function checkEmptyCart() {
 `;
   }
 }
+
+document.querySelectorAll(".filter-toggle").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const group = btn.parentElement;
+
+    group.classList.toggle("collapsed");
+  });
+});
