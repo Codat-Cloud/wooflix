@@ -84,3 +84,202 @@ document.querySelectorAll(".filter-toggle").forEach((btn) => {
     group.classList.toggle("collapsed");
   });
 });
+
+/* VARIANT SELECTION */
+
+document.querySelectorAll(".variant-btn").forEach((btn) => {
+  btn.addEventListener("click", function () {
+    document
+      .querySelectorAll(".variant-btn")
+      .forEach((b) => b.classList.remove("active"));
+
+    this.classList.add("active");
+  });
+});
+
+/* WISHLIST */
+
+const wishlist = document.getElementById("wishlistBtn");
+
+wishlist.addEventListener("click", function () {
+  this.classList.toggle("active");
+
+  this.innerHTML = this.classList.contains("active") ? "❤" : "♡";
+});
+
+const images = [
+  "https://images.unsplash.com/photo-1598137265627-2d2d37a35d58?w=900",
+  "https://images.unsplash.com/photo-1601758124510-52d02ddb7cbd?w=900",
+  "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=900",
+  "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=900",
+];
+
+let currentImage = 0;
+
+function setImage(index) {
+  const img = document.getElementById("mainImage");
+
+  img.classList.add("fade");
+
+  setTimeout(() => {
+    img.src = images[index];
+
+    img.classList.remove("fade");
+  }, 200);
+
+  currentImage = index;
+
+  document
+    .querySelectorAll(".thumb")
+    .forEach((t) => t.classList.remove("active"));
+
+  document.querySelectorAll(".thumb")[index].classList.add("active");
+}
+
+function changeImage(step) {
+  currentImage += step;
+
+  if (currentImage < 0) currentImage = images.length - 1;
+
+  if (currentImage >= images.length) currentImage = 0;
+
+  setImage(currentImage);
+}
+
+let touchStartX = 0;
+let touchEndX = 0;
+
+const gallery = document.querySelector(".gallery-main");
+
+gallery.addEventListener("touchstart", function (e) {
+  touchStartX = e.changedTouches[0].screenX;
+});
+
+gallery.addEventListener("touchend", function (e) {
+  touchEndX = e.changedTouches[0].screenX;
+  handleSwipe();
+});
+
+function handleSwipe() {
+  let swipeDistance = touchEndX - touchStartX;
+
+  /* swipe threshold */
+  if (Math.abs(swipeDistance) < 50) return;
+
+  /* swipe left → next image */
+  if (swipeDistance < 0) {
+    changeImage(1);
+  }
+
+  /* swipe right → previous image */
+  if (swipeDistance > 0) {
+    changeImage(-1);
+  }
+}
+
+document.querySelectorAll(".coupon-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const code = btn.dataset.code;
+
+    navigator.clipboard.writeText(code);
+
+    btn.classList.add("copied");
+
+    btn.querySelector(".btn-text").textContent = "Copied";
+
+    setTimeout(() => {
+      btn.classList.remove("copied");
+      btn.querySelector(".btn-text").textContent = "Copy";
+    }, 2000);
+  });
+});
+
+const reviewImages = [
+  "https://images.unsplash.com/photo-1601758124510-52d02ddb7cbd",
+  "https://images.unsplash.com/photo-1598137265627-2d2d37a35d58",
+  "https://images.unsplash.com/photo-1601758228041-f3b2795255f1",
+];
+
+let reviewImageIndex = 0;
+
+function openReviewGallery(index) {
+  reviewImageIndex = index;
+
+  document.getElementById("reviewGalleryImage").src = reviewImages[index];
+
+  new bootstrap.Modal(document.getElementById("reviewGalleryModal")).show();
+}
+
+function changeReviewImage(step) {
+  reviewImageIndex += step;
+
+  if (reviewImageIndex < 0) reviewImageIndex = reviewImages.length - 1;
+  if (reviewImageIndex >= reviewImages.length) reviewImageIndex = 0;
+
+  document.getElementById("reviewGalleryImage").src =
+    reviewImages[reviewImageIndex];
+}
+
+/* limit images */
+
+document.getElementById("reviewImages").addEventListener("change", function () {
+  if (this.files.length > 5) {
+    alert("You can upload maximum 5 images");
+
+    this.value = "";
+  }
+});
+
+/* SAVE TAB STATE */
+
+document.querySelectorAll(".review-tabs .nav-link").forEach((tab) => {
+  tab.addEventListener("click", function () {
+    localStorage.setItem("activeReviewTab", this.dataset.bsTarget);
+  });
+});
+
+/* RESTORE TAB */
+
+document.addEventListener("DOMContentLoaded", function () {
+  const activeTab = localStorage.getItem("activeReviewTab");
+
+  if (activeTab) {
+    const tabTrigger = document.querySelector(
+      '[data-bs-target="' + activeTab + '"]',
+    );
+
+    if (tabTrigger) {
+      new bootstrap.Tab(tabTrigger).show();
+    }
+  }
+});
+
+let reviewTouchStartX = 0;
+let reviewTouchEndX = 0;
+
+const reviewModal = document.querySelector("#reviewGalleryImage");
+
+reviewModal.addEventListener("touchstart", function (e) {
+  reviewTouchStartX = e.changedTouches[0].screenX;
+});
+
+reviewModal.addEventListener("touchend", function (e) {
+  reviewTouchEndX = e.changedTouches[0].screenX;
+  handleReviewSwipe();
+});
+
+function handleReviewSwipe() {
+  let distance = reviewTouchEndX - reviewTouchStartX;
+
+  if (Math.abs(distance) < 50) return;
+
+  /* swipe left → next */
+  if (distance < 0) {
+    changeReviewImage(1);
+  }
+
+  /* swipe right → previous */
+  if (distance > 0) {
+    changeReviewImage(-1);
+  }
+}

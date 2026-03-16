@@ -1,0 +1,1520 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Pet Store</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- Top Blue Strip -->
+
+    <!-- DESKTOP HEADER -->
+
+    <header class="main-header d-none d-lg-block fixed-top">
+      <!-- TOP STRIP -->
+
+      <div class="top-strip">
+        <div class="container-xxl d-flex justify-content-between">
+          <div class="top-links d-none d-lg-block">
+            <a href="#">Track Order</a>
+          </div>
+
+          <div>Sara’s Wholesome - Balanced Nutrition for Dogs</div>
+        </div>
+      </div>
+
+      <div class="pt-3 pb-2">
+        <div class="container-xxl">
+          <div class="row align-items-center">
+            <div class="col-lg-2">
+              <div class="logo">
+                <img src="/assets/images/logo.png" alt="" class="w-100" />
+              </div>
+            </div>
+
+            <div class="col-lg-5">
+              <input
+                type="text"
+                class="form-control search-box"
+                placeholder="Search"
+              />
+            </div>
+
+            <div class="col-lg-5 text-end header-icons">
+              <div class="dropdown location-dropdown d-inline-block">
+                <button
+                  class="btn location-btn dropdown-toggle"
+                  data-bs-toggle="dropdown"
+                >
+                  📍 <span id="userPincode">560034</span>
+                </button>
+
+                <div
+                  class="dropdown-menu dropdown-menu-end location-menu"
+                  style="width: 300px"
+                >
+                  <h6 class="text-center">
+                    Enter your pincode to Choose a delivery location to check
+                    product availability
+                  </h6>
+
+                  <form id="pincodeForm" class="pincode-form">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="pincodeInput"
+                      placeholder="Enter pincode"
+                      maxlength="6"
+                    />
+
+                    <button type="submit" class="btn btn-orange">Save</button>
+                  </form>
+                </div>
+              </div>
+
+              <span class="me-2">♡ Wishlist</span>
+              <span
+                class="cart-btn position-relative me-2"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#cartDrawer"
+              >
+                🛒 Cart
+                <span class="cart-count">12</span>
+              </span>
+
+              <button class="btn btn-orange">Login/Sign Up</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Offcanvas Cart -->
+    <div
+      class="offcanvas offcanvas-end cart-drawer"
+      tabindex="-1"
+      id="cartDrawer"
+    >
+      <div class="offcanvas-header">
+        <h5>Your Cart</h5>
+
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="offcanvas"
+        ></button>
+      </div>
+
+      <div class="offcanvas-body d-flex flex-column">
+        <div class="cart-items" id="cartItems">
+          <!-- CART ITEM -->
+
+          <div class="cart-item" data-price="174.30">
+            <button class="remove-icon">✕</button>
+
+            <img src="assets/images/toy1.jpg" class="cart-image" />
+
+            <div class="cart-details">
+              <h6 class="cart-title">HUFT Lady Buggs Plush Toy</h6>
+
+              <div class="cart-bottom">
+                <div class="qty-control">
+                  <button class="qty-minus">−</button>
+
+                  <input class="qty-input" value="1" readonly />
+
+                  <button class="qty-plus">+</button>
+                </div>
+
+                <div class="item-price">₹174.30</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty Cart State -->
+        <div class="empty-cart">
+          <img src="assets/images/empty-cart.png" />
+
+          <h5>Your cart is empty</h5>
+
+          <p>Looks like you haven't added anything yet.</p>
+
+          <a href="/" class="start-shopping"> Start Shopping </a>
+        </div>
+
+        <!-- ORDER SUMMARY -->
+
+        <div class="cart-summary">
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span id="cartSubtotal">₹174.30</span>
+          </div>
+
+          <div class="summary-row">
+            <span>Shipping</span>
+            <span id="cartShipping">Free</span>
+          </div>
+
+          <div class="summary-row total">
+            <span>Total</span>
+            <span id="cartTotal">₹174.30</span>
+          </div>
+
+          <button class="checkout-btn">Proceed to Checkout</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESKTOP NAV -->
+    <nav class="main-nav d-none d-lg-block shadow">
+      <div class="container-xxl">
+        <ul class="nav-menu">
+          <li class="has-mega">
+            <a href="#">Dogs</a>
+
+            <div class="mega-menu shadow">
+              <div class="mega-inner container-xxl">
+                <div class="mega-column">
+                  <h6>Dog Food</h6>
+
+                  <a href="#"
+                    ><img src="assets/images/menu/dog-food.jpg" /> Dry Food</a
+                  >
+                  <a href="#"
+                    ><img src="assets/images/menu/dog-food.jpg" /> Wet Food</a
+                  >
+                  <a href="#"
+                    ><img src="assets/images/menu/dog-food.jpg" /> Puppy Food</a
+                  >
+                </div>
+
+                <div class="mega-column">
+                  <h6>Dog Treats</h6>
+
+                  <a href="#"
+                    ><img src="assets/images/menu/treat.jpg" /> Soft Treats</a
+                  >
+                  <a href="#"
+                    ><img src="assets/images/menu/treat.jpg" /> Dental Treats</a
+                  >
+                  <a href="#"
+                    ><img src="assets/images/menu/treat.jpg" /> Training
+                    Treats</a
+                  >
+                </div>
+
+                <div class="mega-column">
+                  <h6>Dog Toys</h6>
+
+                  <a href="#"
+                    ><img src="assets/images/menu/toy.jpg" /> Chew Toys</a
+                  >
+                  <a href="#"
+                    ><img src="assets/images/menu/toy.jpg" /> Plush Toys</a
+                  >
+                  <a href="#"
+                    ><img src="assets/images/menu/toy.jpg" /> Interactive
+                    Toys</a
+                  >
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li class="has-mega">
+            <a href="#">Cats</a>
+
+            <div class="mega-menu shadow">
+              <div class="mega-inner container-xxl">
+                <div class="mega-column">
+                  <h6>Cat Food</h6>
+
+                  <a href="#"
+                    ><img src="assets/images/menu/cat.jpg" /> Dry Food</a
+                  >
+                  <a href="#"
+                    ><img src="assets/images/menu/cat.jpg" /> Wet Food</a
+                  >
+                </div>
+
+                <div class="mega-column">
+                  <h6>Cat Toys</h6>
+
+                  <a href="#"
+                    ><img src="assets/images/menu/cat-toy.jpg" /> Interactive
+                    Toys</a
+                  >
+                  <a href="#"
+                    ><img src="assets/images/menu/cat-toy.jpg" /> Catnip Toys</a
+                  >
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li class="has-mega">
+            <a href="#">Brands</a>
+
+            <div class="mega-menu shadow">
+              <div class="mega-inner container-xxl">
+                <div class="mega-column">
+                  <h6>Popular Brands</h6>
+
+                  <a href="#"
+                    ><img src="assets/images/brands/royal.jpg" /> Royal Canin</a
+                  >
+                  <a href="#"
+                    ><img src="assets/images/brands/pedigree.jpg" /> Pedigree</a
+                  >
+                  <a href="#"
+                    ><img src="assets/images/brands/meowsi.jpg" /> Meowsi</a
+                  >
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li><a href="#">Wholesale</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- MOBILE HEADER -->
+    <div class="mobile-header d-lg-none">
+      <div class="mobile-header-bar">
+        <button
+          class="menu-btn"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#mobileMenu"
+        >
+          ☰
+        </button>
+
+        <div class="delivery">
+          📍 Delivering to <strong>560034</strong>
+          <span class="change">Change</span>
+        </div>
+
+        <div class="wishlist">♡</div>
+      </div>
+
+      <div class="mobile-search">
+        <div class="search-box-mobile">
+          <a href="/">
+            <span class="logo-icon">
+              <img src="assets/images/icon.png" alt="" style="width: 20px" />
+            </span>
+          </a>
+
+          <input type="text" placeholder="Search for Dog" />
+
+          <span class="search-icon">🔍</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOBILE OFFCANVAS MENU -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu">
+      <div class="offcanvas-header bg-primary text-white">
+        <h5>Drool-worthy Treats!</h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="offcanvas"
+        ></button>
+      </div>
+
+      <div class="offcanvas-body">
+        <ul class="mobile-nav">
+          <li>Shop for Dogs</li>
+          <li>Shop for Cats</li>
+          <li>Shop by Brands</li>
+          <li>Winter'25 <span class="badge bg-warning text-dark">NEW</span></li>
+          <li>Fresh Food for Dogs</li>
+          <li>Complete Meals for Cats</li>
+          <li>HUFT Outlet <span class="badge bg-danger">60% Off</span></li>
+          <li>HUFT Spa</li>
+          <li>HUFT Hub</li>
+          <li>Store & Spa Locator</li>
+          <li>Become a Franchisee</li>
+          <li>Join our Birthday Club</li>
+          <li>Adopt Joy</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Breadcrumbs -->
+    <nav aria-label="breadcrumb" class="breadcrumb-wrapper">
+      <div class="container-xxl">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="/">Home</a>
+          </li>
+
+          <li class="breadcrumb-item">
+            <a href="/dogs">Dogs</a>
+          </li>
+
+          <li class="breadcrumb-item active" aria-current="page">
+            <a href="/dogs">Dog Toys</a>
+          </li>
+
+          <li class="breadcrumb-item active" aria-current="page">
+            <a href="/dogs">Product name</a>
+          </li>
+        </ol>
+      </div>
+    </nav>
+
+    <!-- Product Details -->
+
+    <section class="single-product-info">
+      <div class="container-xxl product-page">
+        <div class="row g-4">
+          <!-- PRODUCT IMAGES -->
+
+          <div class="col-lg-6">
+            <div class="product-gallery">
+              <div class="gallery-main">
+                <button class="gallery-arrow left" onclick="changeImage(-1)">
+                  ←
+                </button>
+
+                <div class="image-frame">
+                  <img
+                    id="mainImage"
+                    src="https://unsplash.com/photos/black-and-white-short-coated-dog-on-brown-bear-plush-toy-oD8uurkrH4c"
+                    class="main-product-img"
+                  />
+                </div>
+
+                <button class="gallery-arrow right" onclick="changeImage(1)">
+                  →
+                </button>
+              </div>
+
+              <div class="gallery-thumbs">
+                <img
+                  src="https://unsplash.com/photos/black-and-white-short-coated-dog-on-brown-bear-plush-toy-oD8uurkrH4c"
+                  class="thumb active"
+                  onclick="setImage(0)"
+                />
+
+                <img
+                  src="https://images.unsplash.com/photo-1601758124510-52d02ddb7cbd?w=300"
+                  class="thumb"
+                  onclick="setImage(1)"
+                />
+
+                <img
+                  src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=300"
+                  class="thumb"
+                  onclick="setImage(2)"
+                />
+
+                <img
+                  src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=300"
+                  class="thumb"
+                  onclick="setImage(3)"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- PRODUCT INFO -->
+
+          <div class="col-lg-6">
+            <div class="product-info">
+              <div class="single-product-rating">
+                <span class="rating-stars">⭐ 5.0</span>
+
+                <span class="rating-divider">|</span>
+
+                <span class="rating-count">25 reviews</span>
+              </div>
+              <h1 class="single-product-title">Dog Plush Toy With Catnip</h1>
+              <h2 class="product-brand">
+                <b class="text-dark">From </b>Tail Lovers Company
+              </h2>
+
+              <div class="single-product-price border-bottom">
+                <div>
+                  <span class="price">₹174.30</span>
+
+                  <span class="old-price">₹249</span>
+
+                  <span class="discount">(30% OFF)</span>
+                </div>
+                <button class="wishlist-btn" id="wishlistBtn">♡</button>
+              </div>
+
+              <!-- VARIATIONS -->
+
+              <div class="product-variants py-2">
+                <h6 class="fw-bold">Select</h6>
+
+                <div class="variant-options">
+                  <div class="variant-item">
+                    <button class="variant-btn active">
+                      Chicken
+                      <span class="variant-badge">10% OFF</span>
+                    </button>
+                  </div>
+
+                  <div class="variant-item">
+                    <button class="variant-btn">Salmon</button>
+                  </div>
+
+                  <div class="variant-item">
+                    <button class="variant-btn">
+                      Tuna
+                      <span class="variant-badge">BEST</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ADD TO CART -->
+
+              <button class="btn btn-orange add-cart-btn">Add To Cart</button>
+
+              <!-- OFFERS -->
+              <div class="product-offers">
+                <h5 class="offers-title">🏷 Available Offers</h5>
+
+                <div class="offers-grid">
+                  <div class="offer-card best-offer">
+                    <span class="offer-ribbon">BEST</span>
+
+                    <div class="offer-content">
+                      <h6>Flat ₹50 OFF</h6>
+                      <p>Use coupon on checkout</p>
+                    </div>
+
+                    <button class="coupon-btn" data-code="PET50">
+                      <span class="btn-text">Copy</span>
+                    </button>
+                  </div>
+
+                  <div class="offer-card">
+                    <div class="offer-content">
+                      <h6>10% OFF</h6>
+                      <p>Orders above ₹999</p>
+                    </div>
+
+                    <button class="coupon-btn" data-code="SAVE10">
+                      <span class="btn-text">Copy</span>
+                    </button>
+                  </div>
+
+                  <div class="offer-card">
+                    <div class="offer-content">
+                      <h6>Free Shipping</h6>
+                      <p>Orders above ₹499</p>
+                    </div>
+
+                    <button class="coupon-btn" data-code="FREESHIP">
+                      <span class="btn-text">Copy</span>
+                    </button>
+                  </div>
+
+                  <div class="offer-card">
+                    <div class="offer-content">
+                      <h6>₹100 OFF</h6>
+                      <p>Orders above ₹1999</p>
+                    </div>
+
+                    <button class="coupon-btn" data-code="SAVE100">
+                      <span class="btn-text">Copy</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- DELIVERY CHECK -->
+              <div class="delivery-info">
+                <h5 class="delivery-title">Delivery & Service Information</h5>
+
+                <div class="delivery-check">
+                  <input type="text" value="560034" class="pincode-input" />
+
+                  <button class="btn btn-orange delivery-btn">Check</button>
+                </div>
+
+                <div class="delivery-items">
+                  <div class="delivery-item">
+                    <span class="delivery-icon">⚡</span>
+                    <span>Get it <strong>Today</strong></span>
+                  </div>
+
+                  <div class="delivery-item">
+                    <span class="delivery-icon">🚚</span>
+                    <span>Expected delivery date – <strong>Today</strong></span>
+                  </div>
+
+                  <div class="delivery-item">
+                    <span class="delivery-icon">📦</span>
+                    <span>No Exchange & Returns</span>
+                  </div>
+
+                  <div class="delivery-item">
+                    <span class="delivery-icon free">FREE</span>
+                    <span>Enjoy Free Delivery above <strong>₹699</strong></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- SPECIFICATIONS -->
+
+              <!-- <div class="product-specs">
+              <h6>Product Specifications</h6>
+
+              <ul>
+                <li>Brand: Wooflix</li>
+
+                <li>Material: Plush</li>
+
+                <li>Pet Type: Dog</li>
+              </ul>
+            </div> -->
+
+              <!-- ACCORDION -->
+
+              <div class="accordion product-accordion mt-3">
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button
+                      class="accordion-button collapsed"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#details"
+                    >
+                      Product Details
+                    </button>
+                  </h2>
+
+                  <div id="details" class="accordion-collapse collapse show">
+                    <div class="accordion-body">
+                      Seeing everything covered in your pet's fur is very normal
+                      when you are a pet parent. This Lint Roller is a simple
+                      way to keep things neat and clean! All you need to do is
+                      roll its sticky side on any surface, and it will collect
+                      all the hair effortlessly. From car seats and furniture to
+                      the carpet or your clothes, this can be used on any and
+                      every surface that needs a quick clean-up! Its compact,
+                      lightweight design makes it super easy to use and carry
+                      anywhere you go.
+                      <br />
+
+                      Features: Reusable pet hair removal brush Lightweight,
+                      compact design Easy to carry and travel-friendly Made with
+                      safe plastic Suitable for all surfaces Large capacity
+                      dustbin for fur collection
+                      <br />
+
+                      The TLC Lint Hair Removal Roller For Dog & Cat - Blue from
+                      Tail Lovers Company is now available on Heads Up For
+                      Tails, starting at ₹199 . We handpick products only from
+                      trusted, vet-recommended brands to ensure safety,
+                      nutrition, and comfort for your pet — no compromises. As
+                      India's leading pet care destination, HUFT guarantees 100%
+                      authenticity, fast shipping, and dedicated customer
+                      support backed by real pet experts. Whether it’s food,
+                      toys, grooming, or wellness, we bring you products that
+                      work — because we’re pet parents too.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="accordion-item mt-3">
+                  <h2 class="accordion-header">
+                    <button
+                      class="accordion-button collapsed"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#additional"
+                    >
+                      Additional Information
+                    </button>
+                  </h2>
+
+                  <div id="additional" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                      <div class="product-specifications">
+                        <h6 class="spec-title">Product Specifications</h6>
+
+                        <dl class="spec-list">
+                          <div class="spec-row">
+                            <dt>Product Name</dt>
+                            <dd>
+                              TLC Lint Hair Removal Roller For Dog & Cat - Blue
+                            </dd>
+                          </div>
+
+                          <div class="spec-row">
+                            <dt>Product Type</dt>
+                            <dd>Brushes & Combs</dd>
+                          </div>
+
+                          <div class="spec-row">
+                            <dt>Brand</dt>
+                            <dd>Tail Lovers Company</dd>
+                          </div>
+
+                          <div class="spec-row">
+                            <dt>Net Quantity</dt>
+                            <dd>1</dd>
+                          </div>
+
+                          <div class="spec-row">
+                            <dt>Category</dt>
+                            <dd>Brushes & Combs</dd>
+                          </div>
+
+                          <div class="spec-row">
+                            <dt>Pet Type</dt>
+                            <dd>Dog, Cat</dd>
+                          </div>
+
+                          <div class="spec-row">
+                            <dt>Target Age</dt>
+                            <dd>Puppy, Adult, Senior</dd>
+                          </div>
+
+                          <div class="spec-row">
+                            <dt>Country of Origin</dt>
+                            <dd>India</dd>
+                          </div>
+
+                          <div class="spec-row">
+                            <dt>MRP</dt>
+                            <dd>₹199.00 (Inclusive of all taxes)</dd>
+                          </div>
+
+                          <div class="spec-row">
+                            <dt>Manufactured & Marketed By</dt>
+                            <dd>
+                              Barkyard Private Limited, DSISC, Shed No-21, Road
+                              20 to 25, Okhla Industrial Area, Phase-2, Near Gol
+                              Chakkar, New Delhi-110020, India
+                            </dd>
+                          </div>
+
+                          <div class="spec-row">
+                            <dt>Platform</dt>
+                            <dd>HUFT</dd>
+                          </div>
+                        </dl>
+
+                        <p class="spec-disclaimer">
+                          Disclaimer: All images are for representation purposes
+                          only. You are advised to read the batch details,
+                          manufacturing details & expiry on the physical
+                          product.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="reviews-section container-xxl mt-5">
+      <h4 class="mb-3">Customer Reviews</h4>
+
+      <ul class="nav nav-tabs review-tabs">
+        <li class="nav-item">
+          <button
+            class="nav-link active"
+            data-bs-toggle="tab"
+            data-bs-target="#reviewsTab"
+          >
+            Reviews
+          </button>
+        </li>
+
+        <li class="nav-item">
+          <button
+            class="nav-link"
+            data-bs-toggle="tab"
+            data-bs-target="#writeReviewTab"
+          >
+            Write Review
+          </button>
+        </li>
+
+        <li class="nav-item">
+          <button
+            class="nav-link"
+            data-bs-toggle="tab"
+            data-bs-target="#questionTab"
+          >
+            Ask Question?
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content mt-4">
+        <!-- REVIEWS TAB -->
+
+        <div class="tab-pane fade show active" id="reviewsTab">
+          <div class="">
+            <div class="review-summary">
+              <div class="summary-left">
+                <h2 class="rating-average">4.8</h2>
+
+                <div class="rating-stars">★★★★★</div>
+
+                <p class="total-reviews">Based on 25 reviews</p>
+              </div>
+
+              <div class="summary-bars">
+                <div class="rating-row">
+                  <span>5 ★</span>
+                  <div class="rating-bar">
+                    <div class="rating-fill" style="width: 80%"></div>
+                  </div>
+                  <span class="rating-count">20</span>
+                </div>
+
+                <div class="rating-row">
+                  <span>4 ★</span>
+                  <div class="rating-bar">
+                    <div class="rating-fill" style="width: 12%"></div>
+                  </div>
+                  <span class="rating-count">3</span>
+                </div>
+
+                <div class="rating-row">
+                  <span>3 ★</span>
+                  <div class="rating-bar">
+                    <div class="rating-fill" style="width: 5%"></div>
+                  </div>
+                  <span class="rating-count">1</span>
+                </div>
+
+                <div class="rating-row">
+                  <span>2 ★</span>
+                  <div class="rating-bar">
+                    <div class="rating-fill" style="width: 3%"></div>
+                  </div>
+                  <span class="rating-count">1</span>
+                </div>
+
+                <div class="rating-row">
+                  <span>1 ★</span>
+                  <div class="rating-bar">
+                    <div class="rating-fill" style="width: 0%"></div>
+                  </div>
+                  <span class="rating-count">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-gallery">
+            <img
+              src="https://images.unsplash.com/photo-1601758124510-52d02ddb7cbd"
+              onclick="openReviewGallery(0)"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1598137265627-2d2d37a35d58"
+              onclick="openReviewGallery(1)"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1"
+              onclick="openReviewGallery(2)"
+            />
+          </div>
+
+          <div class="row g-3 mt-3">
+            <div class="col-md-6">
+              <div class="review-card">
+                <div class="review-header">
+                  <div>
+                    <strong>Rahul S.</strong>
+
+                    <span class="verified-badge">✔ Verified Buyer</span>
+                  </div>
+
+                  <span class="review-rating">★★★★★</span>
+                </div>
+
+                <p>Very useful product for removing pet hair from sofa.</p>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="review-card">
+                <div class="review-header">
+                  <strong>Anita M.</strong>
+
+                  <span class="review-rating">★★★★☆</span>
+                </div>
+
+                <p>Works well but wish it was slightly bigger.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- WRITE REVIEW -->
+
+        <div class="tab-pane fade" id="writeReviewTab">
+          <form class="review-form">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Your Name"
+                />
+              </div>
+
+              <div class="col-md-6">
+                <input type="email" class="form-control" placeholder="Email" />
+              </div>
+
+              <div class="col-md-12">
+                <textarea
+                  class="form-control"
+                  rows="4"
+                  placeholder="Write your review"
+                ></textarea>
+              </div>
+
+              <div class="col-md-6">
+                <select class="form-select">
+                  <option>Rating</option>
+                  <option>5 ⭐</option>
+                  <option>4 ⭐</option>
+                  <option>3 ⭐</option>
+                  <option>2 ⭐</option>
+                  <option>1 ⭐</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <input
+                  type="file"
+                  class="form-control"
+                  multiple
+                  accept="image/*"
+                  id="reviewImages"
+                />
+                <small>Max 5 images</small>
+              </div>
+
+              <div class="col-md-12">
+                <button class="btn btn-orange">Submit Review</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- ASK QUESTION -->
+
+        <div class="tab-pane fade" id="questionTab">
+          <form class="review-form">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Your Name"
+                />
+              </div>
+
+              <div class="col-md-6">
+                <input type="email" class="form-control" placeholder="Email" />
+              </div>
+
+              <div class="col-md-12">
+                <textarea
+                  class="form-control"
+                  rows="4"
+                  placeholder="Ask your question"
+                ></textarea>
+              </div>
+
+              <div class="col-md-12">
+                <button class="btn btn-orange">Submit Question</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <div class="modal fade" id="reviewGalleryModal">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-body review-modal-body text-center">
+            <button class="gallery-arrow left" onclick="changeReviewImage(-1)">
+              ←
+            </button>
+
+            <img id="reviewGalleryImage" class="review-modal-img" />
+
+            <button class="gallery-arrow right" onclick="changeReviewImage(1)">
+              →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Slider -->
+    <section class="deals-section">
+      <div class="container-xxl">
+        <h2>Explore More!</h2>
+        <p class="deals-subtitle">These should’ve been in your cart already</p>
+
+        <!-- Category Tabs -->
+        <ul class="nav deals-tabs" role="tablist">
+          <li class="nav-item">
+            <button
+              class="nav-link active"
+              data-category="cat-toys"
+              data-bs-toggle="tab"
+              data-bs-target="#cat-toys"
+            >
+              🧶 Cat Toys
+            </button>
+          </li>
+          <li class="nav-item">
+            <button
+              class="nav-link"
+              data-category="toilet-trays"
+              data-bs-toggle="tab"
+              data-bs-target="#toilet-trays"
+            >
+              🚽 Toilet Trays
+            </button>
+          </li>
+          <li class="nav-item">
+            <button
+              class="nav-link"
+              data-category="cat-treats"
+              data-bs-toggle="tab"
+              data-bs-target="#cat-treats"
+            >
+              🍡 Cat Treats
+            </button>
+          </li>
+          <li class="nav-item">
+            <button
+              class="nav-link"
+              data-category="cat-beds"
+              data-bs-toggle="tab"
+              data-bs-target="#cat-beds"
+            >
+              🐈 Cat Beds
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Tab Panels -->
+      <div class="tab-content">
+        <!-- Initial category rendered immediately -->
+        <div class="tab-pane fade show active" id="cat-toys">
+          <div class="deals-wrapper">
+            <button class="deals-arrow left">❮</button>
+
+            <div class="deals-scroll">
+              <!-- Example product card -->
+              <div class="product-card">
+                <div class="product-image">
+                  <span class="product-badge">10% OFF</span>
+
+                  <img src="assets/images/p1.webp" alt="Product" />
+
+                  <span class="product-rating">⭐ 5.0</span>
+                </div>
+
+                <div class="product-info">
+                  <h6 class="product-brand">Heads Up For Tails</h6>
+
+                  <p class="product-title">
+                    HUFT Lady Buggs Plush With Catnip Toy
+                  </p>
+
+                  <div class="product-price">
+                    <div>
+                      <span class="price">₹174.30</span>
+
+                      <span class="old-price">₹249</span>
+
+                      <span class="discount">(30%)</span>
+                    </div>
+
+                    <div class="product-action">
+                      <button class="add-btn">Add</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Example product card -->
+              <div class="product-card">
+                <div class="product-image">
+                  <span class="product-badge">10% OFF</span>
+
+                  <img src="assets/images/p1.webp" alt="Product" />
+
+                  <span class="product-rating">⭐ 5.0</span>
+                </div>
+
+                <div class="product-info">
+                  <h6 class="product-brand">Heads Up For Tails</h6>
+
+                  <p class="product-title">
+                    HUFT Lady Buggs Plush With Catnip Toy
+                  </p>
+
+                  <div class="product-price">
+                    <div>
+                      <span class="price">₹174.30</span>
+
+                      <span class="old-price">₹249</span>
+
+                      <span class="discount">(30%)</span>
+                    </div>
+
+                    <div class="product-action">
+                      <button class="add-btn">Add</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Example product card -->
+              <div class="product-card">
+                <div class="product-image">
+                  <span class="product-badge">10% OFF</span>
+
+                  <img src="assets/images/p1.webp" alt="Product" />
+
+                  <span class="product-rating">⭐ 5.0</span>
+                </div>
+
+                <div class="product-info">
+                  <h6 class="product-brand">Heads Up For Tails</h6>
+
+                  <p class="product-title">
+                    HUFT Lady Buggs Plush With Catnip Toy
+                  </p>
+
+                  <div class="product-price">
+                    <div>
+                      <span class="price">₹174.30</span>
+
+                      <span class="old-price">₹249</span>
+
+                      <span class="discount">(30%)</span>
+                    </div>
+
+                    <div class="product-action">
+                      <button class="add-btn">Add</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Example product card -->
+              <div class="product-card">
+                <div class="product-image">
+                  <span class="product-badge">10% OFF</span>
+
+                  <img src="assets/images/p1.webp" alt="Product" />
+
+                  <span class="product-rating">⭐ 5.0</span>
+                </div>
+
+                <div class="product-info">
+                  <h6 class="product-brand">Heads Up For Tails</h6>
+
+                  <p class="product-title">
+                    HUFT Lady Buggs Plush With Catnip Toy
+                  </p>
+
+                  <div class="product-price">
+                    <div>
+                      <span class="price">₹174.30</span>
+
+                      <span class="old-price">₹249</span>
+
+                      <span class="discount">(30%)</span>
+                    </div>
+
+                    <div class="product-action">
+                      <button class="add-btn">Add</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Example product card -->
+              <div class="product-card">
+                <div class="product-image">
+                  <span class="product-badge">10% OFF</span>
+
+                  <img src="assets/images/p2.webp" alt="Product" />
+
+                  <span class="product-rating">⭐ 5.0</span>
+                </div>
+
+                <div class="product-info">
+                  <h6 class="product-brand">Heads Up For Tails</h6>
+
+                  <p class="product-title">
+                    HUFT Lady Buggs Plush With Catnip Toy
+                  </p>
+
+                  <div class="product-price">
+                    <span class="price">₹174.30</span>
+
+                    <span class="old-price">₹249</span>
+
+                    <span class="discount">(30%)</span>
+                    <div class="product-action">
+                      <button class="add-btn">Add</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Example product card -->
+              <div class="product-card">
+                <div class="product-image">
+                  <span class="product-badge">10% OFF</span>
+
+                  <img src="assets/images/p3.webp" alt="Product" />
+
+                  <span class="product-rating">⭐ 5.0</span>
+                </div>
+
+                <div class="product-info">
+                  <h6 class="product-brand">Heads Up For Tails</h6>
+
+                  <p class="product-title">
+                    HUFT Lady Buggs Plush With Catnip Toy
+                  </p>
+
+                  <div class="product-price">
+                    <span class="price">₹174.30</span>
+
+                    <span class="old-price">₹249</span>
+
+                    <span class="discount">(30%)</span>
+                    <div class="product-action">
+                      <button class="add-btn">Add</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Example product card -->
+              <div class="product-card">
+                <div class="product-image">
+                  <span class="product-badge">10% OFF</span>
+
+                  <img src="assets/images/p4.webp" alt="Product" />
+
+                  <span class="product-rating">⭐ 5.0</span>
+                </div>
+
+                <div class="product-info">
+                  <h6 class="product-brand">Heads Up For Tails</h6>
+
+                  <p class="product-title">
+                    HUFT Lady Buggs Plush With Catnip Toy
+                  </p>
+
+                  <div class="product-price">
+                    <span class="price">₹174.30</span>
+
+                    <span class="old-price">₹249</span>
+
+                    <span class="discount">(30%)</span>
+                    <div class="product-action">
+                      <button class="add-btn">Add</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Example product card -->
+              <div class="product-card">
+                <div class="product-image">
+                  <!-- <span class="product-badge">10% OFF</span> -->
+
+                  <img src="assets/images/p5.webp" alt="Product" />
+
+                  <span class="product-rating">⭐ 5.0</span>
+                </div>
+
+                <div class="product-info">
+                  <h6 class="product-brand">Heads Up For Tails</h6>
+
+                  <p class="product-title">
+                    HUFT Lady Buggs Plush With Catnip Toy
+                  </p>
+
+                  <div class="product-price">
+                    <span class="price">₹174.30</span>
+
+                    <span class="old-price">₹249</span>
+
+                    <span class="discount">(30%)</span>
+                    <div class="product-action">
+                      <button class="add-btn">Add</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button class="deals-arrow right">❯</button>
+          </div>
+        </div>
+
+        <!-- Other tabs load later -->
+        <div
+          class="tab-pane fade"
+          id="toilet-trays"
+          data-endpoint="/api/deals/toilet-trays"
+        ></div>
+        <div
+          class="tab-pane fade"
+          id="cat-treats"
+          data-endpoint="/api/deals/cat-treats"
+        ></div>
+        <div
+          class="tab-pane fade"
+          id="cat-beds"
+          data-endpoint="/api/deals/cat-beds"
+        ></div>
+      </div>
+    </section>
+
+    <!-- USP Section -->
+    <section class="usp-section">
+      <div class="container-xxl">
+        <div class="row text-center g-3">
+          <div class="col-12 col-lg">
+            <div class="usp-item">
+              <img src="assets/icons/shipping.svg" alt="Free Shipping" />
+
+              <h6>FREE SHIPPING</h6>
+
+              <p>On Orders Above ₹499</p>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg">
+            <div class="usp-item">
+              <img src="assets/icons/returns.svg" alt="Free Returns" />
+
+              <h6>FREE RETURNS</h6>
+
+              <p>Within 7 days (T&C Apply)</p>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg">
+            <div class="usp-item">
+              <img src="assets/icons/payment.svg" alt="Secure Payment" />
+
+              <h6>SECURE PAYMENT</h6>
+
+              <p>Your Transaction is Secure</p>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg">
+            <div class="usp-item">
+              <img src="assets/icons/support.svg" alt="Best Support" />
+
+              <h6>BEST SUPPORT</h6>
+
+              <p>Mon - Fri. 9 AM to 9 PM</p>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg">
+            <div class="usp-item">
+              <img src="assets/icons/delivery.svg" alt="Fast Delivery" />
+
+              <h6>FAST DELIVERY</h6>
+
+              <p>We Deliver on Time</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="container-xxl">
+        <div class="row footer-top">
+          <div class="col-6 col-md-3">
+            <h6>SHOP FOR</h6>
+
+            <ul>
+              <li><a href="#">Dogs</a></li>
+              <li><a href="#">Cats</a></li>
+              <li><a href="#">Birds</a></li>
+              <li><a href="#">Small Animal</a></li>
+              <li><a href="#" class="highlight">Pharmacy</a></li>
+              <li><a href="#">Online Vet Consult</a></li>
+              <li><a href="#">Adoption</a></li>
+            </ul>
+          </div>
+
+          <div class="col-6 col-md-3">
+            <h6>QUICK LINKS</h6>
+
+            <ul>
+              <li><a href="#">About Us</a></li>
+              <li><a href="#">Contact Us</a></li>
+              <li><a href="#">Track Your Order</a></li>
+              <li><a href="#">FAQ's</a></li>
+              <li><a href="#">Returns & Exchange Policy</a></li>
+              <li><a href="#">Terms Of Use</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+            </ul>
+          </div>
+
+          <div class="col-6 col-md-3">
+            <h6>EXPLORE IT</h6>
+
+            <ul>
+              <li><a href="#">Careers</a></li>
+              <li><a href="#">Birthday Club</a></li>
+              <li><a href="#">Learn With Wooflix</a></li>
+              <li><a href="#">Customers Love</a></li>
+              <li><a href="#">XXX</a></li>
+              <li><a href="#">XXX</a></li>
+              <li><a href="#">XXX</a></li>
+            </ul>
+          </div>
+
+          <div class="col-md-3">
+            <h6>DOWNLOAD WOOFLIX APP</h6>
+
+            <div class="app-buttons">
+              <img src="assets/images/google-play.png" />
+
+              <img src="assets/images/app-store.png" />
+            </div>
+
+            <h6 class="subscribe-title">
+              SUBSCRIBE FOR LATEST OFFERS AND DISCOUNTS
+            </h6>
+
+            <form class="subscribe-form">
+              <div class="form-group">
+                <input
+                  type="email"
+                  class="form-control"
+                  placeholder="Enter your email"
+                />
+              </div>
+
+              <button type="submit" class="btn btn-orange w-100 mt-1">
+                Submit
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="popular-search">
+        <div class="container-xxl">
+          <strong>POPULAR SEARCHES:</strong>
+
+          Collars, Leashes & Harnesses | Dog Food | Treats | Cat Food | Dog
+          Grooming | Dog Beds | Dog Bowls | Dog Toys | Cat Toys | Cat Litter |
+          Puppy Food | Dog Brushes & Combs | Interactive Toys
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div
+          class="container-xxl d-flex justify-content-between align-items-center flex-wrap"
+        >
+          <p>© 2024, VKY TECHNOLOGIES. ALL RIGHTS RESERVED.</p>
+
+          <div class="social-icons">
+            <a href="#">YouTube</a> <a href="#">Twitter</a>
+            <a href="#">LinkedIn</a> <a href="#">Facebook</a>
+            <a href="#">Instagram</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-seo">
+        <div class="container-xxl">
+          <p>
+            We understand that sometimes you need to see, feel and experience
+            products in person before making a purchase. If you are searching
+            for "pet store near me" or a "pet shop near me", your search ends
+            here...
+          </p>
+
+          <p>
+            Our journey began with love for our pets and a desire to make their
+            lives better. It's the wagging tails and content purrs that inspired
+            us to create products and services that cater to every pet's needs.
+          </p>
+
+          <p>
+            Quality assurance: Our products undergo comprehensive tests to
+            ensure they are nutritious and meet the highest quality standards.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Mobile Bottom Nav -->
+    <div class="mobile-bottom-nav d-lg-none">
+      <a href="#" class="active">
+        <div>🏠</div>
+        <span>Home</span>
+      </a>
+
+      <a href="#">
+        <div>⬜</div>
+        <span>Category</span>
+      </a>
+
+      <a href="#">
+        <div>🐶</div>
+        <span>HUFT Hub</span>
+      </a>
+
+      <a href="#" data-bs-toggle="offcanvas" data-bs-target="#cartDrawer">
+        <div>🛒</div>
+        <span>Cart</span>
+      </a>
+
+      <a href="#">
+        <div>👤</div>
+        <span>Account</span>
+      </a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="js/index.js"></script>
+  </body>
+</html>
