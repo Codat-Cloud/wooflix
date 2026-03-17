@@ -283,3 +283,4 @@ function handleReviewSwipe() {
     changeReviewImage(-1);
   }
 }
+

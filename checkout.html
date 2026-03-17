@@ -1,0 +1,786 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Pet Store</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- Top Blue Strip -->
+
+    <!-- DESKTOP HEADER -->
+
+    <header class="main-header d-none d-lg-block fixed-top">
+      <!-- TOP STRIP -->
+
+      <div class="top-strip">
+        <div class="container-xxl d-flex justify-content-between">
+          <div class="top-links d-none d-lg-block">
+            <a href="#">Track Order</a>
+          </div>
+
+          <div>Sara’s Wholesome - Balanced Nutrition for Dogs</div>
+        </div>
+      </div>
+
+      <div class="pt-3 pb-2">
+        <div class="container-xxl">
+          <div class="row align-items-center">
+            <div class="col-lg-2">
+              <div class="logo">
+                <img src="/assets/images/logo.png" alt="" class="w-100" />
+              </div>
+            </div>
+
+            <div class="col-lg-5">
+              <input
+                type="text"
+                class="form-control search-box"
+                placeholder="Search"
+              />
+            </div>
+
+            <div class="col-lg-5 text-end header-icons">
+              <div class="dropdown location-dropdown d-inline-block">
+                <button
+                  class="btn location-btn dropdown-toggle"
+                  data-bs-toggle="dropdown"
+                >
+                  📍 <span id="userPincode">560034</span>
+                </button>
+
+                <div
+                  class="dropdown-menu dropdown-menu-end location-menu"
+                  style="width: 300px"
+                >
+                  <h6 class="text-center">
+                    Enter your pincode to Choose a delivery location to check
+                    product availability
+                  </h6>
+
+                  <form id="pincodeForm" class="pincode-form">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="pincodeInput"
+                      placeholder="Enter pincode"
+                      maxlength="6"
+                    />
+
+                    <button type="submit" class="btn btn-orange">Save</button>
+                  </form>
+                </div>
+              </div>
+
+              <span class="me-2">♡ Wishlist</span>
+              <span
+                class="cart-btn position-relative me-2"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#cartDrawer"
+              >
+                🛒 Cart
+                <span class="cart-count">12</span>
+              </span>
+
+              <button class="btn btn-orange">Login/Sign Up</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Offcanvas Cart -->
+    <div
+      class="offcanvas offcanvas-end cart-drawer"
+      tabindex="-1"
+      id="cartDrawer"
+    >
+      <div class="offcanvas-header">
+        <h5>Your Cart</h5>
+
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="offcanvas"
+        ></button>
+      </div>
+
+      <div class="offcanvas-body d-flex flex-column">
+        <div class="cart-items" id="cartItems">
+          <!-- CART ITEM -->
+
+          <div class="cart-item" data-price="174.30">
+            <button class="remove-icon">✕</button>
+
+            <img src="assets/images/toy1.jpg" class="cart-image" />
+
+            <div class="cart-details">
+              <h6 class="cart-title">HUFT Lady Buggs Plush Toy</h6>
+
+              <div class="cart-bottom">
+                <div class="qty-control">
+                  <button class="qty-minus">−</button>
+
+                  <input class="qty-input" value="1" readonly />
+
+                  <button class="qty-plus">+</button>
+                </div>
+
+                <div class="item-price">₹174.30</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty Cart State -->
+        <div class="empty-cart">
+          <img src="assets/images/empty-cart.png" />
+
+          <h5>Your cart is empty</h5>
+
+          <p>Looks like you haven't added anything yet.</p>
+
+          <a href="/" class="start-shopping"> Start Shopping </a>
+        </div>
+
+        <!-- ORDER SUMMARY -->
+
+        <div class="cart-summary">
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span id="cartSubtotal">₹174.30</span>
+          </div>
+
+          <div class="summary-row">
+            <span>Shipping</span>
+            <span id="cartShipping">Free</span>
+          </div>
+
+          <div class="summary-row total">
+            <span>Total</span>
+            <span id="cartTotal">₹174.30</span>
+          </div>
+
+          <button class="checkout-btn">Proceed to Checkout</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESKTOP NAV -->
+    <nav class="main-nav d-none d-lg-block shadow">
+      <div class="container-xxl">
+        <ul class="nav-menu">
+          <li class="has-mega">
+            <a href="#">Dogs</a>
+
+            <div class="mega-menu shadow">
+              <div class="mega-inner container-xxl">
+                <div class="mega-column">
+                  <h6>Dog Food</h6>
+
+                  <a href="#"
+                    ><img src="assets/images/menu/dog-food.jpg" /> Dry Food</a
+                  >
+                  <a href="#"
+                    ><img src="assets/images/menu/dog-food.jpg" /> Wet Food</a
+                  >
+                  <a href="#"
+                    ><img src="assets/images/menu/dog-food.jpg" /> Puppy Food</a
+                  >
+                </div>
+
+                <div class="mega-column">
+                  <h6>Dog Treats</h6>
+
+                  <a href="#"
+                    ><img src="assets/images/menu/treat.jpg" /> Soft Treats</a
+                  >
+                  <a href="#"
+                    ><img src="assets/images/menu/treat.jpg" /> Dental Treats</a
+                  >
+                  <a href="#"
+                    ><img src="assets/images/menu/treat.jpg" /> Training
+                    Treats</a
+                  >
+                </div>
+
+                <div class="mega-column">
+                  <h6>Dog Toys</h6>
+
+                  <a href="#"
+                    ><img src="assets/images/menu/toy.jpg" /> Chew Toys</a
+                  >
+                  <a href="#"
+                    ><img src="assets/images/menu/toy.jpg" /> Plush Toys</a
+                  >
+                  <a href="#"
+                    ><img src="assets/images/menu/toy.jpg" /> Interactive
+                    Toys</a
+                  >
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li class="has-mega">
+            <a href="#">Cats</a>
+
+            <div class="mega-menu shadow">
+              <div class="mega-inner container-xxl">
+                <div class="mega-column">
+                  <h6>Cat Food</h6>
+
+                  <a href="#"
+                    ><img src="assets/images/menu/cat.jpg" /> Dry Food</a
+                  >
+                  <a href="#"
+                    ><img src="assets/images/menu/cat.jpg" /> Wet Food</a
+                  >
+                </div>
+
+                <div class="mega-column">
+                  <h6>Cat Toys</h6>
+
+                  <a href="#"
+                    ><img src="assets/images/menu/cat-toy.jpg" /> Interactive
+                    Toys</a
+                  >
+                  <a href="#"
+                    ><img src="assets/images/menu/cat-toy.jpg" /> Catnip Toys</a
+                  >
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li class="has-mega">
+            <a href="#">Brands</a>
+
+            <div class="mega-menu shadow">
+              <div class="mega-inner container-xxl">
+                <div class="mega-column">
+                  <h6>Popular Brands</h6>
+
+                  <a href="#"
+                    ><img src="assets/images/brands/royal.jpg" /> Royal Canin</a
+                  >
+                  <a href="#"
+                    ><img src="assets/images/brands/pedigree.jpg" /> Pedigree</a
+                  >
+                  <a href="#"
+                    ><img src="assets/images/brands/meowsi.jpg" /> Meowsi</a
+                  >
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li><a href="#">Wholesale</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- MOBILE HEADER -->
+    <div class="mobile-header d-lg-none">
+      <div class="mobile-header-bar">
+        <button
+          class="menu-btn"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#mobileMenu"
+        >
+          ☰
+        </button>
+
+        <div class="delivery">
+          📍 Delivering to <strong>560034</strong>
+          <span class="change">Change</span>
+        </div>
+
+        <div class="wishlist">♡</div>
+      </div>
+
+      <div class="mobile-search">
+        <div class="search-box-mobile">
+          <a href="/">
+            <span class="logo-icon">
+              <img src="assets/images/icon.png" alt="" style="width: 20px" />
+            </span>
+          </a>
+
+          <input type="text" placeholder="Search for Dog" />
+
+          <span class="search-icon">🔍</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOBILE OFFCANVAS MENU -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu">
+      <div class="offcanvas-header bg-primary text-white">
+        <h5>Drool-worthy Treats!</h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="offcanvas"
+        ></button>
+      </div>
+
+      <div class="offcanvas-body">
+        <ul class="mobile-nav">
+          <li>Shop for Dogs</li>
+          <li>Shop for Cats</li>
+          <li>Shop by Brands</li>
+          <li>Winter'25 <span class="badge bg-warning text-dark">NEW</span></li>
+          <li>Fresh Food for Dogs</li>
+          <li>Complete Meals for Cats</li>
+          <li>HUFT Outlet <span class="badge bg-danger">60% Off</span></li>
+          <li>HUFT Spa</li>
+          <li>HUFT Hub</li>
+          <li>Store & Spa Locator</li>
+          <li>Become a Franchisee</li>
+          <li>Join our Birthday Club</li>
+          <li>Adopt Joy</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Breadcrumbs -->
+    <nav aria-label="breadcrumb" class="breadcrumb-wrapper">
+      <div class="container-xxl">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="/">Home</a>
+          </li>
+
+          <li class="breadcrumb-item">
+            <a href="/dogs">Cart</a>
+          </li>
+        </ol>
+      </div>
+    </nav>
+
+    <!-- Checkout -->
+    <section class="checkout-page container-xxl my-4">
+      <div class="row g-4">
+        <!-- LEFT SIDE -->
+
+        <div class="col-lg-8">
+          <h4 class="mb-3">Checkout</h4>
+
+          <!-- ADDRESS -->
+
+          <div class="checkout-card address-section">
+            <h6>Select Delivery Address</h6>
+
+            <!-- ADDRESS LIST -->
+
+            <div class="address-list">
+              <label class="address-card active">
+                <input type="radio" name="address" checked />
+
+                <div class="address-content">
+                  <strong>Home</strong>
+
+                  <p>
+                    Arjun Sharma<br />
+                    Mithapur, Patna, Bihar - 800001<br />
+                    📞 9876543210
+                  </p>
+                </div>
+
+                <a class="edit-address" data-id="1">Edit</a>
+              </label>
+
+              <label class="address-card">
+                <input type="radio" name="address" />
+
+                <div class="address-content">
+                  <strong>Office</strong>
+
+                  <p>
+                    Arjun Sharma<br />
+                    Connaught Place, Delhi - 110001<br />
+                    📞 9876543210
+                  </p>
+                </div>
+
+                <a class="edit-address" data-id="2">Edit</a>
+              </label>
+            </div>
+
+            <!-- ADD NEW ADDRESS -->
+
+            <button
+              class="btn btn-light w-100 mt-3"
+              data-bs-toggle="collapse"
+              data-bs-target="#addAddressForm"
+            >
+              * Add New Address
+            </button>
+
+            <div class="collapse mt-3" id="addAddressForm">
+              <form class="row g-3">
+                <div class="col-md-6">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Full Name"
+                  />
+                </div>
+
+                <div class="col-md-6">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Phone Number"
+                  />
+                </div>
+
+                <div class="col-12">
+                  <textarea
+                    class="form-control"
+                    rows="2"
+                    placeholder="Address"
+                  ></textarea>
+                </div>
+
+                <div class="col-md-4">
+                  <input type="text" class="form-control" placeholder="City" />
+                </div>
+
+                <div class="col-md-4">
+                  <input type="text" class="form-control" placeholder="State" />
+                </div>
+
+                <div class="col-md-4">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Pincode"
+                  />
+                </div>
+
+                <div class="col-12">
+                  <button class="btn btn-orange w-100">Save Address</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- <div class="checkout-card">
+            <h6>Select Delivery Address</h6>
+
+            
+            <div class="address-box active">
+              <strong>Home</strong>
+              <p>Arjun Sharma, Mithapur, Patna, Bihar - 800001</p>
+            </div>
+
+            <button
+              class="btn btn-light w-100 mt-2"
+              data-bs-toggle="collapse"
+              data-bs-target="#addAddressForm"
+            >
+              + Add New Address
+            </button>
+
+            <div class="collapse mt-3" id="addAddressForm">
+              <form class="row g-3">
+                <div class="col-md-6">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Full Name"
+                  />
+                </div>
+
+                <div class="col-md-6">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Phone Number"
+                  />
+                </div>
+
+                <div class="col-12">
+                  <textarea
+                    class="form-control"
+                    rows="2"
+                    placeholder="Address"
+                  ></textarea>
+                </div>
+
+                <div class="col-md-4">
+                  <input type="text" class="form-control" placeholder="City" />
+                </div>
+
+                <div class="col-md-4">
+                  <input type="text" class="form-control" placeholder="State" />
+                </div>
+
+                <div class="col-md-4">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Pincode"
+                  />
+                </div>
+
+                <div class="col-12">
+                  <button class="btn btn-orange w-100">Save Address</button>
+                </div>
+              </form>
+            </div>
+          </div> -->
+
+          <!-- DELIVERY -->
+
+          <div class="checkout-card">
+            <h6>Delivery Options</h6>
+
+            <label class="delivery-option active">
+              <input type="radio" name="delivery" checked />
+              <div>
+                <strong>Standard Delivery</strong>
+                <p>Delivery by Tomorrow</p>
+              </div>
+              <span class="text-success">Free</span>
+            </label>
+
+            <label class="delivery-option">
+              <input type="radio" name="delivery" />
+              <div>
+                <strong>Express Delivery</strong>
+                <p>Get it Today</p>
+              </div>
+              <span>₹49</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- RIGHT SIDE -->
+
+        <div class="col-lg-4">
+          <div class="checkout-summary">
+            <h5>Order Summary</h5>
+
+            <div class="summary-item">
+              <span>Subtotal</span>
+              <span>₹473</span>
+            </div>
+
+            <div class="summary-item">
+              <span>Shipping</span>
+              <span class="text-success">Free</span>
+            </div>
+
+            <div class="summary-item total">
+              <span>Total</span>
+              <span>₹473</span>
+            </div>
+
+            <button class="btn btn-orange w-100 mt-3">Place Order</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="mobile-paybar d-lg-none">
+      <div class="total">₹473</div>
+
+      <button class="btn btn-orange">Place Order</button>
+    </div>
+
+    <!-- USP Section -->
+    <section class="usp-section">
+      <div class="container-xxl">
+        <div class="row text-center g-3">
+          <div class="col-12 col-lg">
+            <div class="usp-item">
+              <img src="assets/icons/shipping.svg" alt="Free Shipping" />
+
+              <h6>FREE SHIPPING</h6>
+
+              <p>On Orders Above ₹499</p>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg">
+            <div class="usp-item">
+              <img src="assets/icons/returns.svg" alt="Free Returns" />
+
+              <h6>FREE RETURNS</h6>
+
+              <p>Within 7 days (T&C Apply)</p>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg">
+            <div class="usp-item">
+              <img src="assets/icons/payment.svg" alt="Secure Payment" />
+
+              <h6>SECURE PAYMENT</h6>
+
+              <p>Your Transaction is Secure</p>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg">
+            <div class="usp-item">
+              <img src="assets/icons/support.svg" alt="Best Support" />
+
+              <h6>BEST SUPPORT</h6>
+
+              <p>Mon - Fri. 9 AM to 9 PM</p>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg">
+            <div class="usp-item">
+              <img src="assets/icons/delivery.svg" alt="Fast Delivery" />
+
+              <h6>FAST DELIVERY</h6>
+
+              <p>We Deliver on Time</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="container-xxl">
+        <div class="row footer-top">
+          <div class="col-6 col-md-3">
+            <h6>SHOP FOR</h6>
+
+            <ul>
+              <li><a href="#">Dogs</a></li>
+              <li><a href="#">Cats</a></li>
+              <li><a href="#">Birds</a></li>
+              <li><a href="#">Small Animal</a></li>
+              <li><a href="#" class="highlight">Pharmacy</a></li>
+              <li><a href="#">Online Vet Consult</a></li>
+              <li><a href="#">Adoption</a></li>
+            </ul>
+          </div>
+
+          <div class="col-6 col-md-3">
+            <h6>QUICK LINKS</h6>
+
+            <ul>
+              <li><a href="#">About Us</a></li>
+              <li><a href="#">Contact Us</a></li>
+              <li><a href="#">Track Your Order</a></li>
+              <li><a href="#">FAQ's</a></li>
+              <li><a href="#">Returns & Exchange Policy</a></li>
+              <li><a href="#">Terms Of Use</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+            </ul>
+          </div>
+
+          <div class="col-6 col-md-3">
+            <h6>EXPLORE IT</h6>
+
+            <ul>
+              <li><a href="#">Careers</a></li>
+              <li><a href="#">Birthday Club</a></li>
+              <li><a href="#">Learn With Wooflix</a></li>
+              <li><a href="#">Customers Love</a></li>
+              <li><a href="#">XXX</a></li>
+              <li><a href="#">XXX</a></li>
+              <li><a href="#">XXX</a></li>
+            </ul>
+          </div>
+
+          <div class="col-md-3">
+            <h6>DOWNLOAD WOOFLIX APP</h6>
+
+            <div class="app-buttons">
+              <img src="assets/images/google-play.png" />
+
+              <img src="assets/images/app-store.png" />
+            </div>
+
+            <h6 class="subscribe-title">
+              SUBSCRIBE FOR LATEST OFFERS AND DISCOUNTS
+            </h6>
+
+            <form class="subscribe-form">
+              <div class="form-group">
+                <input
+                  type="email"
+                  class="form-control"
+                  placeholder="Enter your email"
+                />
+              </div>
+
+              <button type="submit" class="btn btn-orange w-100 mt-1">
+                Submit
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="popular-search">
+        <div class="container-xxl">
+          <strong>POPULAR SEARCHES:</strong>
+
+          Collars, Leashes & Harnesses | Dog Food | Treats | Cat Food | Dog
+          Grooming | Dog Beds | Dog Bowls | Dog Toys | Cat Toys | Cat Litter |
+          Puppy Food | Dog Brushes & Combs | Interactive Toys
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div
+          class="container-xxl d-flex justify-content-between align-items-center flex-wrap"
+        >
+          <p>© 2024, VKY TECHNOLOGIES. ALL RIGHTS RESERVED.</p>
+
+          <div class="social-icons">
+            <a href="#">YouTube</a> <a href="#">Twitter</a>
+            <a href="#">LinkedIn</a> <a href="#">Facebook</a>
+            <a href="#">Instagram</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-seo">
+        <div class="container-xxl">
+          <p>
+            We understand that sometimes you need to see, feel and experience
+            products in person before making a purchase. If you are searching
+            for "pet store near me" or a "pet shop near me", your search ends
+            here...
+          </p>
+
+          <p>
+            Our journey began with love for our pets and a desire to make their
+            lives better. It's the wagging tails and content purrs that inspired
+            us to create products and services that cater to every pet's needs.
+          </p>
+
+          <p>
+            Quality assurance: Our products undergo comprehensive tests to
+            ensure they are nutritious and meet the highest quality standards.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="js/index.js"></script>
+  </body>
+</html>
