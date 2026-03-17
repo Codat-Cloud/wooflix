@@ -284,3 +284,57 @@ function handleReviewSwipe() {
   }
 }
 
+document.querySelectorAll(".address-card").forEach((card) => {
+  card.addEventListener("click", function () {
+    document.querySelectorAll(".address-card").forEach((el) => {
+      el.classList.remove("active");
+    });
+
+    this.classList.add("active");
+  });
+});
+
+// Offcanvas for Profile
+window.openDrawer = function(type){
+
+  console.log(type);
+
+  const drawer = new bootstrap.Offcanvas(document.getElementById('profileDrawer'));
+  const title = document.getElementById("drawerTitle");
+  const content = document.getElementById("drawerContent");
+
+  /* LOADING STATE */
+  content.innerHTML = "<div class='text-center py-5'>Loading...</div>";
+
+  let url = "";
+
+  if(type === "address"){
+    title.innerText = "My Addresses";
+    url = "/address.html";
+  }
+
+  if(type === "refunds"){
+    title.innerText = "Payments & Refunds";
+    url = "/refunds.html";
+  }
+
+  if(type === "coupons"){
+    title.innerText = "Coupons";
+    url = "/coupons.html";
+  }
+
+  fetch(url)
+    .then(res => res.text())
+    .then(html => {
+      content.innerHTML = html;
+
+      /* RE-INIT COLLAPSE (IMPORTANT) */
+      content.querySelectorAll('.collapse').forEach(el=>{
+        new bootstrap.Collapse(el, { toggle: false });
+      });
+
+    });
+
+  drawer.show();
+
+};

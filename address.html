@@ -1,0 +1,40 @@
+<div class="checkout-card">
+  <h6>Select Delivery Address</h6>
+
+  <div class="address-list">
+    <label class="address-card active">
+      <input type="radio" checked />
+      <div class="address-content">
+        <strong>Home</strong>
+        <p>Mithapur, Patna - 800001</p>
+      </div>
+      <button class="edit-address">Edit</button>
+    </label>
+  </div>
+
+  <button
+    class="btn btn-light w-100 mt-3"
+    data-bs-toggle="collapse"
+    data-bs-target="#addAddressForm"
+  >
+    + Add New Address
+  </button>
+
+  <div class="collapse mt-3" id="addAddressForm">
+    <form class="row g-3">
+      <div class="col-md-6">
+        <input class="form-control" placeholder="Name" />
+      </div>
+
+      <div class="col-md-6">
+        <input class="form-control" placeholder="Phone" />
+      </div>
+
+      <div class="col-12">
+        <textarea class="form-control"></textarea>
+      </div>
+
+      <button class="btn btn-orange w-100">Save</button>
+    </form>
+  </div>
+</div>
