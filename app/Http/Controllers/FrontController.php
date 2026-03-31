@@ -58,6 +58,22 @@ class FrontController extends Controller
             ->get()
             ->keyBy('id');
 
+        foreach ($sections as $section) {
+
+            if ($section->type === 'tabbed_category_products') {
+
+                foreach ($section->items as $item) {
+
+                    $item->products = \App\Models\Product::with('brand')
+                        ->where('category_id', $item->item_id)
+                        ->where('is_active', true)
+                        ->latest()
+                        ->limit(10)
+                        ->get();
+                }
+            }
+        }
+
         return view('front.index', compact(
             'banners',
             'offers',

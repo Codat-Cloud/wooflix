@@ -76,6 +76,16 @@
             <h2 class="fw-bold">{{ $section->title }}</h2>
             <p class="section-subtitle">{{ $section->subtitle }}</p>
 
+            @php
+                $gridMap = [
+                    'grid_4' => 'col-6 col-md-6 col-lg-3', // 4 per row
+                    'grid_6' => 'col-6 col-md-4 col-lg-2', // 6 per row
+                    'grid_8' => 'col-6 col-md-3 col-lg-2', // approx 6–8 responsive
+                ];
+
+                $gridClass = $gridMap[$section->layout] ?? 'col-6 col-md-4 col-lg-3';
+            @endphp
+
             {{-- ================= CATEGORY SCROLL ================= --}}
             @if($section->layout === 'scroll')
 
@@ -131,18 +141,18 @@
 
                         @if($brand)
 
-                            <div class="col-6 col-md-4 col-lg-2">
+                            <div class="{{ $gridClass }}">
                                 <a href="#" class="brand-card text-decoration-none">
 
-                                    <img 
-                                        src="{{ asset('storage/' . ($item->image ?? $brand->image)) }}" 
-                                        class="w-100"
-                                        loading="lazy"
-                                    />
+                                  <img 
+                                      src="{{ asset('storage/' . ($item->image ?? $brand->image)) }}" 
+                                      class="w-100"
+                                      loading="lazy"
+                                  />
 
-                                    <div class="text-center brand-card-text">
-                                        {{ $item->title ?? $brand->name }}
-                                    </div>
+                                  <div class="text-center brand-card-text">
+                                      {{ $item->title ?? $brand->name }}
+                                  </div>
 
                                 </a>
                             </div>
@@ -167,7 +177,7 @@
 
                         @if($product)
 
-                            <div class="col-6 col-md-4 col-lg-3">
+                            <div class="{{ $gridClass }}">
 
                                 <div class="product-card">
 
@@ -214,6 +224,77 @@
                     @endforeach
 
                 </div>
+
+            @endif
+
+            {{-- ================= Tabbed Category Products ================== --}}
+            @if($section->type === 'tabbed_category_products')
+
+              <section class="deals-section">
+
+                <div class="container-xxl">
+                  <h2>{{ $section->title }}</h2>
+                  <p class="deals-subtitle">{{ $section->subtitle }}</p>
+
+                  {{-- Tabs --}}
+                  <ul class="nav deals-tabs">
+
+                    @foreach($section->items as $index => $item)
+
+                      <li class="nav-item">
+                        <button
+                          class="nav-link {{ $index === 0 ? 'active' : '' }}"
+                          data-bs-toggle="tab"
+                          data-bs-target="#tab-{{ $item->id }}"
+                        >
+                          {{ $item->title ?? $categories[$item->item_id]->name ?? '' }}
+                        </button>
+                      </li>
+
+                    @endforeach
+
+                  </ul>
+                </div>
+
+                {{-- Tab Content --}}
+                <div class="tab-content">
+
+                  @foreach($section->items as $index => $item)
+
+                    <div
+                      class="tab-pane fade {{ $index === 0 ? 'show active' : '' }}"
+                      id="tab-{{ $item->id }}"
+                    >
+
+                      <div class="deals-wrapper">
+                        <div class="deals-scroll">
+
+                          @foreach($item->products as $product)
+
+                            <div class="product-card">
+                              <div class="product-image">
+                                <img src="{{ asset('storage/'.$product->main_image) }}">
+                              </div>
+
+                              <div class="product-info">
+                                <h6>{{ $product->brand->name ?? '' }}</h6>
+                                <p>{{ $product->name }}</p>
+                                <span class="price">₹{{ $product->base_price }}</span>
+                              </div>
+                            </div>
+
+                          @endforeach
+
+                        </div>
+                      </div>
+
+                    </div>
+
+                  @endforeach
+
+                </div>
+
+              </section>
 
             @endif
 

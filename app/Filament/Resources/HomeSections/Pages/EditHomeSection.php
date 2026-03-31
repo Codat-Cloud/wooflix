@@ -4,7 +4,7 @@ namespace App\Filament\Resources\HomeSections\Pages;
 
 use App\Filament\Resources\HomeSections\HomeSectionResource;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\ViewAction;
+// use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditHomeSection extends EditRecord
@@ -14,7 +14,7 @@ class EditHomeSection extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            ViewAction::make(),
+            // ViewAction::make(),
             DeleteAction::make(),
         ];
     }

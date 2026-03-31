@@ -76,7 +76,7 @@ class HomeSectionForm
                             ->relationship() // IMPORTANT
                             ->reorderable()  // drag & drop items
                             ->collapsible()
-                            ->collapsed()
+                            // ->collapsed()
                             ->defaultItems(1)
                             ->orderColumn('sort_order') // 🔥 THIS IS THE REAL FIX
                             // 🔥 SHOW TITLE IN HEADER
@@ -93,14 +93,21 @@ class HomeSectionForm
                                             return Brand::pluck('name', 'id');
                                         }
 
-                                        if ($type === 'category') {
+                                        if ($type === 'category' || $type === 'tabbed_category_products') {
                                             return Category::pluck('name', 'id');
+                                        }
+
+                                        if ($type === 'product') {
+                                            return \App\Models\Product::pluck('name', 'id');
                                         }
 
                                         return [];
                                     })
                                     ->searchable()
-                                    ->visible(fn($get) => in_array($get('../../type'), ['brand', 'category'])),
+                                    ->visible(fn($get) => in_array(
+                                        $get('../../type'),
+                                        ['brand', 'category', 'product', 'tabbed_category_products']
+                                    )),
 
                                 TextInput::make('title')
                                     ->placeholder('Override title (optional)'),
