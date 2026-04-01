@@ -38,25 +38,22 @@ class CreateProduct extends CreateRecord
     {
         $this->form->validate();
 
-        $data = $this->form->getState();
-
-        $variantInputs = $data['variant_inputs'] ?? [];
-
-        unset($data['variant_inputs']);
+        $data = $this->mutateFormDataBeforeCreate(
+            $this->form->getState()
+        );
 
         $data['is_active'] = false;
 
         $record = $this->handleRecordCreation($data);
 
-        // 🔥 SAVE VARIANT STRUCTURE TEMPORARILY
-        session([
-            'variant_inputs_' . $record->id => $variantInputs
-        ]);
+        // 🔥 IMPORTANT FIX
+        $this->record = $record;
 
-        return $this->redirect(
-            ProductResource::getUrl('variants', [
-                'record' => $record,
-            ])
+        $this->form->model($record)->saveRelationships();
+
+        return redirect()->route(
+            'filament.admin.resources.products.variants',
+            ['record' => $record]
         );
     }
 

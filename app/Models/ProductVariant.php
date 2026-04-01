@@ -18,6 +18,9 @@ class ProductVariant extends Model
     ];
 
     protected $casts = [
+        'price' => 'float',
+        'sale_price' => 'float',
+        'stock' => 'integer',
         'is_active' => 'boolean',
     ];
 
@@ -31,8 +34,8 @@ class ProductVariant extends Model
         return $this->belongsToMany(
             ProductOptionValue::class,
             'variant_option_values',
-            // 'product_variant_id',
-            // 'product_option_value_id'
+            'product_variant_id',
+            'product_option_value_id'
         );
     }
 

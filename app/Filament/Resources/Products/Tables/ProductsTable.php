@@ -29,13 +29,11 @@ class ProductsTable
                     ->sortable(),
                 ImageColumn::make('image')
                     ->label('Image')
-                    ->disk('public')
+                    // ->disk('public')
                     ->circular(),
                 TextColumn::make('name')
                     ->searchable(),
                 IconColumn::make('is_active')
-                    ->boolean(),
-                IconColumn::make('is_featured')
                     ->boolean(),
                 TextColumn::make('base_price')
                     ->money('INR')

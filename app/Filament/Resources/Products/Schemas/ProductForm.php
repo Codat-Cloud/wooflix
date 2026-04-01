@@ -30,10 +30,12 @@ class ProductForm
                         Select::make('category_id')
                             ->relationship('category', 'name')
                             ->searchable()
+                            ->preload() 
                             ->required(),
 
                         Select::make('brand_id')
                             ->relationship('brand', 'name')
+                            ->preload() 
                             ->searchable(),
 
                         TextInput::make('name')
@@ -52,7 +54,9 @@ class ProductForm
                             ->label('Published')
                             ->visible(fn($record) => $record !== null),
 
-                        Toggle::make('is_featured'),
+                        Toggle::make('is_featured')
+                                ->hidden()
+                                ->default(0),
 
                         TextInput::make('base_price')
                             ->required(),
@@ -95,28 +99,28 @@ class ProductForm
         
                 ]),
 
-                Section::make('Variations')
-                ->schema([
+                // Section::make('Variations')
+                // ->schema([
 
-                    Repeater::make('variant_inputs')
-                    ->label('Product Variations')
-                    ->schema([
+                //     Repeater::make('variant_inputs')
+                //     ->label('Product Variations')
+                //     ->schema([
 
-                        TextInput::make('name')
-                            ->label('Variation Name')
-                            ->placeholder('Flavor / Size / Pack')
-                            ->required(),
+                //         TextInput::make('name')
+                //             ->label('Variation Name')
+                //             ->placeholder('Flavor / Size / Pack')
+                //             ->required(),
 
-                        TextInput::make('values')
-                            ->label('Values')
-                            ->placeholder('Chocolate, Vanilla/ 200G, 500G/ Pack of 2')
-                            ->required(),
+                //         TextInput::make('values')
+                //             ->label('Values')
+                //             ->placeholder('Chocolate, Vanilla/ 200G, 500G/ Pack of 2')
+                //             ->required(),
 
-                    ])
-                    ->defaultItems(1)
-                    // ->columnSpanFull()
+                //     ])
+                //     ->defaultItems(1)
+                //     // ->columnSpanFull()
 
-                ])
+                // ])
 
 
             // ================= SEO =================

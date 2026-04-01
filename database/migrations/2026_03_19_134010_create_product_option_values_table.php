@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('product_option_id')->constrained()->cascadeOnDelete();
 
             $table->string('value'); // Red, Chicken, XL
+            $table->integer('position')->default(0);
             
             $table->timestamps();
         });
