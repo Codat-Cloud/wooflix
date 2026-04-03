@@ -7,6 +7,7 @@ use App\Models\ProductOption;
 use App\Models\ProductOptionValue;
 use App\Models\ProductVariant;
 use Filament\Actions\Action;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -15,6 +16,7 @@ use Filament\Resources\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ManageVariants extends Page
@@ -28,6 +30,7 @@ class ManageVariants extends Page
     public Product $record;
 
     public ?array $data = [];
+
 
     // =========================================================
     // MOUNT — pre-fill from DB if options/variants already exist
@@ -50,9 +53,10 @@ class ManageVariants extends Page
         }
 
         // 2. Pre-fill variants (FIXED HERE)
-        $variants = $record->variants()->get();
+        $variants = $record->variants()->with('images')->get();
 
         if ($variants->isNotEmpty()) {
+            // Map exactly to what the Repeater expects
             $this->data['variants'] = $record->variants->map(fn($v) => [
                 'id'         => $v->id,
                 'name'       => $v->name,
@@ -61,10 +65,14 @@ class ManageVariants extends Page
                 'sale_price' => $v->sale_price,
                 'stock'      => $v->stock,
                 'is_active'  => (bool) $v->is_active,
+                'image'      => $v->images->first()?->image,
             ])->toArray();
         } else {
             $this->data['variants'] = [];
         }
+
+        // This forces the form to recognize the data we just put in $this->data
+        $this->form->fill($this->data);
 
         // dd($this->data['variants']);
     }
@@ -113,7 +121,7 @@ class ManageVariants extends Page
                             ->schema([
                                 TextInput::make('name')
                                     ->label('Variant')
-                                    ->disabled()
+                                    ->readOnly()
                                     ->columnSpan(2),
 
                                 TextInput::make('sku')
@@ -143,6 +151,14 @@ class ManageVariants extends Page
                                 Toggle::make('is_active')
                                     ->label('Active')
                                     ->default(true)
+                                    ->columnSpan(1),
+                                    // Inside your form() method, within the variants Repeater schema:
+                                FileUpload::make('image')
+                                    ->label('Variant Image')
+                                    ->image()
+                                    ->disk('public')
+                                    ->directory('products/variants')
+                                    ->visibility('public')
                                     ->columnSpan(1),
                             ])
                             ->columns(4)
@@ -244,10 +260,10 @@ class ManageVariants extends Page
                 ->action('saveVariants'),
 
             // ── Save as Draft ────────────────────────────────────────
-            Action::make('draft')
-                ->label('Save as Draft')
-                ->color('gray')
-                ->action('saveAsDraft'),
+            // Action::make('draft')
+            //     ->label('Save as Draft')
+            //     ->color('gray')
+            //     ->action('saveAsDraft'),
 
         ];
     }
@@ -266,84 +282,108 @@ class ManageVariants extends Page
         $this->save(publish: false);
     }
 
+    // =========================================================
+    // Save Variations
+    // =========================================================
+
     private function save(bool $publish): void
     {
-        // CRITICAL: This syncs the UI inputs with the Livewire state and validates the form
+        // 1. Pull data from the form. 
+        // Ensure variant 'name' is NOT marked ->disabled() in your form() method, 
+        // use ->readOnly() instead so it's included here.
         $data = $this->form->getState();
 
-        // 1. Persist options + their values
-        $this->record->options()->delete(); // Cascade deletes old option values
+        // 2. Clear old data to prevent orphans.
+        // We use a transaction to ensure that if variants fail, we don't lose options.
+        DB::transaction(function () use ($data, $publish) {
 
-        $optionValueLookup = [];
-        $optionPosition = 0;
+            // 3. Handle Options & Values
+            $this->record->options()->delete();
+            $optionValueLookup = [];
+            $optionPosition = 0;
 
-        foreach ($data['options'] as $optionData) {
-            $name = trim($optionData['name'] ?? '');
-            if (empty($name)) continue;
+            foreach ($data['options'] ?? [] as $optionData) {
+                $name = trim($optionData['name'] ?? '');
+                if (empty($name)) continue;
 
-            /** @var ProductOption $option */
-            $option = $this->record->options()->create([
-                'name'     => $name,
-                'position' => $optionPosition++,
-            ]);
-
-            $values = collect(explode(',', $optionData['values'] ?? ''))
-                ->map(fn($v) => trim($v))
-                ->filter();
-
-            $valuePosition = 0;
-            foreach ($values as $val) {
-                /** @var ProductOptionValue $ov */
-                $ov = $option->values()->create([
-                    'value'    => $val,
-                    'position' => $valuePosition++,
+                $option = $this->record->options()->create([
+                    'name'     => $name,
+                    'position' => $optionPosition++,
                 ]);
-                // Store by value for easy lookup during variant linking
-                $optionValueLookup[$val] = $ov;
+
+                $values = collect(explode(',', $optionData['values'] ?? ''))
+                    ->map(fn($v) => trim($v))
+                    ->filter();
+
+                $valuePosition = 0;
+                foreach ($values as $val) {
+                    $ov = $option->values()->create([
+                        'value'    => $val,
+                        'position' => $valuePosition++,
+                    ]);
+                    // Map the string value to the ID for Step 5
+                    $optionValueLookup[$val] = $ov->id;
+                }
             }
-        }
 
-        // 2. Persist variants
-        $this->record->variants()->delete();
+            // 4. Handle Variants
+            $this->record->variants()->delete();
 
-        foreach ($data['variants'] as $variantData) {
-            $variantName = trim($variantData['name'] ?? '');
-            if (empty($variantName)) continue;
+            foreach ($data['variants'] ?? [] as $variantData) {
+                $variantName = trim($variantData['name'] ?? '');
 
-            /** @var ProductVariant $variant */
-            $variant = $this->record->variants()->create([
-                'name'       => $variantName,
-                'sku'        => $variantData['sku'] ?? strtoupper(Str::random(8)),
-                'price'      => $variantData['price'] ?? 0,
-                'sale_price' => $variantData['sale_price'] ?: null,
-                'stock'      => $variantData['stock'] ?? 0,
-                'is_active'  => $variantData['is_active'] ?? true,
-            ]);
+                // If name is empty here, it means the field was disabled in the form
+                if (empty($variantName)) continue;
 
-            // 3. Link variant to option values (Pivot Table)
-            // We split by " / " (with spaces) to match your generation logic
-            $parts = collect(explode(' / ', $variantName))->map(fn($p) => trim($p));
+                /** @var ProductVariant $variant */
+                $variant = $this->record->variants()->create([
+                    'name'       => $variantName,
+                    // Fallback to random SKU if user left it blank
+                    'sku'        => $variantData['sku'] ?? strtoupper(Str::random(10)),
+                    'price'      => $variantData['price'] ?? 0,
+                    'sale_price' => $variantData['sale_price'] ?: null,
+                    'stock'      => $variantData['stock'] ?? 0,
+                    'is_active'  => $variantData['is_active'] ?? true,
+                ]);
 
-            $valueIds = $parts
-                ->map(fn($part) => $optionValueLookup[$part]?->id ?? null)
-                ->filter()
-                ->toArray();
+                // Handle Variant Image
+                if (!empty($variantData['image'])) {
+                    // Create record in product_images table
+                    $variant->images()->create([
+                        'product_id'         => $this->record->id,
+                        'product_variant_id' => $variant->id,
+                        'image'              => $variantData['image'],
+                        'position'           => 0,
+                    ]);
+                }
 
-            if (!empty($valueIds)) {
-                $variant->optionValues()->sync($valueIds);
+                // 5. Link Variants to Option Values (Pivot)
+                // Example: "Chocolate / 1 KG" -> ["Chocolate", "1 KG"]
+                $parts = collect(explode(' / ', $variantName))
+                    ->map(fn($p) => trim($p));
+
+                $valueIds = $parts
+                    ->map(fn($part) => $optionValueLookup[$part] ?? null)
+                    ->filter()
+                    ->toArray();
+
+                if (!empty($valueIds)) {
+                    // Attaches IDs to the variant_option_value pivot table
+                    $variant->optionValues()->sync($valueIds);
+                }
             }
-        }
 
-        // 4. Update parent product status
-        $this->record->update(['is_active' => $publish]);
+            // 6. Finalize Product State
+            $this->record->update(['is_active' => $publish]);
+        });
 
+        // 7. Notification & Navigation
         Notification::make()
             ->title($publish ? 'Product published!' : 'Saved as draft.')
             ->success()
             ->send();
 
-        // Redirect using Filament's helper to ensure the notification persists
-        $this->redirect($this->getResource()::getUrl('index'));
+        // $this->redirect($this->getResource()::getUrl('index'));
     }
 
     // =========================================================

@@ -59,7 +59,13 @@ class ProductForm
                                 ->default(0),
 
                         TextInput::make('base_price')
+                            ->prefix('₹')
                             ->required(),
+                        TextInput::make('sale_price')
+                            ->label('Sale Price')
+                            ->prefix('₹')
+                            ->helperText('Leave blank if there is no discount.')
+                            ->lte('base_price'),
 
                     ]),
 

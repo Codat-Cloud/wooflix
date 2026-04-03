@@ -16,10 +16,12 @@ class CategoriesTable
         return $table
             ->columns([
                 TextColumn::make('name')
-                ->searchable(),
-                TextColumn::make('parent_id')
-                    ->numeric()
-                    ->sortable(),
+                    ->searchable(),
+                TextColumn::make('parent.name')
+                    ->label('Parent Category')
+                    ->searchable()
+                    ->sortable()
+                    ->placeholder('None (Top Level)'),
                 ImageColumn::make('image')
                     ->label('Image')
                     ->circular(),

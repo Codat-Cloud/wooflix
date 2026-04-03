@@ -24,8 +24,8 @@ class ProductInfolist
                 TextEntry::make('name'),
                 TextEntry::make('slug'),
                 ImageEntry::make('main_image')
-                    ->label('Main Image')
-                    ->disk('public'),
+                    ->label('Main Image'),
+                    // ->disk('public'),
                 TextEntry::make('short_description')
                     ->placeholder('-'),
                 TextEntry::make('description')
@@ -36,6 +36,9 @@ class ProductInfolist
                 IconEntry::make('is_featured')
                     ->boolean(),
                 TextEntry::make('base_price')
+                    ->money()
+                    ->placeholder('-'),
+                TextEntry::make('sale_price')
                     ->money()
                     ->placeholder('-'),
                 TextEntry::make('meta_title')

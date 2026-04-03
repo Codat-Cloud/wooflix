@@ -20,12 +20,12 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained()->cascadeOnDelete();
             $table->foreignId('brand_id')->nullable()->constrained()->nullOnDelete();
 
-            $table->string('name');
-            $table->string('slug')->unique();
-            $table->string('main_image');
+            $table->text('name');
+            $table->text('slug')->unique();
+            $table->text('main_image');
             
 
-            $table->string('short_description')->nullable();
+            $table->longText('short_description')->nullable();
             $table->longText('description')->nullable();
 
             // product flags
@@ -34,10 +34,11 @@ return new class extends Migration
 
             // base price (fallback if no variants)
             $table->decimal('base_price', 10, 2)->nullable();
+            $table->decimal('sale_price', 10, 2)->nullable();
 
             // SEO
-            $table->string('meta_title')->nullable();
-            $table->string('meta_description')->nullable();
+            $table->text('meta_title')->nullable();
+            $table->text('meta_description')->nullable();
 
             $table->timestamps();
 

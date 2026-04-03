@@ -27,9 +27,10 @@ class ProductsTable
                     ->label('Brand')
                     ->searchable()
                     ->sortable(),
-                ImageColumn::make('image')
+                ImageColumn::make('main_image')
                     ->label('Image')
-                    // ->disk('public')
+                    ->disk('public')
+                    ->visibility('public')
                     ->circular(),
                 TextColumn::make('name')
                     ->searchable(),
@@ -37,6 +38,11 @@ class ProductsTable
                     ->boolean(),
                 TextColumn::make('base_price')
                     ->money('INR')
+                    ->sortable(),
+                TextColumn::make('sale_price')
+                    ->label('Sale Price')
+                    ->money('INR')
+                    ->color('success') // Makes the sale price green
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()

@@ -18,6 +18,7 @@ class Product extends Model
         'is_active',
         'is_featured',
         'base_price',
+        'sale_price',
         'meta_title',
         'meta_description',
     ];
