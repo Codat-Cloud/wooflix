@@ -57,6 +57,7 @@ class HomeSectionForm
                                 ])
                                 ->default('scroll')
                                 ->required()
+                                ->live() // 🔥 THIS IS REQUIRED for the maxItems closure to work instantly
                                 ->helperText('Scroll = horizontal slider (best for brands). Grid = fixed layout (best for categories/products).'),
 
                             TextInput::make('sort_order')
@@ -75,6 +76,18 @@ class HomeSectionForm
                         Repeater::make('items')
                             ->relationship() // IMPORTANT
                             ->reorderable()  // drag & drop items
+                            ->maxItems(function ($get) {
+                                    $layout = $get('layout'); // Get the value from the 'layout' select
+                                    
+                                    return match ($layout) {
+                                        'grid_4' => 4,
+                                        'grid_6' => 6,
+                                        'grid_8' => 8,
+                                        'scroll' => 15, // Set a reasonable limit for the horizontal slider
+                                        default => null, // No limit if layout isn't set or is something else
+                                    };
+                                })
+                            ->live() // Ensure the repeater reacts immediately when layout changes
                             ->collapsible()
                             // ->collapsed()
                             ->defaultItems(1)
@@ -103,6 +116,7 @@ class HomeSectionForm
 
                                         return [];
                                     })
+                                    ->required()
                                     ->searchable()
                                     ->visible(fn($get) => in_array(
                                         $get('../../type'),
@@ -110,6 +124,7 @@ class HomeSectionForm
                                     )),
 
                                 TextInput::make('title')
+                                    ->required()
                                     ->placeholder('Override title (optional)'),
 
                                 TextInput::make('link')
@@ -119,7 +134,8 @@ class HomeSectionForm
                                     ->image()
                                     ->disk('public')
                                     ->directory('home')
-                                    ->helperText('Optional override image. Size: 258x312px')
+                                    ->helperText('Size: 258x312px')
+                                    ->required()
                                     ->columnSpanFull(),
 
                                 TextInput::make('sort_order')

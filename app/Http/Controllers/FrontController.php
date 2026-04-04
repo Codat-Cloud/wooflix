@@ -24,52 +24,61 @@ class FrontController extends Controller
             ->orderBy('sort_order')
             ->get();
 
+        // 1. Get all active sections with their items
         $sections = HomeSection::where('is_active', true)
-            ->with('items')
+            ->with(['items' => function ($query) {
+                $query->orderBy('sort_order');
+            }])
             ->orderBy('sort_order')
             ->get();
 
-        // Collect IDs
+        // 2. Initialize ID collectors
         $brandIds = [];
         $categoryIds = [];
         $productIds = [];
 
+        // 3. Loop through sections to gather IDs for batch fetching
         foreach ($sections as $section) {
             foreach ($section->items as $item) {
+                if (!$item->item_id) continue; // Skip if ID is missing
+
                 if ($section->type === 'brand') {
                     $brandIds[] = $item->item_id;
-                }
-
-                if ($section->type === 'category') {
+                } elseif ($section->type === 'category' || $section->type === 'tabbed_category_products') {
                     $categoryIds[] = $item->item_id;
-                }
-
-                if ($section->type === 'product') {
+                } elseif ($section->type === 'product') {
                     $productIds[] = $item->item_id;
                 }
             }
         }
 
-        // Fetch once (IMPORTANT)
+        // 4. Clean the arrays (Remove duplicates and nulls)
+        $brandIds = array_unique(array_filter($brandIds));
+        $categoryIds = array_unique(array_filter($categoryIds));
+        $productIds = array_unique(array_filter($productIds));
+
+        // 5. Fetch Data in Bulk (Pre-load relationships to avoid 100s of queries)
         $brands = Brand::whereIn('id', $brandIds)->get()->keyBy('id');
         $categories = Category::whereIn('id', $categoryIds)->get()->keyBy('id');
-        $products = Product::with('variants')
+        $products = Product::with(['variants', 'brand'])
             ->whereIn('id', $productIds)
             ->get()
             ->keyBy('id');
 
+        // 6. Handle Tabbed Sections (Injecting products into the items)
         foreach ($sections as $section) {
-
             if ($section->type === 'tabbed_category_products') {
-
                 foreach ($section->items as $item) {
-
-                    $item->products = \App\Models\Product::with('brand')
-                        ->where('category_id', $item->item_id)
-                        ->where('is_active', true)
-                        ->latest()
-                        ->limit(10)
-                        ->get();
+                    if ($item->item_id) {
+                        $item->products = Product::with('brand')
+                            ->where('category_id', $item->item_id)
+                            ->where('is_active', true)
+                            ->latest()
+                            ->limit(10)
+                            ->get();
+                    } else {
+                        $item->products = collect(); // Return empty collection if no ID
+                    }
                 }
             }
         }
