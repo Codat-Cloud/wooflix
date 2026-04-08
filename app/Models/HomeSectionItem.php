@@ -15,6 +15,9 @@ class HomeSectionItem extends Model
         'sort_order',
     ];
 
+    // This tells Laravel NOT to try and save this to the home_section_items table
+    public $featured_products;
+
     public function section()
     {
         return $this->belongsTo(HomeSection::class);

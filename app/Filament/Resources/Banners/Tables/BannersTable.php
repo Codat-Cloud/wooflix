@@ -20,6 +20,7 @@ class BannersTable
                 ->label('Banner'),
 
                 TextColumn::make('title')
+                    ->limit(30)
                     ->searchable(),
 
                 TextColumn::make('sort_order')

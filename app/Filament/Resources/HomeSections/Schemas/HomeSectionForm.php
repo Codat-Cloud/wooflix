@@ -19,136 +19,135 @@ class HomeSectionForm
     {
         return $schema
             ->components([
-                Section::make('Section')
+                Section::make('Section Settings')
                     ->schema([
-
                         Toggle::make('is_active')
                             ->default(true),
 
                         Grid::make(2)->schema([
-
                             TextInput::make('title')
                                 ->required()
                                 ->placeholder('Try Yum Nums'),
 
                             TextInput::make('subtitle')
                                 ->placeholder('Soft Chews: For ₹199'),
-
                         ]),
 
                         Grid::make(3)->schema([
-
                             Select::make('type')
                                 ->options([
                                     'brand' => 'Brand',
                                     'category' => 'Category',
-                                    'product' => 'Product',
                                     'tabbed_category_products' => 'Deals (Tabbed)',
                                 ])
                                 ->required()
                                 ->live(),
 
                             Select::make('layout')
-                                ->options([
-                                    'scroll' => 'Scroll (brands)',
-                                    'grid_4' => 'Grid 4',
-                                    'grid_6' => 'Grid 6',
-                                    'grid_8' => 'Grid 8',
-                                ])
-                                ->default('scroll')
+                                ->options(function ($get) {
+                                    $type = $get('type');
+
+                                    // Deals (Tabbed) ONLY gets the Scroll layout
+                                    if ($type === 'tabbed_category_products') {
+                                        return ['scroll' => 'Deals Slider'];
+                                    }
+
+                                    // Brands, Categories, and Products get Grid 4 or Grid 6
+                                    // Note: Grid 6 will be scrollable on mobile automatically in our CSS
+                                    return [
+                                        'grid_4' => 'Grid 4',
+                                        'grid_6' => 'Grid 6',
+                                    ];
+                                })
+                                ->default('grid_6')
                                 ->required()
-                                ->live() // 🔥 THIS IS REQUIRED for the maxItems closure to work instantly
-                                ->helperText('Scroll = horizontal slider (best for brands). Grid = fixed layout (best for categories/products).'),
+                                ->live(),
 
                             TextInput::make('sort_order')
                                 ->numeric()
-                                ->default(0)
-                                ->helperText('Lower numbers appear first on homepage. Example: 0 = top, 10 = below.'),
-
+                                ->default(0),
                         ]),
-
                     ]),
 
                 Section::make('Items')
-                    ->description('Add items for this section')
+                    ->description('Add Categories (Tabs) and pick Featured Products for Deals')
                     ->schema([
-
                         Repeater::make('items')
-                            ->relationship() // IMPORTANT
-                            ->reorderable()  // drag & drop items
-                            ->maxItems(function ($get) {
-                                    $layout = $get('layout'); // Get the value from the 'layout' select
-                                    
-                                    return match ($layout) {
-                                        'grid_4' => 4,
-                                        'grid_6' => 6,
-                                        'grid_8' => 8,
-                                        'scroll' => 15, // Set a reasonable limit for the horizontal slider
-                                        default => null, // No limit if layout isn't set or is something else
-                                    };
-                                })
-                            ->live() // Ensure the repeater reacts immediately when layout changes
-                            ->collapsible()
-                            // ->collapsed()
-                            ->defaultItems(1)
-                            ->orderColumn('sort_order') // 🔥 THIS IS THE REAL FIX
-                            // 🔥 SHOW TITLE IN HEADER
-                            ->itemLabel(fn($state) => $state['title'] ?? 'Item')
+                            ->relationship()
+                            ->reorderable()
+                            ->orderColumn('sort_order')
+                            ->itemLabel(fn($state) => $state['title'] ?? 'Section Item')
                             ->schema([
+                                // ROW 1: Category and Title
+                                Grid::make(2)
+                                    ->schema([
+                                        Select::make('item_id')
+                                            ->label(fn($get) => $get('../../type') === 'tabbed_category_products' ? 'Select Category (Tab)' : 'Select Item')
+                                            ->options(function ($get) {
+                                                $type = $get('../../type');
+                                                if ($type === 'brand') return Brand::pluck('name', 'id');
+                                                if ($type === 'category' || $type === 'tabbed_category_products') {
+                                                    return Category::pluck('name', 'id');
+                                                }
+                                                return [];
+                                            })
+                                            ->required()
+                                            ->searchable()
+                                            ->live(),
 
-                                // Dynamic select based on type
-                                Select::make('item_id')
-                                    ->label('Select Item')
-                                    ->options(function ($get) {
-                                        $type = $get('../../type');
+                                        TextInput::make('title')
+                                            ->label('Custom Title (Icon + Text)')
+                                            ->placeholder('e.g., 🧶 Cat Toys')
+                                            ->required()
+                                            ->helperText('This title will appear on the Tab button.'),
+                                    ]),
 
-                                        if ($type === 'brand') {
-                                            return Brand::pluck('name', 'id');
-                                        }
-
-                                        if ($type === 'category' || $type === 'tabbed_category_products') {
-                                            return Category::pluck('name', 'id');
-                                        }
-
-                                        if ($type === 'product') {
-                                            return \App\Models\Product::pluck('name', 'id');
-                                        }
-
-                                        return [];
-                                    })
-                                    ->required()
+                                // ROW 2: Product Multi-select (Full Width)
+                                // Only visible when 'Deals (Tabbed)' is selected as the Section Type
+                                Select::make('featured_products')
+                                    ->label('Select Products for this Tab')
+                                    ->multiple()
                                     ->searchable()
-                                    ->visible(fn($get) => in_array(
-                                        $get('../../type'),
-                                        ['brand', 'category', 'product', 'tabbed_category_products']
-                                    )),
+                                    ->preload()
+                                    ->maxItems(12)
+                                    ->columnSpanFull() // Makes it take the whole second row
+                                    ->visible(fn($get) => $get('../../type') === 'tabbed_category_products')
+                                    ->options(function ($get) {
+                                        $categoryId = $get('item_id');
+                                        if (!$categoryId) return [];
 
-                                TextInput::make('title')
-                                    ->required()
-                                    ->placeholder('Override title (optional)'),
+                                        return \App\Models\Product::where('category_id', $categoryId)
+                                            ->pluck('name', 'id');
+                                    })
+                                    // Sync logic for is_featured column
+                                    ->afterStateHydrated(function (Select $component, $state, $get) {
+                                        $categoryId = $get('item_id');
+                                        if ($categoryId) {
+                                            $featured = \App\Models\Product::where('category_id', $categoryId)
+                                                ->where('is_featured', true)
+                                                ->pluck('id')
+                                                ->toArray();
+                                            $component->state($featured);
+                                        }
+                                    })
+                                    ->afterStateUpdated(function ($state, $get) {
+                                        $categoryId = $get('item_id');
+                                        if ($categoryId) {
+                                            \App\Models\Product::where('category_id', $categoryId)->update(['is_featured' => false]);
+                                            if (!empty($state)) {
+                                                \App\Models\Product::whereIn('id', $state)->update(['is_featured' => true]);
+                                            }
+                                        }
+                                    }),
 
-                                TextInput::make('link')
-                                    ->placeholder('/shop?brand=1'),
-
+                                // FileUpload for non-deal sections (Brands/General Categories)
                                 FileUpload::make('image')
                                     ->image()
-                                    ->disk('public')
                                     ->directory('home')
-                                    ->helperText('Size: 258x312px')
-                                    ->required()
-                                    ->columnSpanFull(),
-
-                                TextInput::make('sort_order')
-                                    ->numeric()
-                                    ->default(0)
                                     ->columnSpanFull()
-                                    ->hidden()
-                                    ->helperText('Lower numbers appear first on homepage. Example: 0 = top, 10 = below.'),
-
+                                    ->hidden(fn($get) => $get('../../type') === 'tabbed_category_products')
+                                    ->required(fn($get) => $get('../../type') !== 'tabbed_category_products'),
                             ])
-                            ->columns(2)
-                            ->defaultItems(1),
-
                     ])
             ]);
     }

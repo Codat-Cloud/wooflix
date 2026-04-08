@@ -19,15 +19,14 @@ return new class extends Migration
             $table->string('subtitle')->nullable();
 
             // What this section shows
-            $table->enum('type', ['brand', 'category', 'custom']);
+            $table->enum('type', ['brand', 'category', 'tabbed_category_products']);
 
             // Layout type (VERY IMPORTANT)
             $table->enum('layout', [
                 'scroll',     // horizontal scroll (brands)
                 'grid_4',     // 4 items
                 'grid_6',     // 6 items
-                'grid_8'      // 8 items
-            ])->default('scroll');
+            ]);
 
             // Ordering + visibility
             $table->integer('sort_order')->default(0);

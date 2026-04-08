@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Brands\Tables;
 
+use App\Models\Brand;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -19,7 +20,7 @@ class BrandsTable
         return $table
             ->columns([
                 TextColumn::make('name')
-                ->searchable(),
+                    ->searchable(),
                 ImageColumn::make('logo')
                     ->label('Logo')
                     ->circular(),
@@ -28,8 +29,10 @@ class BrandsTable
                 IconColumn::make('is_visible')
                     ->boolean(),
                 TextColumn::make('meta_title')
+                    ->limit(30)
                     ->searchable(),
                 TextColumn::make('meta_description')
+                    ->limit(30)
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()

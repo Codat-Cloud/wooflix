@@ -432,10 +432,10 @@ body {
   display: none;
 }
 
-/* product item */
+/* product card */
 
 .product-card {
-  background: #fff;
+  background: #ffffff;
   border-radius: 16px;
   padding: 14px;
   flex: 0 0 auto;
@@ -445,13 +445,13 @@ body {
 .product-image {
   position: relative;
   background: #f6f6f6;
-  border-radius: 14px;
+  border-radius: 8px;
   overflow: hidden;
+  display: block;
 }
 
 .product-image img {
   width: 100%;
-  display: block;
 }
 
 /* OFFER BADGE */
@@ -616,10 +616,10 @@ body {
 }
 
 @media (min-width: 992px) {
-  .category-scroll {
+  /* .category-scroll {
     overflow: visible;
     justify-content: space-between;
-  }
+  } */
 
   .category-item {
     width: 190px;
@@ -641,7 +641,7 @@ body {
 /* DEALS */
 
 .deals-section {
-  padding: 50px 0;
+  padding: 50px 0px;
 }
 
 .deals-tabs {
@@ -691,17 +691,42 @@ body {
 }
 
 .deals-scroll {
-  display: flex;
-  gap: 20px;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    
+    /* 1. Calculate the distance from the screen edge to the container edge */
+    /* This uses the standard Bootstrap container math */
+    --container-offset: calc((100vw - 1320px) / 2); 
+
+    /* Fallback for smaller screens where container is full width */
+    @media (max-width: 1400px) {
+        --container-offset: calc((100vw - 1140px) / 2);
+    }
+    @media (max-width: 1200px) {
+        --container-offset: calc((100vw - 960px) / 2);
+    }
+    @media (max-width: 992px) {
+        --container-offset: 15px; /* Standard Bootstrap gutter */
+    }
+
+    /* 2. Pull the container to the screen edges */
+    margin-left: calc(-1 * var(--container-offset));
+    margin-right: calc(-1 * var(--container-offset));
+
+    /* 3. Push the content back in to align with the heading */
+    padding-left: var(--container-offset);
+    padding-right: var(--container-offset);
+    
+    /* 4. Ensure it doesn't wrap */
+    flex-wrap: nowrap;
 }
 
 .deals-scroll::-webkit-scrollbar {
   display: none;
 }
-
 /* arrows desktop only */
 
 .deals-arrow {
@@ -726,6 +751,11 @@ body {
 }
 
 @media (max-width: 991px) {
+  .deals-scroll {
+    margin-left: 0;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
   .deals-arrow {
     display: none;
   }
@@ -2625,20 +2655,6 @@ body {
 
 .order-info {
   flex: 1;
-}
-
-/* PRODUCT */
-
-.product-card {
-  background: #fafafa;
-  padding: 10px;
-  border-radius: 10px;
-  text-align: center;
-}
-
-.product-card img {
-  width: 100%;
-  border-radius: 8px;
 }
 
 /* REVIEW */

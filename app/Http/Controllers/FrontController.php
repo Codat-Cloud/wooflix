@@ -16,69 +16,55 @@ class FrontController extends Controller
 
     public function index()
     {
-        $banners = Banner::where('is_active', true)
-            ->orderBy('sort_order')
-            ->get();
+        // 1. Fetch Global Data
+        $banners = Banner::where('is_active', true)->orderBy('sort_order')->get();
+        $offers = Offer::where('is_active', true)->orderBy('sort_order')->get();
 
-        $offers = Offer::where('is_active', true)
-            ->orderBy('sort_order')
-            ->get();
-
-        // 1. Get all active sections with their items
+        // 2. Fetch Sections with eager-loaded Items
         $sections = HomeSection::where('is_active', true)
-            ->with(['items' => function ($query) {
-                $query->orderBy('sort_order');
-            }])
+            ->with(['items' => fn($q) => $q->orderBy('sort_order')])
             ->orderBy('sort_order')
             ->get();
 
-        // 2. Initialize ID collectors
+        // 3. Collect all IDs in ONE pass to fetch everything in bulk
         $brandIds = [];
         $categoryIds = [];
-        $productIds = [];
+        $dealCategoryIds = [];
 
-        // 3. Loop through sections to gather IDs for batch fetching
         foreach ($sections as $section) {
             foreach ($section->items as $item) {
-                if (!$item->item_id) continue; // Skip if ID is missing
+                if (!$item->item_id) continue;
 
                 if ($section->type === 'brand') {
                     $brandIds[] = $item->item_id;
-                } elseif ($section->type === 'category' || $section->type === 'tabbed_category_products') {
+                } elseif ($section->type === 'category') {
                     $categoryIds[] = $item->item_id;
-                } elseif ($section->type === 'product') {
-                    $productIds[] = $item->item_id;
+                } elseif ($section->type === 'tabbed_category_products') {
+                    $dealCategoryIds[] = $item->item_id;
                 }
             }
         }
 
-        // 4. Clean the arrays (Remove duplicates and nulls)
-        $brandIds = array_unique(array_filter($brandIds));
-        $categoryIds = array_unique(array_filter($categoryIds));
-        $productIds = array_unique(array_filter($productIds));
+        // 4. Bulk Fetch Reference Data (Brands & Categories)
+        $brands = Brand::whereIn('id', array_unique($brandIds))->get()->keyBy('id');
+        $categories = Category::whereIn('id', array_unique(array_merge($categoryIds, $dealCategoryIds)))->get()->keyBy('id');
 
-        // 5. Fetch Data in Bulk (Pre-load relationships to avoid 100s of queries)
-        $brands = Brand::whereIn('id', $brandIds)->get()->keyBy('id');
-        $categories = Category::whereIn('id', $categoryIds)->get()->keyBy('id');
-        $products = Product::with(['variants', 'brand'])
-            ->whereIn('id', $productIds)
+        // 5. THE BIG OPTIMIZATION: Fetch ALL featured products for ALL deal tabs in ONE query
+        // Instead of querying inside the loop, we get them all now and group them by category_id
+        $allFeaturedProducts = Product::with(['brand', 'variants'])
+            ->whereIn('category_id', array_unique($dealCategoryIds))
+            ->where('is_active', true)
+            ->where('is_featured', true)
+            ->latest()
             ->get()
-            ->keyBy('id');
+            ->groupBy('category_id');
 
-        // 6. Handle Tabbed Sections (Injecting products into the items)
+        // 6. Map the pre-fetched products back to the section items
         foreach ($sections as $section) {
             if ($section->type === 'tabbed_category_products') {
                 foreach ($section->items as $item) {
-                    if ($item->item_id) {
-                        $item->products = Product::with('brand')
-                            ->where('category_id', $item->item_id)
-                            ->where('is_active', true)
-                            ->latest()
-                            ->limit(10)
-                            ->get();
-                    } else {
-                        $item->products = collect(); // Return empty collection if no ID
-                    }
+                    // Pull from our pre-fetched collection instead of hitting the DB again
+                    $item->products = $allFeaturedProducts->get($item->item_id, collect())->take(12);
                 }
             }
         }
@@ -88,8 +74,7 @@ class FrontController extends Controller
             'offers',
             'sections',
             'brands',
-            'categories',
-            'products'
+            'categories'
         ));
     }
 }

@@ -40,6 +40,9 @@ return new class extends Migration
             $table->text('meta_title')->nullable();
             $table->text('meta_description')->nullable();
 
+            // Marketing
+            $table->text('custom_tracking_script')->nullable();
+
             $table->timestamps();
 
             $table->index(['category_id']);

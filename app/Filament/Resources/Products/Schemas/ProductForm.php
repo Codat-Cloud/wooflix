@@ -27,6 +27,14 @@ class ProductForm
 
                     Grid::make(2)->schema([
 
+                        Toggle::make('is_active')
+                            ->label('Published')
+                            ->visible(fn($record) => $record !== null),
+
+                        Toggle::make('is_featured')
+                                ->label('Added In Deals Tab')
+                                ->default(0),
+
                         Select::make('category_id')
                             ->relationship('category', 'name')
                             ->searchable()
@@ -50,14 +58,6 @@ class ProductForm
                             ->nullable()
                             ->unique(ignoreRecord: true),
 
-                        Toggle::make('is_active')
-                            ->label('Published')
-                            ->visible(fn($record) => $record !== null),
-
-                        Toggle::make('is_featured')
-                                ->hidden()
-                                ->default(0),
-
                         TextInput::make('base_price')
                             ->prefix('₹')
                             ->required(),
@@ -78,6 +78,7 @@ class ProductForm
 
                     TextInput::make('meta_title'),
                     Textarea::make('meta_description'),
+                    Textarea::make('custom_tracking_script'),
 
                 ]),
 
@@ -104,38 +105,6 @@ class ProductForm
                     ])
         
                 ]),
-
-                // Section::make('Variations')
-                // ->schema([
-
-                //     Repeater::make('variant_inputs')
-                //     ->label('Product Variations')
-                //     ->schema([
-
-                //         TextInput::make('name')
-                //             ->label('Variation Name')
-                //             ->placeholder('Flavor / Size / Pack')
-                //             ->required(),
-
-                //         TextInput::make('values')
-                //             ->label('Values')
-                //             ->placeholder('Chocolate, Vanilla/ 200G, 500G/ Pack of 2')
-                //             ->required(),
-
-                //     ])
-                //     ->defaultItems(1)
-                //     // ->columnSpanFull()
-
-                // ])
-
-
-            // ================= SEO =================
-            // Section::make('SEO')
-            //     ->schema([
-
-
-
-            //     ]),
 
         ]);
     }

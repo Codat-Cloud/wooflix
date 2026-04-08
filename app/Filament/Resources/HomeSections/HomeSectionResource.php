@@ -57,7 +57,7 @@ class HomeSectionResource extends Resource
         return [
             'index' => ListHomeSections::route('/'),
             'create' => CreateHomeSection::route('/create'),
-            'view' => ViewHomeSection::route('/{record}'),
+            // 'view' => ViewHomeSection::route('/{record}'),
             'edit' => EditHomeSection::route('/{record}/edit'),
         ];
     }

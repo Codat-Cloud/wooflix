@@ -45,6 +45,8 @@ class ProductInfolist
                     ->placeholder('-'),
                 TextEntry::make('meta_description')
                     ->placeholder('-'),
+                TextEntry::make('custom_tracking_script')
+                    ->placeholder('-'),
                 TextEntry::make('created_at')
                     ->dateTime()
                     ->placeholder('-'),

@@ -6,7 +6,6 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -30,26 +29,39 @@ class OrdersTable
                 // TOTAL
                 TextColumn::make('total_amount')
                     ->label('Amount')
-                    ->formatStateUsing(fn ($state) => 'Rs. ' . number_format($state, 2))
+                    ->formatStateUsing(fn($state) => 'Rs. ' . number_format($state, 2))
                     ->sortable(),
 
-                // STATUS
-                BadgeColumn::make('status')
-                    ->colors([
-                        'warning' => 'pending',
-                        'primary' => 'confirmed',
-                        'info' => 'shipped',
-                        'success' => 'delivered',
-                        'danger' => 'cancelled',
-                    ]),
+                // ORDER STATUS
+                TextColumn::make('status')
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'pending' => 'warning',
+                        'confirmed' => 'primary',
+                        'shipped' => 'info',
+                        'delivered' => 'success',
+                        'cancelled' => 'danger',
+                        default => 'gray',
+                    })
+                    ->icon(fn(string $state): string => match ($state) {
+                        'pending' => 'heroicon-m-clock',
+                        'confirmed' => 'heroicon-m-check-circle',
+                        'shipped' => 'heroicon-m-truck',
+                        'delivered' => 'heroicon-m-shopping-bag',
+                        'cancelled' => 'heroicon-m-x-circle',
+                        default => 'heroicon-m-question-mark-circle',
+                    }),
 
                 // PAYMENT STATUS
-                BadgeColumn::make('payment_status')
-                    ->colors([
-                        'warning' => 'pending',
-                        'success' => 'paid',
-                        'danger' => 'failed',
-                    ]),
+                TextColumn::make('payment_status')
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'pending' => 'warning',
+                        'paid' => 'success',
+                        'failed' => 'danger',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn(string $state): string => ucfirst($state)),
 
                 // DATE
                 TextColumn::make('created_at')

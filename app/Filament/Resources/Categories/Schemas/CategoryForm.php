@@ -18,7 +18,7 @@ class CategoryForm
         return $schema
         ->components([
 
-            Section::make()
+            Section::make('Category Details')
                 ->schema([
 
                     Grid::make(2)

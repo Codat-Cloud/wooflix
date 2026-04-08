@@ -18,7 +18,7 @@
           <div class="row align-items-center">
             <div class="col-lg-2">
               <div class="logo">
-                <img src="{{ asset('/images/logo.png')}}" alt="" class="w-100" />
+                <img src="{{ asset('storage/' . ($settings['logo_desktop'] ?? '')) }}" alt="" class="w-100" />
               </div>
             </div>
 
@@ -292,7 +292,7 @@
         <div class="search-box-mobile">
           <a href="/">
             <span class="logo-icon">
-              <img src="{{ asset('/images/icon.png')}}" alt="" style="width: 20px" />
+              <img src="{{ asset('storage/' . ($settings['logo_mobile'] ?? ($settings['logo_desktop'] ?? ''))) }}" alt="" style="width: 20px" />
             </span>
           </a>
 

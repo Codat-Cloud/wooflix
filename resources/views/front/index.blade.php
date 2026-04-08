@@ -67,241 +67,123 @@
       </div>
   </section>
 
-  {{-- Cards --}}
+  {{-- Page Sections --}}
   @foreach($sections as $section)
-
-    <section class="mt-5">
-        <div class="container-xxl">
-
-            <h2 class="fw-bold">{{ $section->title }}</h2>
-            <p class="section-subtitle">{{ $section->subtitle }}</p>
-
-            @php
-                $gridMap = [
-                    'grid_4' => 'col-6 col-md-6 col-lg-3', // 4 per row
-                    'grid_6' => 'col-6 col-md-4 col-lg-2', // 6 per row
-                    'grid_8' => 'col-6 col-md-3 col-lg-2', // approx 6–8 responsive
-                ];
-
-                $gridClass = $gridMap[$section->layout] ?? 'col-6 col-md-4 col-lg-3';
-            @endphp
-
-            {{-- ================= CATEGORY SCROLL ================= --}}
-            @if($section->layout === 'scroll')
-
-                <div class="category-scroll">
-
-                    @foreach($section->items as $item)
-
-                        @php
-                            if ($section->type === 'category') {
-                                $data = $categories[$item->item_id] ?? null;
-                            } elseif ($section->type === 'brand') {
-                                $data = $brands[$item->item_id] ?? null;
-                            } else {
-                                $data = $products[$item->item_id] ?? null;
-                            }
-                        @endphp
-
-                        @if($data)
-
-                            <a href="#" class="category-item">
-
-                                <div class="category-card shadow">
-                                    <img 
-                                        src="{{ asset('storage/' . ($item->image ?? $data->image)) }}" 
-                                        alt="{{ $item->title ?? $data->name }}"
-                                        loading="lazy"
-                                    />
-                                </div>
-
-                                <div class="category-title">
-                                    {{ $item->title ?? $data->name }}
-                                </div>
-
-                            </a>
-
-                        @endif
-
-                    @endforeach
-
-                </div>
-
-            @endif
-
-
-            {{-- ================= BRAND GRID ================= --}}
-            @if(str_starts_with($section->layout, 'grid') && $section->type === 'brand')
-
-                <div class="row g-4">
-
-                    @foreach($section->items as $item)
-
-                        @php $brand = $brands[$item->item_id] ?? null; @endphp
-
-                        @if($brand)
-
-                            <div class="{{ $gridClass }}">
-                                <a href="#" class="brand-card text-decoration-none">
-
-                                  <img 
-                                      src="{{ asset('storage/' . ($item->image ?? $brand->image)) }}" 
-                                      class="w-100"
-                                      loading="lazy"
-                                  />
-
-                                  <div class="text-center brand-card-text">
-                                      {{ $item->title ?? $brand->name }}
-                                  </div>
-
-                                </a>
-                            </div>
-
-                        @endif
-
-                    @endforeach
-
-                </div>
-
-            @endif
-
-
-            {{-- ================= PRODUCT GRID ================= --}}
-            @if(str_starts_with($section->layout, 'grid') && $section->type === 'product')
-
-                <div class="row g-4">
-
-                    @foreach($section->items as $item)
-
-                        @php $product = $products[$item->item_id] ?? null; @endphp
-
-                        @if($product)
-
-                            <div class="{{ $gridClass }}">
-
-                                <div class="product-card">
-
-                                    <div class="product-image">
-                                        <span class="product-badge">10% OFF</span>
-
-                                        <img 
-                                            src="{{ asset('storage/' . $product->main_image) }}" 
-                                            alt="{{ $product->name }}"
-                                            loading="lazy"
-                                        />
-
-                                        <span class="product-rating">⭐ 5.0</span>
-                                    </div>
-
-                                    <div class="product-info">
-
-                                        <h6 class="product-brand">
-                                            {{ $product->brand->name ?? '' }}
-                                        </h6>
-
-                                        <p class="product-title">
-                                            {{ $product->name }}
-                                        </p>
-
-                                        <div class="product-price">
-                                            <div>
-                                                <span class="price">₹{{ $product->base_price }}</span>
-                                            </div>
-
-                                            <div class="product-action">
-                                                <button class="add-btn">Add</button>
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        @endif
-
-                    @endforeach
-
-                </div>
-
-            @endif
-
-            {{-- ================= Tabbed Category Products ================== --}}
-            @if($section->type === 'tabbed_category_products')
-
-              <section class="deals-section">
-
-                <div class="container-xxl">
-                  <h2>{{ $section->title }}</h2>
-                  <p class="deals-subtitle">{{ $section->subtitle }}</p>
-
-                  {{-- Tabs --}}
-                  <ul class="nav deals-tabs">
-
-                    @foreach($section->items as $index => $item)
-
-                      <li class="nav-item">
-                        <button
-                          class="nav-link {{ $index === 0 ? 'active' : '' }}"
-                          data-bs-toggle="tab"
-                          data-bs-target="#tab-{{ $item->id }}"
-                        >
-                          {{ $item->title ?? $categories[$item->item_id]->name ?? '' }}
-                        </button>
-                      </li>
-
-                    @endforeach
-
-                  </ul>
-                </div>
-
-                {{-- Tab Content --}}
-                <div class="tab-content">
-
-                  @foreach($section->items as $index => $item)
-
-                    <div
-                      class="tab-pane fade {{ $index === 0 ? 'show active' : '' }}"
-                      id="tab-{{ $item->id }}"
-                    >
-
-                      <div class="deals-wrapper">
-                        <div class="deals-scroll">
-
-                          @foreach($item->products as $product)
-
+      {{-- 1. Determine Layout Mode --}}
+      @php
+          $isScroll = $section->layout === 'scroll';
+          $isTabbed = $section->type === 'tabbed_category_products';
+          
+          $gridMap = [
+              'grid_4' => 'col-6 col-md-4 col-lg-3',
+              'grid_6' => 'col-6 col-md-4 col-lg-2',
+              'grid_8' => 'col-6 col-md-3 col-lg-1-5', // Custom 8-col logic
+          ];
+          $gridClass = $gridMap[$section->layout] ?? 'col-6 col-md-4 col-lg-3';
+      @endphp
+
+      {{-- 2. TABBED DEALS LAYOUT (Special Product Slider) --}}
+      @if($isTabbed)
+          <section class="deals-section mt-5">
+    <div class="container-xxl">
+        <h2 class="fw-bold">{{ $section->title }}</h2>
+        <p class="deals-subtitle">{{ $section->subtitle }}</p>
+
+        <ul class="nav deals-tabs" role="tablist">
+            @foreach($section->items as $index => $item)
+                <li class="nav-item">
+                    <button class="nav-link {{ $index === 0 ? 'active' : '' }}" 
+                            data-bs-toggle="tab" 
+                            data-bs-target="#tab-{{ $section->id }}-{{ $index }}">
+                        {!! $item->title !!}
+                    </button>
+                </li>
+            @endforeach
+        </ul>
+    </div>
+
+    <div class="tab-content">
+        @foreach($section->items as $index => $item)
+            <div class="tab-pane fade {{ $index === 0 ? 'show active' : '' }}" id="tab-{{ $section->id }}-{{ $index }}">
+              <div class="container-xxl">
+
+                <div class="deals-wrapper">
+                    <button class="deals-arrow left">❮</button>
+                    
+                    <div class="deals-scroll">
+                        {{-- This is where the manually selected 'is_featured' products from the controller appear --}}
+                        @foreach($item->products as $p)
                             <div class="product-card">
-                              <div class="product-image">
-                                <img src="{{ asset('storage/'.$product->main_image) }}">
-                              </div>
-
-                              <div class="product-info">
-                                <h6>{{ $product->brand->name ?? '' }}</h6>
-                                <p>{{ $product->name }}</p>
-                                <span class="price">₹{{ $product->base_price }}</span>
-                              </div>
+                                <div class="product-image">
+                                    @if($p->sale_price && $p->sale_price < $p->base_price)
+                                        <span class="product-badge">{{ round((($p->base_price - $p->sale_price) / $p->base_price) * 100) }}% OFF</span>
+                                    @endif
+                                    <img src="{{ asset('storage/'.$p->main_image) }}" alt="{{ $p->name }}">
+                                    <span class="product-rating">⭐ 5.0</span>
+                                </div>
+                                <div class="product-info">
+                                    <h6 class="product-brand">{{ $p->brand->name ?? '' }}</h6>
+                                    <p class="product-title text-truncate">{{ $p->name }}</p>
+                                    <div class="product-price">
+                                        <div>
+                                            <span class="price">₹{{ $p->sale_price ?? $p->base_price }}</span>
+                                            @if($p->sale_price) <span class="old-price">₹{{ $p->base_price }}</span> @endif
+                                        </div>
+                                        <div class="product-action"><button class="add-btn">Add</button></div>
+                                    </div>
+                                </div>
                             </div>
-
-                          @endforeach
-
-                        </div>
-                      </div>
-
+                        @endforeach
                     </div>
 
-                  @endforeach
-
+                    <button class="deals-arrow right">❯</button>
                 </div>
+              </div>
 
-              </section>
+            </div>
+        @endforeach
+    </div>
+</section>
 
-            @endif
+      {{-- 3. STANDARD GRID OR SCROLL (Brands & Categories) --}}
+      @else
+          <section class="mt-5 {{ $section->type === 'category' ? 'categories' : 'brand-section' }}">
+              <div class="container-xxl">
+                  <h2 class="fw-bold">{{ $section->title }}</h2>
+                  <p class="{{ $section->type === 'category' ? 'category-subtitle' : 'section-subtitle' }}">
+                      {{ $section->subtitle }}
+                  </p>
 
-        </div>
-    </section>
+                  <div class="{{ $isScroll ? 'category-scroll' : 'row g-4' }}">
+                      @foreach($section->items as $item)
+                          @php
+                              $id = (int) $item->item_id;
+                              $data = ($section->type === 'brand') ? ($brands[$id] ?? null) : ($categories[$id] ?? null);
+                              $title = $item->title ?? ($data->name ?? 'Item');
+                          @endphp
 
+                          {{-- Use Grid Column wrapper only if not scrolling --}}
+                          @if(!$isScroll) <div class="{{ $gridClass }}"> @endif
+
+                              <a href="{{ $item->link ?? '#' }}" class="{{ $section->type === 'category' ? 'category-item' : 'brand-card' }} text-decoration-none">
+                                  <div class="{{ $section->type === 'category' ? 'category-card shadow' : '' }}">
+                                      <img src="{{ asset('storage/' . $item->image) }}" 
+                                          class="{{ $section->type === 'brand' ? 'w-100' : '' }}" 
+                                          alt="{{ $title }}" />
+                                  </div>
+                                  <div class="{{ $section->type === 'category' ? 'category-title' : 'text-center brand-card-text' }}">
+                                      {{ $title }}
+                                  </div>
+                              </a>
+
+                          @if(!$isScroll) </div> @endif
+                      @endforeach
+                  </div>
+              </div>
+          </section>
+      @endif
   @endforeach
+
 
     <!-- categories -->
     <section class="categories">
@@ -537,7 +419,7 @@
     </section>
 
     <!-- Product Slider -->
-    <section class="deals-section">
+    {{-- <section class="deals-section">
       <div class="container-xxl">
         <h2>Deals to Buy for!</h2>
         <p class="deals-subtitle">These should’ve been in your cart already</p>
@@ -745,6 +627,97 @@
                   </div>
                 </div>
               </div>
+              
+              
+              <!-- Example product card -->
+              <div class="product-card">
+                <div class="product-image">
+                  <!-- <span class="product-badge">10% OFF</span> -->
+
+                  <img src="{{ asset('/images/p5.webp')}}" alt="Product" />
+
+                  <span class="product-rating">⭐ 5.0</span>
+                </div>
+
+                <div class="product-info">
+                  <h6 class="product-brand">Heads Up For Tails</h6>
+
+                  <p class="product-title">
+                    HUFT Lady Buggs Plush With Catnip Toy
+                  </p>
+
+                  <div class="product-price">
+                    <span class="price">₹174.30</span>
+
+                    <span class="old-price">₹249</span>
+
+                    <span class="discount">(30%)</span>
+                    <div class="product-action">
+                      <button class="add-btn">Add</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Example product card -->
+              <div class="product-card">
+                <div class="product-image">
+                  <!-- <span class="product-badge">10% OFF</span> -->
+
+                  <img src="{{ asset('/images/p5.webp')}}" alt="Product" />
+
+                  <span class="product-rating">⭐ 5.0</span>
+                </div>
+
+                <div class="product-info">
+                  <h6 class="product-brand">Heads Up For Tails</h6>
+
+                  <p class="product-title">
+                    HUFT Lady Buggs Plush With Catnip Toy
+                  </p>
+
+                  <div class="product-price">
+                    <span class="price">₹174.30</span>
+
+                    <span class="old-price">₹249</span>
+
+                    <span class="discount">(30%)</span>
+                    <div class="product-action">
+                      <button class="add-btn">Add</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Example product card -->
+              <div class="product-card">
+                <div class="product-image">
+                  <!-- <span class="product-badge">10% OFF</span> -->
+
+                  <img src="{{ asset('/images/p5.webp')}}" alt="Product" />
+
+                  <span class="product-rating">⭐ 5.0</span>
+                </div>
+
+                <div class="product-info">
+                  <h6 class="product-brand">Heads Up For Tails</h6>
+
+                  <p class="product-title">
+                    HUFT Lady Buggs Plush With Catnip Toy
+                  </p>
+
+                  <div class="product-price">
+                    <span class="price">₹174.30</span>
+
+                    <span class="old-price">₹249</span>
+
+                    <span class="discount">(30%)</span>
+                    <div class="product-action">
+                      <button class="add-btn">Add</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
             </div>
 
             <button class="deals-arrow right">❯</button>
@@ -769,7 +742,7 @@
         ></div>
       </div>
       
-    </section>
+    </section> --}}
 
     <!-- Single Category Banner -->
     <section class="promo-section">

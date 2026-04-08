@@ -129,15 +129,27 @@
         </div>
       </div>
 
-      <div class="popular-search">
-        <div class="container-xxl">
-          <strong>POPULAR SEARCHES:</strong>
+      @if(!empty($settings['popular_searches']))
+        <div class="popular-search">
+          <div class="container-xxl">
+            <strong>POPULAR SEARCHES:</strong>
+              @foreach(explode(',', $settings['popular_searches']) as $keyword)
+                  @php $trimmed = trim($keyword); @endphp
+                  
+                  @if($trimmed)
+                      {{-- <a href="{{ url('/search?q='.$trimmed) }}" class="popular-link"> --}}
+                          {{ $trimmed }}
+                      {{-- </a> --}}
 
-          Collars, Leashes & Harnesses | Dog Food | Treats | Cat Food | Dog
-          Grooming | Dog Beds | Dog Bowls | Dog Toys | Cat Toys | Cat Litter |
-          Puppy Food | Dog Brushes & Combs | Interactive Toys
+                      {{-- Add the pipe separator only if it's NOT the last item --}}
+                      @if (!$loop->last)
+                          <span>|</span>
+                      @endif
+                  @endif
+              @endforeach
+          </div>
         </div>
-      </div>
+      @endif
 
       <div class="footer-bottom">
         <div
@@ -155,23 +167,7 @@
 
       <div class="footer-seo">
         <div class="container-xxl">
-          <p>
-            We understand that sometimes you need to see, feel and experience
-            products in person before making a purchase. If you are searching
-            for "pet store near me" or a "pet shop near me", your search ends
-            here...
-          </p>
-
-          <p>
-            Our journey began with love for our pets and a desire to make their
-            lives better. It's the wagging tails and content purrs that inspired
-            us to create products and services that cater to every pet's needs.
-          </p>
-
-          <p>
-            Quality assurance: Our products undergo comprehensive tests to
-            ensure they are nutritious and meet the highest quality standards.
-          </p>
+          {!! $settings['footer_about'] ?? '' !!}
         </div>
       </div>
     </footer>

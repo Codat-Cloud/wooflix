@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Products\Tables;
 
 use App\Filament\Resources\Products\ProductResource;
+use App\Models\Product;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -33,6 +34,8 @@ class ProductsTable
                     ->visibility('public')
                     ->circular(),
                 TextColumn::make('name')
+                    ->limit(30)
+                    ->tooltip(fn (Product $record): string => $record->name)
                     ->searchable(),
                 IconColumn::make('is_active')
                     ->boolean(),

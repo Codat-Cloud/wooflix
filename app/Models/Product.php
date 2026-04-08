@@ -21,6 +21,7 @@ class Product extends Model
         'sale_price',
         'meta_title',
         'meta_description',
+        'custom_tracking_script',
     ];
 
     protected $casts = [
