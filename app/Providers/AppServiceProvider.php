@@ -6,6 +6,7 @@ use App\Models\Blog;
 use App\Models\SiteSetting;
 use App\Observers\BlogObserver;
 use Illuminate\Support\ServiceProvider;
+use Livewire\Volt\Volt;
 
 class AppServiceProvider extends ServiceProvider
 {

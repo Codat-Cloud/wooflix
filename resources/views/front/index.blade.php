@@ -777,70 +777,41 @@
 
     <section class="blog-section">
       <div class="container-xxl">
-        <h2 class="section-title">Explore the World of HUFT</h2>
+        <h2 class="section-title">Explore the World of Wooflix</h2>
 
         <p class="section-subtitle">
           Bringing joy to pets and families, one home at a time!
         </p>
 
         <div class="row g-4">
-          <div class="col-6 col-md-3">
-            <a href="/blog/post-1" class="blog-card">
-              <div class="blog-image">
-                <img
-                  src="{{ asset('/images/b1.webp')}}"
-                  class="img-fluid"
-                  alt="HUFTians react"
-                />
-              </div>
+            @forelse($latestBlogs as $post)
+                <div class="col-6 col-md-3">
+                    <a href="{{ url('blog/' . $post->slug) }}" class="blog-card">
+                        <div class="blog-image">
+                            <picture>
+                                {{-- Try loading WebP first --}}
+                                @if($post->webp_thumb)
+                                    <source srcset="{{ asset('storage/' . $post->webp_thumb) }}" type="image/webp">
+                                @endif
 
-              <p class="blog-title">HUFTians react to your pets</p>
-            </a>
-          </div>
+                                {{-- Fallback to original JPG/PNG --}}
+                                <img 
+                                    src="{{ asset('storage/' . $post->featured_image) }}" 
+                                    class="img-fluid" 
+                                    alt="{{ $post->image_alt ?? $post->title }}"
+                                    loading="lazy"
+                                />
+                            </picture>
+                        </div>
 
-          <div class="col-6 col-md-3">
-            <a href="/blog/post-2" class="blog-card">
-              <div class="blog-image">
-                <img
-                  src="{{ asset('/images/b2.webp')}}"
-                  class="img-fluid"
-                  alt="Shopping approved"
-                />
-              </div>
-
-              <p class="blog-title">
-                Every shopping has to be approved by them!
-              </p>
-            </a>
-          </div>
-
-          <div class="col-6 col-md-3">
-            <a href="/blog/post-3" class="blog-card">
-              <div class="blog-image">
-                <img
-                  src="{{ asset('/images/b3.webp')}}"
-                  class="img-fluid"
-                  alt="Dog feelings"
-                />
-              </div>
-
-              <p class="blog-title">Things dogs wish we knew</p>
-            </a>
-          </div>
-
-          <div class="col-6 col-md-3">
-            <a href="/blog/post-4" class="blog-card">
-              <div class="blog-image">
-                <img
-                  src="{{ asset('/images/b4.webp')}}"
-                  class="img-fluid"
-                  alt="Groomers"
-                />
-              </div>
-
-              <p class="blog-title">Our groomers go the extra mile</p>
-            </a>
-          </div>
+                        <p class="blog-title">{{ $post->title }}</p>
+                    </a>
+                </div>
+            @empty
+                <div class="col-12 text-center py-5">
+                    <p class="text-muted">No blog posts available yet. Check back soon!</p>
+                </div>
+            @endforelse
         </div>
       </div>
     </section>

@@ -30,6 +30,8 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    @livewireStyles
+
   </head>
 
     <body>
@@ -43,8 +45,10 @@
         </main>
 
         {{-- FOOTER --}}
-         @include('front.partials.footer')
+        @include('front.partials.footer')
 
-         @stack('scripts')
+        @livewireScripts
+
+        @stack('scripts')
     </body>
 </html>

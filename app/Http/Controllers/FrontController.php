@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Banner;
+use App\Models\Blog;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\HomeSection;
@@ -69,12 +70,44 @@ class FrontController extends Controller
             }
         }
 
+        // Fetch 4 latest published blogs
+        $latestBlogs = Blog::where('is_published', true)
+            ->orderBy('published_at', 'desc')
+            ->take(4)
+            ->get();
+
         return view('front.index', compact(
             'banners',
             'offers',
             'sections',
             'brands',
-            'categories'
+            'categories',
+            'latestBlogs'
         ));
+    }
+
+    public function shop(Request $request)
+    {
+        // 1. Start Query
+        $query = Product::query()->where('is_active', true);
+
+        // 2. Apply Filters (We will implement the logic for these later)
+        if ($request->has('brand')) {
+            $query->whereIn('brand_id', $request->brand);
+        }
+
+        // 3. Fetch Data
+        $products = $query->latest()->paginate(1);
+
+        // 4. Get Dynamic Filter Data (for the sidebar)
+        $brands = Brand::withCount('products')->get();
+        $categories = Category::withCount('products')->get();
+
+        return view('front.shop', compact('products', 'brands', 'categories'));
+    }
+
+    public function singleProduct($productSlug)
+    {
+        return view('front.singleProduct');
     }
 }
