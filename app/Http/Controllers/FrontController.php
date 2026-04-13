@@ -6,6 +6,7 @@ use App\Models\Banner;
 use App\Models\Blog;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Coupon;
 use App\Models\HomeSection;
 use App\Models\Offer;
 use App\Models\Product;
@@ -35,7 +36,6 @@ class FrontController extends Controller
         foreach ($sections as $section) {
             foreach ($section->items as $item) {
                 if (!$item->item_id) continue;
-
                 if ($section->type === 'brand') {
                     $brandIds[] = $item->item_id;
                 } elseif ($section->type === 'category') {
@@ -106,8 +106,26 @@ class FrontController extends Controller
         return view('front.shop', compact('products', 'brands', 'categories'));
     }
 
-    public function singleProduct($productSlug)
+    public function singleProduct($slug)
     {
-        return view('front.singleProduct');
+        $product = Product::where('slug', $slug)
+            ->where('is_active', true)
+            ->with(['brand', 'category', 'images', 'variants', 'reviews'])
+            ->firstOrFail();
+
+        // Fetch related products from the same category
+        $relatedProducts = Product::where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->where('is_active', true)
+            ->take(10)
+            ->get();
+
+            // Fetch coupons marked as visible and currently valid
+        $coupons = Coupon::available()
+            ->where('is_visible', true)
+            ->orderBy('is_best', 'desc') // Show 'BEST' coupons first
+            ->get();
+
+        return view('front.singleProduct', compact('product', 'relatedProducts', 'coupons'));
     }
 }

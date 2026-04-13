@@ -2162,6 +2162,54 @@ body {
   color: #ff6a00;
 }
 
+/* Star Rating Styling */
+.star-rating i {
+    cursor: pointer;
+    transition: color 0.2s, transform 0.2s;
+}
+
+.star-rating i:hover {
+    transform: scale(1.2);
+}
+
+/* Square Image Previews */
+.review-image-preview {
+    width: 80px;
+    height: 80px;
+    object-fit: cover; /* Keeps aspect ratio while filling the square */
+    border: 1px solid #dee2e6;
+}
+
+/* Overlay Close Button */
+.remove-img-btn {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    font-size: 12px;
+    line-height: 1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Custom Wooflix Branding */
+.btn-orange {
+    background-color: #ff6b00;
+    color: #fff;
+    font-weight: 600;
+    border: none;
+}
+
+.btn-orange:hover {
+    background-color: #e66000;
+    color: #fff;
+}
+
 /* CART ITEM */
 
 .cart-item {

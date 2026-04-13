@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <link rel="canonical" href="{{ url()->current() }}">
+
     @php
         // Logic: Use Page SEO if available, otherwise fallback to Global Settings
         $seoTitle = $page->seo_title ?? $page->title ?? $settings['site_title'] ?? $settings['site_name'] ?? 'Wooflix';
@@ -48,6 +50,14 @@
         @include('front.partials.footer')
 
         @livewireScripts
+
+        <script>
+            document.addEventListener('livewire:init', () => {
+                Livewire.on('page-title-updated', (event) => {
+                    document.title = event.title;
+                });
+            });
+        </script>
 
         @stack('scripts')
     </body>

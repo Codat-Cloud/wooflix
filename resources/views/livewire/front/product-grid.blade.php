@@ -3,7 +3,7 @@
         <div class="container-xxl">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Shop</li>
+                <li class="breadcrumb-item active" aria-current="page">Collections</li>
             </ol>
         </div>
     </nav>
@@ -22,7 +22,7 @@
                     <button wire:click="$set('sort', 'price_low')" class="sort-btn {{ $sort == 'price_low' ? 'active' : '' }}">Price: Low to High</button>
                     <button wire:click="$set('sort', 'price_high')" class="sort-btn {{ $sort == 'price_high' ? 'active' : '' }}">Price: High to Low</button>
                     <button wire:click="$set('sort', 'newest')" class="sort-btn {{ $sort == 'newest' ? 'active' : '' }}">Newest</button>
-                    <button wire:click="$set('sort', 'rating')" class="sort-btn {{ $sort == 'rating' ? 'active' : '' }}">Rating</button>
+                    {{-- <button wire:click="$set('sort', 'rating')" class="sort-btn {{ $sort == 'rating' ? 'active' : '' }}">Rating</button> --}}
                 </div>
             </div>
         </div>
@@ -38,13 +38,14 @@
                     </div>
 
                     @if(count($selectedBrands) > 0)
-                        <div class="active-filters">
-                            @foreach($selectedBrands as $slug)
-                                <span class="filter-chip" wire:click="$set('selectedBrands', {{ json_encode(array_diff($selectedBrands, [$slug])) }})"> 
-                                    {{ Str::headline($slug) }} ✕ 
-                                </span>
-                            @endforeach
-                        </div>
+                    <div class="active-filters">
+                        @foreach($selectedBrands as $slug)
+                            <span class="filter-chip" wire:click="$set('selectedBrands', {{ json_encode(array_diff($selectedBrands, [$slug])) }})"> 
+                                {{ Str::headline($slug) }} ✕ 
+                            </span>
+                        @endforeach
+                        
+                    </div>
                     @endif
 
                     <div class="filter-group">
@@ -85,15 +86,19 @@
                                 @if($product->discount_percentage)
                                     <span class="product-badge">{{ $product->discount_percentage }}% OFF</span>
                                 @endif
-                                <img src="{{ asset('storage/' . $product->main_image) }}" alt="{{ $product->name }}" />
+                                <a href="{{ route('front.singleProduct', $product->slug) }}">
+                                    <img src="{{ asset('storage/' . $product->main_image) }}" alt="{{ $product->name }}" />
+                                </a>
                                 @if($product->rating)
                                     <span class="product-rating">⭐ {{ $product->rating }}</span>
                                 @endif
                             </div>
 
                             <div class="product-info">
+                                <a href="{{ route('front.singleProduct', $product->slug) }}" class="text-decoration-none">
                                 <h6 class="product-brand">{{ $product->brand->name ?? 'Wooflix' }}</h6>
                                 <p class="product-title">{{ $product->name }}</p>
+                                </a>
 
                                 <div class="product-price">
                                     <div>

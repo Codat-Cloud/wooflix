@@ -82,4 +82,38 @@ class Product extends Model
     {
         return $this->hasMany(CartItem::class);
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class)->where('is_approved', true);
+    }
+
+    // Logic for the Summary Bars (5 stars, 4 stars, etc.)
+    public function getRatingStatsAttribute()
+    {
+        $total = $this->reviews()->count();
+        
+        // Returns count for each star level [5 => 20, 4 => 3, etc.]
+        $counts = $this->reviews()
+            ->selectRaw('rating, count(*) as count')
+            ->groupBy('rating')
+            ->pluck('count', 'rating')
+            ->toArray();
+
+        $stats = [];
+        for ($i = 5; $i >= 1; $i--) {
+            $count = $counts[$i] ?? 0;
+            $percentage = $total > 0 ? ($count / $total) * 100 : 0;
+            $stats[$i] = [
+                'count' => $count,
+                'percentage' => $percentage
+            ];
+        }
+
+        return [
+            'total' => $total,
+            'average' => round($this->reviews()->avg('rating'), 1) ?: 0,
+            'details' => $stats
+        ];
+    }
 }

@@ -200,42 +200,6 @@ document.querySelectorAll(".coupon-btn").forEach((btn) => {
     });
 });
 
-const reviewImages = [
-    "https://images.unsplash.com/photo-1601758124510-52d02ddb7cbd",
-    "https://images.unsplash.com/photo-1598137265627-2d2d37a35d58",
-    "https://images.unsplash.com/photo-1601758228041-f3b2795255f1",
-];
-
-let reviewImageIndex = 0;
-
-function openReviewGallery(index) {
-    reviewImageIndex = index;
-
-    document.getElementById("reviewGalleryImage").src = reviewImages[index];
-
-    new bootstrap.Modal(document.getElementById("reviewGalleryModal")).show();
-}
-
-function changeReviewImage(step) {
-    reviewImageIndex += step;
-
-    if (reviewImageIndex < 0) reviewImageIndex = reviewImages.length - 1;
-    if (reviewImageIndex >= reviewImages.length) reviewImageIndex = 0;
-
-    document.getElementById("reviewGalleryImage").src =
-        reviewImages[reviewImageIndex];
-}
-
-/* limit images */
-
-document.getElementById("reviewImages").addEventListener("change", function () {
-    if (this.files.length > 5) {
-        alert("You can upload maximum 5 images");
-
-        this.value = "";
-    }
-});
-
 /* SAVE TAB STATE */
 
 document.querySelectorAll(".review-tabs .nav-link").forEach((tab) => {
