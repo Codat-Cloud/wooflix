@@ -116,4 +116,11 @@ class Product extends Model
             'details' => $stats
         ];
     }
+
+    public function questions()
+    {
+        return $this->hasMany(ProductQuestion::class)
+                    ->where('is_visible', true)
+                    ->latest();
+    }
 }

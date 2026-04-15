@@ -94,49 +94,90 @@
                   {{ $product->brand->name ?? 'Wooflix' }}
               </h2>
 
+@include('livewire.front.product-action', ['product' => $product])
+
               <!-- Price -->
-              <div class="product-price border-bottom">
+              {{-- <div class="product-price border-bottom">
                 <div>
-                  <span class="price">₹174.30</span>
+                    <span class="price">₹{{ number_format($product->sale_price, 2) }}</span>
 
-                  <span class="old-price">MRP: ₹249</span>
+                    @if($product->base_price > $product->sale_price)
+                        <span class="old-price">MRP: ₹{{ number_format($product->base_price, 2) }}</span>
 
-                  <span class="discount">(30% OFF)</span>
+                        @php 
+                            $discount = (($product->base_price - $product->sale_price) / $product->base_price) * 100;
+                        @endphp
+                        <span class="discount">({{ round($discount) }}% OFF)</span>
+                    @endif
                 </div>
                 <div>
-                  <button class="wishlist-btn" id="wishlistBtn">♡</button>
+                    <button class="wishlist-btn" id="wishlistBtn">♡</button>
                 </div>
-              </div>
+            </div> --}}
 
               <!-- VARIATIONS -->
 
-              <div class="product-variants py-2">
-                <h6 class="fw-bold">Select</h6>
+            {{-- <div x-data="{ 
+                selectedPrice: {{ $product->sale_price }}, 
+                selectedMRP: {{ $product->base_price }},
+                selectedId: {{ $product->variants->first()->id ?? 'null' }} 
+            }">
+                
+                <div class="product-price border-bottom">
+                    <div>
+                        <span class="price">₹<span x-text="selectedPrice.toFixed(2)"></span></span>
 
-                <div class="variant-options">
-                  <div class="variant-item">
-                    <button class="variant-btn active">
-                      Chicken
-                      <span class="variant-badge">10% OFF</span>
-                    </button>
-                  </div>
+                        <template x-if="selectedMRP > selectedPrice">
+                            <span class="old-price">MRP: ₹<span x-text="selectedMRP.toFixed(2)"></span></span>
+                        </template>
 
-                  <div class="variant-item">
-                    <button class="variant-btn">Salmon</button>
-                  </div>
-
-                  <div class="variant-item">
-                    <button class="variant-btn">
-                      Tuna
-                      <span class="variant-badge">BEST</span>
-                    </button>
-                  </div>
+                        <template x-if="selectedMRP > selectedPrice">
+                            <span class="discount" x-text="'(' + Math.round(((selectedMRP - selectedPrice) / selectedMRP) * 100) + '% OFF)'"></span>
+                        </template>
+                    </div>
+                    <div>
+                        <button class="wishlist-btn" id="wishlistBtn">♡</button>
+                    </div>
                 </div>
-              </div>
 
-              <!-- ADD TO CART -->
+                @if($product->variants->count() > 0)
+                    <div class="product-variants py-2">
+                        <h6 class="fw-bold">Select</h6>
 
-              <button class="btn btn-orange add-cart-btn">Add To Cart</button>
+                        <div class="variant-options">
+                            @foreach($product->variants as $variant)
+                                @php 
+                                    $vDiscount = ($variant->price > $variant->sale_price) 
+                                        ? round((($variant->price - $variant->sale_price) / $variant->price) * 100) 
+                                        : 0;
+                                @endphp
+                                <div class="variant-item">
+                                    <button 
+                                        type="button"
+                                        class="variant-btn" 
+                                        :class="selectedId == {{ $variant->id }} ? 'active' : ''"
+                                        @click="
+                                            selectedPrice = {{ $variant->sale_price }}; 
+                                            selectedMRP = {{ $variant->price }}; 
+                                            selectedId = {{ $variant->id }};
+                                        "
+                                    >
+                                        {{ $variant->name }}
+                                        
+                                        @if($vDiscount > 0)
+                                            <span class="variant-badge">{{ $vDiscount }}% OFF</span>
+                                        @endif
+                                    </button>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
+                <button class="btn btn-orange add-cart-btn w-100 mt-3">
+                    Add To Cart
+                </button>
+            </div> --}}
 
               <!-- OFFERS -->
               <div class="product-offers">
@@ -356,33 +397,47 @@
           </div>
 
           <div class="row g-3 mt-3">
-            <div class="col-md-6">
-              <div class="review-card">
-                <div class="review-header">
-                  <div>
-                    <strong>Rahul S.</strong>
+              @forelse($product->reviews as $review)
+                  <div class="col-md-6">
+                      <div class="review-card">
+                          <div class="review-header">
+                              <div>
+                                  <strong>{{ $review->customer_name }}</strong>
 
-                    <span class="verified-badge">✔ Verified Buyer</span>
+                                  @if($review->is_verified_buyer)
+                                      <span class="verified-badge">✔ Verified Buyer</span>
+                                  @endif
+                              </div>
+
+                              <span class="review-rating text-warning">
+                                  {{-- Output solid stars based on rating --}}
+                                  @for($i = 1; $i <= 5; $i++)
+                                      {{ $i <= $review->rating ? '★' : '☆' }}
+                                  @endfor
+                              </span>
+                          </div>
+
+                          <p>{{ $review->comment }}</p>
+
+                          {{-- If the review has images, you can show them here --}}
+                          @if($review->images->count() > 0)
+                              <div class="review-images-mini mt-2 d-flex gap-2">
+                                  @foreach($review->images as $rImg)
+                                      <img src="{{ asset('storage/' . $rImg->image_path) }}" 
+                                          alt="Review Photo" 
+                                          class="rounded" 
+                                          lazyload="lazy"
+                                          style="width: 50px; height: 50px; object-fit: cover;">
+                                  @endforeach
+                              </div>
+                          @endif
+                      </div>
                   </div>
-
-                  <span class="review-rating">★★★★★</span>
-                </div>
-
-                <p>Very useful product for removing pet hair from sofa.</p>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="review-card">
-                <div class="review-header">
-                  <strong>Anita M.</strong>
-
-                  <span class="review-rating">★★★★☆</span>
-                </div>
-
-                <p>Works well but wish it was slightly bigger.</p>
-              </div>
-            </div>
+              @empty
+                  <div class="col-12 text-center py-4">
+                      <p class="text-muted">No reviews yet. Be the first to share your thoughts!</p>
+                  </div>
+              @endforelse
           </div>
 
           
@@ -399,7 +454,53 @@
         <!-- ASK QUESTION -->
 
         <div class="tab-pane fade" id="questionTab">
-          <form class="review-form">
+
+          <div class="row g-4 my-4">
+            <div class="col-12">
+                <h5 class="fw-bold mb-4">Questions & Answers ({{ $product->questions->count() }})</h5>
+            </div>
+
+            @forelse($product->questions as $q)
+                <div class="col-md-6">
+                    <div class="review-card h-100 shadow-sm border-0 p-3 bg-white">
+                        <div class="d-flex gap-2 mb-3">
+                            <span class="badge bg-dark rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">Q</span>
+                            <div>
+                                <strong class="d-block text-dark">{{ $q->question }}</strong>
+                                <small class="text-muted" style="font-size: 0.75rem;">
+                                    By {{ $q->name }} • {{ $q->created_at->format('d M, Y') }}
+                                </small>
+                            </div>
+                        </div>
+
+                        @if($q->answer)
+                        <div class="admin-answer-box p-3 rounded" style="background-color: #fff9f0; border-left: 3px solid #ff9800;">
+                            <div class="d-flex gap-2">
+                                <span class="badge bg-orange rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; color: white;">A</span>
+                                <div>
+                                    <p class="mb-0 text-dark small">{{ $q->answer }}</p>
+                                    <small class="text-muted fw-bold" style="font-size: 0.7rem; text-transform: uppercase;">
+                                        — Wooflix Expert Team • {{ $q->updated_at->format('d M, Y') }}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+            @empty
+                <div class="col-12">
+                    <div class="text-center p-5 border rounded bg-light">
+                        <i class="bi bi-chat-dots fs-1 text-muted"></i>
+                        <p class="mt-2 text-muted italic">Have a question about this product? Ask us below!</p>
+                    </div>
+                </div>
+            @endforelse
+        </div>
+
+
+          <livewire:front.ask-question :productId="$product->id" />
+          {{-- <form class="review-form">
             <div class="row g-3">
               <div class="col-md-6">
                 <input
@@ -425,7 +526,7 @@
                 <button class="btn btn-orange">Submit Question</button>
               </div>
             </div>
-          </form>
+          </form> --}}
         </div>
       </div>
     </section>

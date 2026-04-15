@@ -27,6 +27,9 @@ return new class extends Migration
             $table->boolean('is_approved')->default(false); // Moderation
             $table->boolean('is_verified_buyer')->default(false); // If they actually bought it
 
+            $table->integer('likes')->default(0);
+            $table->integer('dislikes')->default(0);
+
             $table->timestamps();
         });
 

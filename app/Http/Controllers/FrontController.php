@@ -128,4 +128,5 @@ class FrontController extends Controller
 
         return view('front.singleProduct', compact('product', 'relatedProducts', 'coupons'));
     }
+
 }

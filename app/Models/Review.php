@@ -16,7 +16,9 @@ class Review extends Model
         'rating',
         'comment',
         'is_approved',
-        'is_verified_buyer'
+        'is_verified_buyer',
+        'likes', 
+        'dislikes'
     ];
 
     // Get the images for this specific review
