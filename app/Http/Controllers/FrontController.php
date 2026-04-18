@@ -110,7 +110,7 @@ class FrontController extends Controller
     {
         $product = Product::where('slug', $slug)
             ->where('is_active', true)
-            ->with(['brand', 'category', 'images', 'variants', 'reviews'])
+            ->with(['brand', 'category', 'images', 'variants', 'variants.optionValues', 'reviews'])
             ->firstOrFail();
 
         // Fetch related products from the same category

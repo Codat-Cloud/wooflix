@@ -4,7 +4,7 @@
         <div class="row text-center g-3">
           <div class="col-12 col-lg">
             <div class="usp-item">
-              <img src="assets/icons/shipping.svg" alt="Free Shipping" />
+              {{-- <img src="assets/icons/shipping.svg" alt="Free Shipping" /> --}}
 
               <h6>FREE SHIPPING</h6>
 
@@ -14,7 +14,7 @@
 
           <div class="col-12 col-lg">
             <div class="usp-item">
-              <img src="assets/icons/returns.svg" alt="Free Returns" />
+              {{-- <img src="assets/icons/returns.svg" alt="Free Returns" /> --}}
 
               <h6>FREE RETURNS</h6>
 
@@ -24,7 +24,7 @@
 
           <div class="col-12 col-lg">
             <div class="usp-item">
-              <img src="assets/icons/payment.svg" alt="Secure Payment" />
+              {{-- <img src="assets/icons/payment.svg" alt="Secure Payment" /> --}}
 
               <h6>SECURE PAYMENT</h6>
 
@@ -34,7 +34,7 @@
 
           <div class="col-12 col-lg">
             <div class="usp-item">
-              <img src="assets/icons/support.svg" alt="Best Support" />
+              {{-- <img src="assets/icons/support.svg" alt="Best Support" /> --}}
 
               <h6>BEST SUPPORT</h6>
 
@@ -44,7 +44,7 @@
 
           <div class="col-12 col-lg">
             <div class="usp-item">
-              <img src="assets/icons/delivery.svg" alt="Fast Delivery" />
+              {{-- <img src="assets/icons/delivery.svg" alt="Fast Delivery" /> --}}
 
               <h6>FAST DELIVERY</h6>
 
@@ -105,9 +105,9 @@
             <h6>DOWNLOAD WOOFLIX APP</h6>
 
             <div class="app-buttons">
-              <img src="assets/images/google-play.png" />
+              {{-- <img src="assets/images/google-play.png" /> --}}
 
-              <img src="assets/images/app-store.png" />
+              {{-- <img src="assets/images/app-store.png" /> --}}
             </div>
 
             <h6 class="subscribe-title">

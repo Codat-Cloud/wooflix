@@ -60,14 +60,15 @@
               </div>
 
               <span class="me-2">♡ Wishlist</span>
-              <span
+              <livewire:front.cart />
+              {{-- <span
                 class="cart-btn position-relative me-2"
                 data-bs-toggle="offcanvas"
                 data-bs-target="#cartDrawer"
               >
                 🛒 Cart
                 <span class="cart-count">12</span>
-              </span>
+              </span> --}}
 
               <button class="btn btn-orange">Login/Sign Up</button>
             </div>
@@ -99,7 +100,7 @@
           <div class="cart-item" data-price="174.30">
             <button class="remove-icon">✕</button>
 
-            <img src="{{ asset('/images/toy1.jpg')}}" class="cart-image" />
+            {{-- <img src="{{ asset('/images/toy1.jpg')}}" class="cart-image" /> --}}
 
             <div class="cart-details">
               <h6 class="cart-title">HUFT Lady Buggs Plush Toy</h6>
@@ -121,7 +122,7 @@
 
         <!-- Empty Cart State -->
         <div class="empty-cart">
-          <img src="{{ asset('/images/empty-cart.png')}}" />
+          {{-- <img src="{{ asset('/images/empty-cart.png')}}" /> --}}
 
           <h5>Your cart is empty</h5>
 
@@ -166,7 +167,7 @@
                 <div class="mega-column">
                   <h6>Dog Food</h6>
 
-                  <a href="#"
+                  {{-- <a href="#"
                     ><img src="assets/images/menu/dog-food.jpg" /> Dry Food</a
                   >
                   <a href="#"
@@ -174,13 +175,13 @@
                   >
                   <a href="#"
                     ><img src="assets/images/menu/dog-food.jpg" /> Puppy Food</a
-                  >
+                  > --}}
                 </div>
 
                 <div class="mega-column">
                   <h6>Dog Treats</h6>
 
-                  <a href="#"
+                  {{-- <a href="#"
                     ><img src="assets/images/menu/treat.jpg" /> Soft Treats</a
                   >
                   <a href="#"
@@ -188,14 +189,14 @@
                   >
                   <a href="#"
                     ><img src="assets/images/menu/treat.jpg" /> Training
-                    Treats</a
+                    Treats</a --}}
                   >
                 </div>
 
                 <div class="mega-column">
                   <h6>Dog Toys</h6>
 
-                  <a href="#"
+                  {{-- <a href="#"
                     ><img src="assets/images/menu/toy.jpg" /> Chew Toys</a
                   >
                   <a href="#"
@@ -203,7 +204,7 @@
                   >
                   <a href="#"
                     ><img src="assets/images/menu/toy.jpg" /> Interactive
-                    Toys</a
+                    Toys</a --}}
                   >
                 </div>
               </div>
@@ -218,24 +219,24 @@
                 <div class="mega-column">
                   <h6>Cat Food</h6>
 
-                  <a href="#"
+                  {{-- <a href="#"
                     ><img src="assets/images/menu/cat.jpg" /> Dry Food</a
                   >
                   <a href="#"
                     ><img src="assets/images/menu/cat.jpg" /> Wet Food</a
-                  >
+                  > --}}
                 </div>
 
                 <div class="mega-column">
                   <h6>Cat Toys</h6>
 
-                  <a href="#"
+                  {{-- <a href="#"
                     ><img src="assets/images/menu/cat-toy.jpg" /> Interactive
                     Toys</a
                   >
                   <a href="#"
                     ><img src="assets/images/menu/cat-toy.jpg" /> Catnip Toys</a
-                  >
+                  > --}}
                 </div>
               </div>
             </div>
@@ -249,7 +250,7 @@
                 <div class="mega-column">
                   <h6>Popular Brands</h6>
 
-                  <a href="#"
+                  {{-- <a href="#"
                     ><img src="assets/images/brands/royal.jpg" /> Royal Canin</a
                   >
                   <a href="#"
@@ -257,7 +258,7 @@
                   >
                   <a href="#"
                     ><img src="assets/images/brands/meowsi.jpg" /> Meowsi</a
-                  >
+                  > --}}
                 </div>
               </div>
             </div>

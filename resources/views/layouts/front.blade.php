@@ -49,15 +49,21 @@
         {{-- FOOTER --}}
         @include('front.partials.footer')
 
-        @livewireScripts
-
+        
         <script>
+            window.addEventListener('cart-updated', () => {
+                const cart = new bootstrap.Offcanvas('#cartDrawer');
+                cart.show();
+            });
+
             document.addEventListener('livewire:init', () => {
                 Livewire.on('page-title-updated', (event) => {
                     document.title = event.title;
                 });
             });
         </script>
+        
+        @livewireScripts
 
         @stack('scripts')
     </body>

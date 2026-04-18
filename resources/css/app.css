@@ -6,3 +6,7 @@
 
 /* custom styles */
 @import './style.css';
+
+[x-cloak] { 
+    display: none !important; 
+}

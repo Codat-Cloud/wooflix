@@ -15,7 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')
                 ->constrained()
-                ->cascadeOnDelete();
+                ->cascadeOnDelete()
+                ->nullable();
+
+            $table->string('session_id')->nullable(); // for guest user
 
             $table->foreignId('product_id')
                 ->nullable()
@@ -28,7 +31,9 @@ return new class extends Migration
                 ->constrained('product_variants')
                 ->nullOnDelete();
 
-            $table->unsignedInteger('quantity')->default(1);
+            $table->integer('quantity')->default(1);
+
+            $table->decimal('price', 10, 2);
 
             $table->timestamps();
 

@@ -8,9 +8,11 @@ class CartItem extends Model
 {
     protected $fillable = [
         'user_id',
+        'session_id',
         'product_id',
         'variant_id',
         'quantity',
+        'price',
     ];
 
     // ================= RELATIONS =================
@@ -37,7 +39,8 @@ class CartItem extends Model
         return $this->variant?->name ?? $this->product?->name;
     }
 
-    public function getPriceAttribute()
+    // DO NOT override price column
+    public function getDisplayPriceAttribute()
     {
         return $this->variant?->price ?? $this->product?->base_price;
     }
@@ -46,5 +49,5 @@ class CartItem extends Model
     {
         return $this->price * $this->quantity;
     }
-    
+
 }

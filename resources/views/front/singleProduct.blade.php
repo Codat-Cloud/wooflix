@@ -1,6 +1,50 @@
 @extends('layouts.front')
 
 @section('content')
+{{-- <pre>
+{{ dd($product->variants->toArray()) }}
+</pre> --}}
+@php
+$variants = $product->variants->map(function ($v) {
+    return [
+        'id' => $v->id,
+        'name' => $v->optionValues->pluck('value')->join(' / '), // 🔥 CORRECT
+        'price' => $v->price,
+        'sale_price' => $v->sale_price,
+    ];
+});
+@endphp
+
+<script>
+    window.productVariants = {!! json_encode($variants) !!};
+
+    window.productBase = {
+        price: {{ $product->base_price }},
+        sale_price: {{ $product->sale_price ?? 'null' }}
+    };
+
+</script>
+
+@php
+    // Check by user_id if logged in, otherwise session_id
+    $cartQuery = \App\Models\CartItem::query();
+    if(auth()->check()) {
+        $cartQuery->where('user_id', auth()->id());
+    } else {
+        $cartQuery->where('session_id', session()->getId());
+    }
+    
+    $cartItemsInDB = $cartQuery->get();
+    $cartVariantIds = $cartItemsInDB->pluck('variant_id')->filter()->toArray();
+    $cartProductIds = $cartItemsInDB->whereNull('variant_id')->pluck('product_id')->toArray();
+@endphp
+
+<script>
+    window.cartVariantIds = @json($cartVariantIds);
+    window.cartProductIds = @json($cartProductIds);
+</script>
+
+
     <nav aria-label="breadcrumb" class="breadcrumb-wrapper">
         <div class="container-xxl">
             <ol class="breadcrumb">
@@ -94,93 +138,140 @@
                   {{ $product->brand->name ?? 'Wooflix' }}
               </h2>
 
-@include('livewire.front.product-action', ['product' => $product])
-
               <!-- Price -->
-              {{-- <div class="product-price border-bottom">
-                <div>
-                    <span class="price">₹{{ number_format($product->sale_price, 2) }}</span>
+              <div x-data="{
+                  variants: window.productVariants || [],
+                  selected: null,
+                  inCartVariants: window.cartVariantIds || [],
+                  inCartProducts: window.cartProductIds || [],
+                  price: 0,
+                  mrp: null,
+                  adding: false,
+                  added: false,
 
-                    @if($product->base_price > $product->sale_price)
-                        <span class="old-price">MRP: ₹{{ number_format($product->base_price, 2) }}</span>
+                  init() {
+                      if (this.variants.length > 0) {
+                          this.select(this.variants[0]);
+                      } else {
+                          this.price = window.productBase.sale_price ?? window.productBase.price;
+                          this.mrp = window.productBase.sale_price ? window.productBase.price : null;
+                      }
+                  },
 
-                        @php 
-                            $discount = (($product->base_price - $product->sale_price) / $product->base_price) * 100;
-                        @endphp
-                        <span class="discount">({{ round($discount) }}% OFF)</span>
-                    @endif
-                </div>
-                <div>
-                    <button class="wishlist-btn" id="wishlistBtn">♡</button>
-                </div>
-            </div> --}}
+                  select(v) {
+                      this.selected = v;
+                      this.price = v.sale_price ?? v.price;
+                      this.mrp = v.sale_price ? v.price : null;
+                  },
 
-              <!-- VARIATIONS -->
+                  isAdded() {
+                      if (this.variants.length > 0) {
+                          return this.selected ? this.inCartVariants.includes(this.selected.id) : false;
+                      }
+                      return this.inCartProducts.includes({{ $product->id }});
+                  },
 
-            {{-- <div x-data="{ 
-                selectedPrice: {{ $product->sale_price }}, 
-                selectedMRP: {{ $product->base_price }},
-                selectedId: {{ $product->variants->first()->id ?? 'null' }} 
-            }">
-                
-                <div class="product-price border-bottom">
-                    <div>
-                        <span class="price">₹<span x-text="selectedPrice.toFixed(2)"></span></span>
+                  discount() {
+                      if (!this.mrp) return null;
+                      return Math.round(((this.mrp - this.price) / this.mrp) * 100);
+                  }
 
-                        <template x-if="selectedMRP > selectedPrice">
-                            <span class="old-price">MRP: ₹<span x-text="selectedMRP.toFixed(2)"></span></span>
-                        </template>
+              }" 
+              @cart-updated.window="inCartVariants = [...($event.detail.variant_ids || [])];
+inCartProducts = [...($event.detail.product_ids || [])]; adding = false; added = true; setTimeout(() => added = false, 2000);"
+              >
 
-                        <template x-if="selectedMRP > selectedPrice">
-                            <span class="discount" x-text="'(' + Math.round(((selectedMRP - selectedPrice) / selectedMRP) * 100) + '% OFF)'"></span>
-                        </template>
-                    </div>
-                    <div>
-                        <button class="wishlist-btn" id="wishlistBtn">♡</button>
-                    </div>
-                </div>
+              <!-- PRICE -->
+              <div class="product-price border-bottom">
+                  <div>
 
-                @if($product->variants->count() > 0)
-                    <div class="product-variants py-2">
-                        <h6 class="fw-bold">Select</h6>
+              <span class="price" x-text="'₹' + price"></span>
 
-                        <div class="variant-options">
-                            @foreach($product->variants as $variant)
-                                @php 
-                                    $vDiscount = ($variant->price > $variant->sale_price) 
-                                        ? round((($variant->price - $variant->sale_price) / $variant->price) * 100) 
-                                        : 0;
-                                @endphp
-                                <div class="variant-item">
-                                    <button 
-                                        type="button"
-                                        class="variant-btn" 
-                                        :class="selectedId == {{ $variant->id }} ? 'active' : ''"
-                                        @click="
-                                            selectedPrice = {{ $variant->sale_price }}; 
-                                            selectedMRP = {{ $variant->price }}; 
-                                            selectedId = {{ $variant->id }};
-                                        "
-                                    >
-                                        {{ $variant->name }}
-                                        
-                                        @if($vDiscount > 0)
-                                            <span class="variant-badge">{{ $vDiscount }}% OFF</span>
-                                        @endif
-                                    </button>
-                                </div>
-                            @endforeach
+                          <template x-if="mrp">
+                              <span class="old-price" x-text="'MRP: ₹' + mrp"></span>
+                          </template>
+
+                          <template x-if="mrp">
+                              <span class="discount" x-text="'(' + discount() + '% OFF)'"></span>
+                          </template>
+
+                      </div>
+
+                      <div>
+                          <button class="wishlist-btn">♡</button>
+                      </div>
+                  </div>
+
+                  <!-- VARIANTS -->
+              <div class="product-variants py-2" x-show="variants.length > 0">
+                  <h6 class="fw-bold">Select</h6>
+
+                  <div class="variant-options">
+
+                    <template x-for="v in variants" :key="v.id">
+
+                        <div class="variant-item">
+
+                            <button 
+                                class="variant-btn"
+                                :class="selected?.id === v.id ? 'active' : ''"
+                                @click="select(v)"
+                            >
+
+                                <span x-text="v.name"></span>
+
+                                <template x-if="v.sale_price">
+                                    <span class="variant-badge" 
+                                          x-text="Math.round(((v.price - v.sale_price)/v.price)*100) + '% OFF'">
+                                    </span>
+                                </template>
+
+                            </button>
+
                         </div>
-                    </div>
-                @endif
 
-                <button class="btn btn-orange add-cart-btn w-100 mt-3">
-                    Add To Cart
-                </button>
-            </div> --}}
+                    </template>
 
-              <!-- OFFERS -->
-              <div class="product-offers">
+                  </div>
+              </div>
+
+              <button 
+                class="btn add-cart-btn w-100"
+
+                :class="{
+                    'btn-orange': !adding && !isAdded(),
+                    'btn-secondary': adding,
+                    'btn-success': isAdded()
+                }"
+
+                @click="
+                    if (adding || isAdded()) return;
+
+                    if (variants.length > 0 && !selected) {
+                        alert('Select variant');
+                        return;
+                    }
+
+                    adding = true;
+
+                    window.dispatchEvent(new CustomEvent('add-to-cart', {
+                        detail: [
+                            selected ? selected.id : null,
+                            variants.length === 0 ? {{ $product->id }} : null
+                        ]
+                    }));
+                "
+            >
+                <span x-show="!adding && !isAdded()">Add To Cart</span>
+                <span x-show="adding">Adding...</span>
+                <span x-show="isAdded()">Already in Cart ✓</span>
+            </button>
+              </div>
+
+
+
+            <!-- OFFERS -->
+            <div class="product-offers">
                 <h5 class="offers-title">
                   <svg width="20" height="20" class="w-5 h-5 inline-block mb-1 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
@@ -531,58 +622,63 @@
       </div>
     </section>
 
-<div class="modal fade" id="reviewGalleryModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content bg-dark border-0">
-            <div class="modal-body p-0 position-relative text-center">
-                {{-- Navigation Arrows --}}
-                <button class="gallery-arrow left" onclick="changeReviewImage(-1)">&#10094;</button>
-                
-                <img id="reviewGalleryImage" class="img-fluid rounded" style="max-height: 80vh;">
+    <div class="modal fade" id="reviewGalleryModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content bg-dark border-0">
+                <div class="modal-body p-0 position-relative text-center">
+                    {{-- Navigation Arrows --}}
+                    <button class="gallery-arrow left" onclick="changeReviewImage(-1)">&#10094;</button>
+                    
+                    <img id="reviewGalleryImage" class="img-fluid rounded" style="max-height: 80vh;">
 
-                <button class="gallery-arrow right" onclick="changeReviewImage(1)">&#10095;</button>
+                    <button class="gallery-arrow right" onclick="changeReviewImage(1)">&#10095;</button>
 
-                {{-- Close Button --}}
-                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                    {{-- Close Button --}}
+                    <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    // 1. Dynamically build the array from PHP
-    const reviewImages = [
-        @foreach($product->reviews as $review)
-            @foreach($review->images as $image)
-                "{{ asset('storage/' . $image->image_path) }}",
-            @endforeach
-        @endforeach
-    ];
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                // 1. Dynamically build the array from PHP
+                const reviewImages = [
+                    @foreach($product->reviews as $review)
+                        @foreach($review->images as $image)
+                            "{{ asset('storage/' . $image->image_path) }}",
+                        @endforeach
+                    @endforeach
+                ];
 
-    let reviewImageIndex = 0;
+                let reviewImageIndex = 0;
 
-    function openReviewGallery(index) {
-        reviewImageIndex = index;
-        
-        // Set the initial image
-        document.getElementById("reviewGalleryImage").src = reviewImages[index];
+            });
 
-        // Show the modal (Standard Bootstrap 5 way)
-        const myModal = new bootstrap.Modal(document.getElementById('reviewGalleryModal'));
-        myModal.show();
-    }
+            function openReviewGallery(index) {
+                reviewImageIndex = index;
+                
+                // Set the initial image
+                document.getElementById("reviewGalleryImage").src = reviewImages[index];
 
-    function changeReviewImage(step) {
-        reviewImageIndex += step;
+                // Show the modal (Standard Bootstrap 5 way)
+                const modalElement = document.getElementById('reviewGalleryModal');
+                const myModal = new bootstrap.Modal(document.getElementById('reviewGalleryModal'));
+                myModal.show();
+            }
 
-        // Loop back logic
-        if (reviewImageIndex < 0) reviewImageIndex = reviewImages.length - 1;
-        if (reviewImageIndex >= reviewImages.length) reviewImageIndex = 0;
+            function changeReviewImage(step) {
+                reviewImageIndex += step;
 
-        // Update the image src
-        document.getElementById("reviewGalleryImage").src = reviewImages[reviewImageIndex];
-    }
-</script>
+                // Loop back logic
+                if (reviewImageIndex < 0) reviewImageIndex = reviewImages.length - 1;
+                if (reviewImageIndex >= reviewImages.length) reviewImageIndex = 0;
 
+                // Update the image src
+                document.getElementById("reviewGalleryImage").src = reviewImages[reviewImageIndex];
+            }
+        </script>
+    @endpush
  
 @endsection

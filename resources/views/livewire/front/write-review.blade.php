@@ -35,7 +35,8 @@
 
             <div class="col-md-6">
                 <label class="small fw-bold mb-1 d-block">Rating</label>
-                <div class="d-flex align-items-center gap-2" x-data="{ hover: 0, rating: @entangle('rating') }">
+                <div class="d-flex align-items-center gap-2" x-cloak x-data="{ hover: 0, rating: 0 }">
+                {{-- <div class="d-flex align-items-center gap-2" x-data="{ hover: 0, rating: @entangle('rating') }"> --}}
                     @foreach(range(1, 5) as $i)
                         <span 
                             @mouseenter="hover = {{ $i }}" 
