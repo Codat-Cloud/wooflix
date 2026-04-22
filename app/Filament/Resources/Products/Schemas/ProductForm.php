@@ -59,6 +59,7 @@ class ProductForm
                             ->unique(ignoreRecord: true),
 
                         TextInput::make('base_price')
+                            ->helperText('Maximum Retail Price.')
                             ->prefix('₹')
                             ->required(),
                         TextInput::make('sale_price')
@@ -66,6 +67,10 @@ class ProductForm
                             ->prefix('₹')
                             ->helperText('Leave blank if there is no discount.')
                             ->lte('base_price'),
+
+                        TextInput::make('stock')
+                            ->label('Total Stock')
+                            ->helperText('Applicable to non-variation product.'),
 
                     ]),
 

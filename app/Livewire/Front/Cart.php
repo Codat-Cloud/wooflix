@@ -14,6 +14,16 @@ class Cart extends Component
 
     protected $listeners = ['add-to-cart' => 'add'];
 
+    public $subtotal = 0;
+
+    public function updateTotals()
+    {
+        $this->count = collect($this->items)->sum('quantity');
+
+        $this->subtotal = collect($this->items)
+            ->sum(fn($i) => $i->price * $i->quantity);
+    }
+
     public function mount()
     {
         $this->loadCart();
@@ -28,7 +38,7 @@ class Cart extends Component
             ->get()
             ->values();
 
-        $this->count = collect($this->items)->sum('quantity');
+        $this->updateTotals();
     }
 
     public function add($variant_id = null, $product_id = null)
@@ -104,24 +114,61 @@ class Cart extends Component
 
     public function increase($id)
     {
-        $item = CartItem::find($id);
+        foreach ($this->items as $key => $item) {
 
-        if ($item) {
-            $item->increment('quantity');
+            if ($item->id == $id) {
+
+                // Reload fresh from DB (avoid stale data)
+                $dbItem = CartItem::with('variant', 'product')->find($id);
+
+                if (!$dbItem) return;
+
+                // Determine stock source
+                $stock = $dbItem->variant->stock
+                    ?? $dbItem->product->stock
+                    ?? 0;
+
+                // ✅ Stock check
+                if ($dbItem->quantity >= $stock) {
+
+                    $this->dispatch('notify', [
+                        'type' => 'error',
+                        'message' => 'Maximum available stock reached'
+                    ]);
+
+                    return;
+                }
+
+                // ✅ Optimistic UI update
+                $this->items[$key]->quantity++;
+
+                // ✅ DB update
+                $dbItem->increment('quantity');
+
+                break;
+            }
         }
 
-        $this->loadCart();
+        $this->updateTotals();
     }
 
     public function decrease($id)
     {
-        $item = CartItem::find($id);
+        foreach ($this->items as $key => $item) {
 
-        if ($item && $item->quantity > 1) {
-            $item->decrement('quantity');
+            if ($item->id == $id) {
+
+                if ($item->quantity <= 1) return;
+
+                $this->items[$key]->quantity--;
+
+                CartItem::where('id', $id)->decrement('quantity');
+
+                break;
+            }
         }
 
-        $this->loadCart();
+        $this->updateTotals();
     }
 
     public function isInCart($variantId)

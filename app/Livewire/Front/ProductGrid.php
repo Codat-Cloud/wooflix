@@ -13,6 +13,15 @@ class ProductGrid extends Component
 {
     use WithPagination;
 
+    #[Url(as: 'q')]
+    public $search = '';
+
+    // public function mount()
+    // {
+    //     dd($this->search);
+    //     $this->search = request()->query('q', '');
+    // }
+
     // #[Url(as: 'brand', history: true, keep: false)] 
     public $selectedBrands = [];
 
@@ -45,10 +54,50 @@ class ProductGrid extends Component
         $this->perPage += 12;
     }
 
+    //     public function render()
+    // {
+    //     $search = request()->query('q');
+
+    //     $products = Product::where('is_active', true)
+    //         ->where('name', 'LIKE', '%' . $search . '%')
+    //         ->get();
+
+    //     dd($products);
+    // }
+
     public function render()
     {
+        // dd(request()->query('q'), $this->search);
+
         $seoTitle = "Shop Pet Supplies";
-        $query = Product::query()->where('is_active', true);
+        $query = Product::query()
+            ->with(['brand', 'variants'])
+            ->where('is_active', true);
+
+
+        if (!empty($this->search)) {
+
+            $keywords = explode(' ', $this->search);
+
+            $query->where(function ($q) use ($keywords) {
+
+                foreach ($keywords as $word) {
+
+                    $word = '%' . $word . '%';
+
+                    $q->where(function ($sub) use ($word) {
+
+                        $sub->where('products.name', 'ILIKE', $word)
+                            ->orWhereHas('brand', function ($q) use ($word) {
+                                $q->where('name', 'ILIKE', $word);
+                            })
+                            ->orWhereHas('variants', function ($q) use ($word) {
+                                $q->where('name', 'ILIKE', $word);
+                            });
+                    });
+                }
+            });
+        }
 
         // Filter Logic
         if (!empty($this->selectedBrands)) {
@@ -102,7 +151,7 @@ class ProductGrid extends Component
 
         // 3. Reset Pagination to page 1
         $this->resetPage();
-        
+
         // 4. Optional: Dispatch the title update back to default
         $this->dispatch('page-title-updated', title: 'Shop Pet Supplies');
     }

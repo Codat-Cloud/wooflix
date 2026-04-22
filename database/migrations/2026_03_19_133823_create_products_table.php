@@ -32,6 +32,8 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->boolean('is_featured')->default(false);
 
+            $table->integer('stock')->default(0);
+
             // base price (fallback if no variants)
             $table->decimal('base_price', 10, 2)->nullable();
             $table->decimal('sale_price', 10, 2)->nullable();

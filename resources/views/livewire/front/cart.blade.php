@@ -11,7 +11,7 @@
     </span>
 
     <!-- OFFCANVAS -->
-    <div class="offcanvas offcanvas-end cart-drawer" tabindex="-1" id="cartDrawer">
+    <div class="offcanvas offcanvas-end cart-drawer" tabindex="-1" id="cartDrawer" wire:ignore.self>
 
         <div class="offcanvas-header">
             <h5>Your Cart</h5>
@@ -45,6 +45,7 @@
                         <div class="cart-details">
 
                             <p class="cart-title" title="{{$item->display_name}}">
+
                                 {{ \Illuminate\Support\Str::limit($item->display_name, 35) }}
                             </p>
 
@@ -53,7 +54,14 @@
                                 <!-- QTY -->
                                 <div class="qty-control">
 
-                                    <button wire:click="decrease({{ $item->id }})">−</button>
+                                    <button 
+                                        wire:click="decrease({{ $item->id }})"
+                                        wire:loading.attr="disabled"
+                                        wire:target="decrease({{ $item->id }})"
+                                        wire:click.stop="decrease({{ $item->id }})"
+                                    >
+                                        −
+                                    </button>
 
                                     <input 
                                         class="qty-input" 
@@ -61,13 +69,26 @@
                                         readonly 
                                     />
 
-                                    <button wire:click="increase({{ $item->id }})">+</button>
+                                    <button 
+                                        wire:click="increase({{ $item->id }})"
+                                        wire:loading.attr="disabled"
+                                        wire:target="increase({{ $item->id }})"
+                                        wire:click.stop="increase({{ $item->id }})"
+                                    >
+                                        +
+                                    </button>
 
                                 </div>
 
                                 <!-- PRICE -->
                                 <div class="item-price">
                                     ₹{{ number_format($item->price, 2) }}
+                                    @if($item->variant_name)
+                                    <br>
+                                        <small class="">
+                                            {{ $item->variant_name }}
+                                        </small>
+                                    @endif
                                 </div>
 
                             </div>
@@ -101,7 +122,7 @@
 
                     <div class="summary-row">
                         <span>Subtotal</span>
-                        <span>₹{{ number_format($this->items->sum(fn($i) => $i->price * $i->quantity), 2) }}</span>
+                        <span>₹₹{{ number_format($subtotal, 2) }}</span>
                     </div>
 
                     <div class="summary-row">

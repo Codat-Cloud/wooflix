@@ -39,6 +39,7 @@
 
                     @if(count($selectedBrands) > 0)
                     <div class="active-filters">
+                        
                         @foreach($selectedBrands as $slug)
                             <span class="filter-chip" wire:click="$set('selectedBrands', {{ json_encode(array_diff($selectedBrands, [$slug])) }})"> 
                                 {{ Str::headline($slug) }} ✕ 

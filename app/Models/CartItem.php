@@ -36,7 +36,12 @@ class CartItem extends Model
 
     public function getDisplayNameAttribute()
     {
-        return $this->variant?->name ?? $this->product?->name;
+        return $this->product?->name;
+    }
+
+    public function getVariantNameAttribute()
+    {
+        return $this->variant?->name;
     }
 
     // DO NOT override price column

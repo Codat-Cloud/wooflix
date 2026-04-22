@@ -23,11 +23,16 @@
             </div>
 
             <div class="col-lg-5">
-              <input
-                type="text"
-                class="form-control search-box"
-                placeholder="Search"
-              />
+              <form action="{{ route('front.shop') }}" method="GET">
+                <input
+                    type="text"
+                    name="q"
+                    class="form-control search-box"
+                    placeholder="Search products..."
+                    value="{{ request('q') }}"
+                    autocomplete="off"
+                />
+            </form>
             </div>
 
             <div class="col-lg-5 text-end header-icons">
