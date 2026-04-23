@@ -71,13 +71,13 @@ function checkEmptyCart() {
 
     if (cart.children.length === 0) {
         cart.innerHTML = `
-<div class="empty-cart">
-<img src="assets/images/empty-cart.png">
-<h5>Your cart is empty</h5>
-<p>Looks like you haven't added anything yet.</p>
-<a href="/" class="start-shopping">Start Shopping</a>
-</div>
-`;
+            <div class="empty-cart">
+            <img src="assets/images/empty-cart.png">
+            <h5>Your cart is empty</h5>
+            <p>Looks like you haven't added anything yet.</p>
+            <a href="/" class="start-shopping">Start Shopping</a>
+            </div>
+            `;
     }
 }
 
@@ -113,75 +113,6 @@ if (wishlist) {
     });
 }
 
-const images = [
-    "https://images.unsplash.com/photo-1598137265627-2d2d37a35d58?w=900",
-    "https://images.unsplash.com/photo-1601758124510-52d02ddb7cbd?w=900",
-    "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=900",
-    "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=900",
-];
-
-let currentImage = 0;
-
-function setImage(index) {
-    const img = document.getElementById("mainImage");
-
-    img.classList.add("fade");
-
-    setTimeout(() => {
-        img.src = images[index];
-
-        img.classList.remove("fade");
-    }, 200);
-
-    currentImage = index;
-
-    document
-        .querySelectorAll(".thumb")
-        .forEach((t) => t.classList.remove("active"));
-
-    document.querySelectorAll(".thumb")[index].classList.add("active");
-}
-
-function changeImage(step) {
-    currentImage += step;
-
-    if (currentImage < 0) currentImage = images.length - 1;
-
-    if (currentImage >= images.length) currentImage = 0;
-
-    setImage(currentImage);
-}
-
-let touchStartX = 0;
-let touchEndX = 0;
-
-const gallery = document.querySelector(".gallery-main");
-
-gallery.addEventListener("touchstart", function (e) {
-    touchStartX = e.changedTouches[0].screenX;
-});
-
-gallery.addEventListener("touchend", function (e) {
-    touchEndX = e.changedTouches[0].screenX;
-    handleSwipe();
-});
-
-function handleSwipe() {
-    let swipeDistance = touchEndX - touchStartX;
-
-    /* swipe threshold */
-    if (Math.abs(swipeDistance) < 50) return;
-
-    /* swipe left → next image */
-    if (swipeDistance < 0) {
-        changeImage(1);
-    }
-
-    /* swipe right → previous image */
-    if (swipeDistance > 0) {
-        changeImage(-1);
-    }
-}
 
 document.querySelectorAll(".coupon-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -227,16 +158,22 @@ document.addEventListener("DOMContentLoaded", function () {
 let reviewTouchStartX = 0;
 let reviewTouchEndX = 0;
 
-const reviewModal = document.querySelector("#reviewGalleryImage");
+function initReviewSwipe() {
 
-reviewModal.addEventListener("touchstart", function (e) {
-    reviewTouchStartX = e.changedTouches[0].screenX;
-});
+    const el = document.querySelector("#reviewGalleryImage");
+    if (!el) return;
 
-reviewModal.addEventListener("touchend", function (e) {
-    reviewTouchEndX = e.changedTouches[0].screenX;
-    handleReviewSwipe();
-});
+    el.addEventListener("touchstart", e => {
+        reviewTouchStartX = e.changedTouches[0].screenX;
+    });
+
+    el.addEventListener("touchend", e => {
+        reviewTouchEndX = e.changedTouches[0].screenX;
+        handleReviewSwipe();
+    });
+}
+
+initReviewSwipe();
 
 function handleReviewSwipe() {
     let distance = reviewTouchEndX - reviewTouchStartX;
@@ -263,47 +200,3 @@ document.querySelectorAll(".address-card").forEach((card) => {
         this.classList.add("active");
     });
 });
-
-// Offcanvas for Profile
-window.openDrawer = function (type) {
-    console.log(type);
-
-    const drawer = new bootstrap.Offcanvas(
-        document.getElementById("profileDrawer"),
-    );
-    const title = document.getElementById("drawerTitle");
-    const content = document.getElementById("drawerContent");
-
-    /* LOADING STATE */
-    content.innerHTML = "<div class='text-center py-5'>Loading...</div>";
-
-    let url = "";
-
-    if (type === "address") {
-        title.innerText = "My Addresses";
-        url = "/address.html";
-    }
-
-    if (type === "refunds") {
-        title.innerText = "Payments & Refunds";
-        url = "/refunds.html";
-    }
-
-    if (type === "coupons") {
-        title.innerText = "Coupons";
-        url = "/coupons.html";
-    }
-
-    fetch(url)
-        .then((res) => res.text())
-        .then((html) => {
-            content.innerHTML = html;
-
-            /* RE-INIT COLLAPSE (IMPORTANT) */
-            content.querySelectorAll(".collapse").forEach((el) => {
-                new bootstrap.Collapse(el, { toggle: false });
-            });
-        });
-
-    drawer.show();
-};

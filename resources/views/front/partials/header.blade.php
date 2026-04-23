@@ -75,7 +75,7 @@
                 <span class="cart-count">12</span>
               </span> --}}
 
-              <button class="btn btn-orange">Login/Sign Up</button>
+              <a href="{{route('login')}}" class="btn btn-orange">Login/Sign Up</a>
             </div>
           </div>
         </div>

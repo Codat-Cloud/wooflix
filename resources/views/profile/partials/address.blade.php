@@ -1,0 +1,1 @@
+@livewire('front.address-manager')

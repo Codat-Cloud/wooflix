@@ -2787,3 +2787,60 @@ body {
     --bs-offcanvas-width: 60%;
   }
 }
+
+
+/* Offcanvas Drwaer Added on 23-04-2026 */
+
+.drawer-forms {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.profile-section {
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.profile-section:last-child {
+    border-bottom: none;
+}
+
+.section-header h6 {
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.section-header p {
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 15px;
+}
+
+.form-group {
+    margin-bottom: 14px;
+}
+
+.custom-input {
+    height: 44px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    transition: 0.2s ease;
+}
+
+.custom-input:focus {
+    border-color: #ff7a00;
+    box-shadow: 0 0 0 2px rgba(255, 122, 0, 0.1);
+}
+
+.btn-orange {
+    height: 44px;
+    font-weight: 500;
+    border-radius: 8px;
+}
+
+.btn-outline-dark {
+    height: 44px;
+    border-radius: 8px;
+}

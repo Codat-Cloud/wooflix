@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Order;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,16 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
+    public function dashboard()
+    {
+        $orders = Order::with(['items.product'])
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->take(6)
+            ->get();
+
+        return view('dashboard', compact('orders'));
+    }
     /**
      * Display the user's profile form.
      */

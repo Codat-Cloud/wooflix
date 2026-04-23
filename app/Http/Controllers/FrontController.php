@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Banner;
 use App\Models\Blog;
 use App\Models\Brand;
+use App\Models\CartItem;
 use App\Models\Category;
 use App\Models\Coupon;
 use App\Models\HomeSection;
@@ -127,6 +128,26 @@ class FrontController extends Controller
             ->get();
 
         return view('front.singleProduct', compact('product', 'relatedProducts', 'coupons'));
+    }
+
+    public function cart()
+    {
+        $sessionId = session()->getId();
+
+        $items = CartItem::with(['product', 'variant'])
+            ->where('session_id', $sessionId)
+            ->get();
+
+        return view('front.cart', compact('items'));
+    }
+
+    public function checkout()
+    {
+        // if (!auth()->check()) {
+        //     return redirect()->route('login');
+        // }
+
+        return view('front.checkout');
     }
 
 }
