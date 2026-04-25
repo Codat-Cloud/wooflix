@@ -27,6 +27,9 @@ return new class extends Migration
             $table->string('tracking_number')->nullable();
             $table->string('tracking_url')->nullable();
 
+            $table->foreignId('coupon_id')->nullable()->constrained()->nullOnDelete();
+            $table->decimal('discount', 10, 2)->default(0);
+
             $table->timestamps();
         });
     }

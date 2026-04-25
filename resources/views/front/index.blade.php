@@ -210,7 +210,7 @@
               HEALTH SUPPLEMENTS ARE ALSO AVAILABLE
             </p>
 
-            <a href="#" class="promo-btn"> SHOP NOW </a>
+            <a href="{{route('front.shop')}}" class="promo-btn"> SHOP NOW </a>
           </div>
         </div>
       </div>

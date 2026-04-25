@@ -11,6 +11,7 @@ use App\Models\Coupon;
 use App\Models\HomeSection;
 use App\Models\Offer;
 use App\Models\Product;
+use App\Models\Wholesale;
 use Illuminate\Http\Request;
 
 
@@ -121,7 +122,7 @@ class FrontController extends Controller
             ->take(10)
             ->get();
 
-            // Fetch coupons marked as visible and currently valid
+        // Fetch coupons marked as visible and currently valid
         $coupons = Coupon::available()
             ->where('is_visible', true)
             ->orderBy('is_best', 'desc') // Show 'BEST' coupons first
@@ -143,11 +144,44 @@ class FrontController extends Controller
 
     public function checkout()
     {
-        // if (!auth()->check()) {
-        //     return redirect()->route('login');
-        // }
+
+        if (!auth()->check()) {
+            return redirect('/login');
+        }
 
         return view('front.checkout');
     }
 
+    public function wholesale()
+    {
+        return view('front.wholesale');
+    }
+
+    public function wholesaleSave(Request $request)
+    {
+        $data = $request->validate([
+            'full_name' => 'required',
+            'business_name' => 'required',
+            'email' => 'required|email',
+            'phone' => 'required',
+            'business_type' => 'required',
+            'address' => 'required',
+            'city' => 'required',
+            'state' => 'required',
+            'postal_code' => 'required',
+        ]);
+
+        Wholesale::create([
+            ...$data,
+            'products_interested' => $request->products_interested,
+            'sales_channels' => $request->sales_channels,
+            'monthly_quantity' => $request->monthly_quantity,
+            'sells_pet_products' => $request->sells_pet_products,
+            'brands' => $request->brands,
+            'message' => $request->message,
+            'consent' => $request->consent ?? false,
+        ]);
+
+        return back()->with('success', 'Request submitted');
+    }
 }

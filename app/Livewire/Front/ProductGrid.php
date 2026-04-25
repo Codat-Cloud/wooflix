@@ -16,12 +16,6 @@ class ProductGrid extends Component
     #[Url(as: 'q')]
     public $search = '';
 
-    // public function mount()
-    // {
-    //     dd($this->search);
-    //     $this->search = request()->query('q', '');
-    // }
-
     // #[Url(as: 'brand', history: true, keep: false)] 
     public $selectedBrands = [];
 
@@ -53,17 +47,6 @@ class ProductGrid extends Component
     {
         $this->perPage += 12;
     }
-
-    //     public function render()
-    // {
-    //     $search = request()->query('q');
-
-    //     $products = Product::where('is_active', true)
-    //         ->where('name', 'LIKE', '%' . $search . '%')
-    //         ->get();
-
-    //     dd($products);
-    // }
 
     public function render()
     {

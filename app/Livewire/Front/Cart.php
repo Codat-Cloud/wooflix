@@ -33,10 +33,15 @@ class Cart extends Component
     {
         $sessionId = session()->getId();
 
-        $this->items = CartItem::with('product', 'variant')
-            ->where('session_id', $sessionId)
-            ->get()
-            ->values();
+        $query = CartItem::with('product', 'variant');
+
+        if (auth()->check()) {
+            $query->where('user_id', auth()->id());
+        } else {
+            $query->where('session_id', $sessionId);
+        }
+
+        $this->items = $query->get()->values();
 
         $this->updateTotals();
     }

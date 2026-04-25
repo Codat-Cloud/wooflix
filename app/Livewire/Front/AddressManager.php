@@ -19,6 +19,7 @@ class AddressManager extends Component
         'city' => '',
         'state' => '',
         'postal_code' => '',
+        'is_default' => false,
     ];
 
     public function mount()
@@ -42,6 +43,22 @@ class AddressManager extends Component
             'form.state' => 'required',
             'form.postal_code' => 'required',
         ]);
+
+        if (Address::where('user_id', Auth::id())->count() === 0) {
+            $this->form['is_default'] = true;
+        }
+
+        // 🔥 If setting default → remove previous default
+        if ($this->form['is_default']) {
+
+            $query = Address::where('user_id', Auth::id());
+
+            if ($this->editingId) {
+                $query->where('id', '!=', $this->editingId);
+            }
+
+            $query->update(['is_default' => false]);
+        }
 
         if ($this->editingId) {
             Address::where('id', $this->editingId)
@@ -67,23 +84,36 @@ class AddressManager extends Component
             ->firstOrFail();
 
         $this->editingId = $id;
-        $this->form = $address->only([
-            'name',
-            'phone',
-            'address_line1',
-            'address_line2',
-            'city',
-            'state',
-            'postal_code',
-        ]);
+        $this->form = [
+            'name' => $address->name,
+            'phone' => $address->phone,
+            'address_line1' => $address->address_line1,
+            'address_line2' => $address->address_line2,
+            'city' => $address->city,
+            'state' => $address->state,
+            'postal_code' => $address->postal_code,
+            'is_default' => (bool) $address->is_default,
+        ];
     }
 
     // ================= DELETE =================
     public function delete($id)
     {
-        Address::where('id', $id)
+        $address = Address::where('id', $id)
             ->where('user_id', Auth::id())
-            ->delete();
+            ->first();
+
+        if (!$address) return;
+
+        $wasDefault = $address->is_default;
+
+        $address->delete();
+
+        if ($wasDefault) {
+            Address::where('user_id', Auth::id())
+                ->latest()
+                ->first()?->update(['is_default' => true]);
+        }
 
         $this->loadAddresses();
     }
@@ -99,6 +129,7 @@ class AddressManager extends Component
             'city' => '',
             'state' => '',
             'postal_code' => '',
+            'is_default' => false,
         ];
     }
 

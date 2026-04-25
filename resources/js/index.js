@@ -101,18 +101,6 @@ document.querySelectorAll(".variant-btn").forEach((btn) => {
     });
 });
 
-/* WISHLIST */
-
-const wishlist = document.getElementById("wishlistBtn");
-
-if (wishlist) {
-    wishlist.addEventListener("click", function () {
-        this.classList.toggle("active");
-
-        this.innerHTML = this.classList.contains("active") ? "❤" : "♡";
-    });
-}
-
 
 document.querySelectorAll(".coupon-btn").forEach((btn) => {
     btn.addEventListener("click", () => {

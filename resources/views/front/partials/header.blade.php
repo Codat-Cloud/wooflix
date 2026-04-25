@@ -18,7 +18,9 @@
           <div class="row align-items-center">
             <div class="col-lg-2">
               <div class="logo">
-                <img src="{{ asset('storage/' . ($settings['logo_desktop'] ?? '')) }}" alt="" class="w-100" />
+                <a href="/">
+                  <img src="{{ asset('storage/' . ($settings['logo_desktop'] ?? '')) }}" alt="" class="w-100" />
+                </a>
               </div>
             </div>
 
@@ -35,7 +37,7 @@
             </form>
             </div>
 
-            <div class="col-lg-5 text-end header-icons">
+            <div class="col-lg-5 d-flex justify-content-end align-items-center gap-3 header-icons">
               <div class="dropdown location-dropdown d-inline-block">
                 <button
                   class="btn location-btn dropdown-toggle"
@@ -64,7 +66,7 @@
                 </div>
               </div>
 
-              <span class="me-2">♡ Wishlist</span>
+              <a class="text-decoration-none text-dark me-1" href="{{route('dashboard')}}" class="me-2">♡ Wishlist</a>
               <livewire:front.cart />
               {{-- <span
                 class="cart-btn position-relative me-2"
@@ -75,89 +77,52 @@
                 <span class="cart-count">12</span>
               </span> --}}
 
-              <a href="{{route('login')}}" class="btn btn-orange">Login/Sign Up</a>
+@auth
+    <div class="dropdown d-inline-block ms-2">
+        <a class="btn btn-light dropdown-toggle d-flex align-items-center gap-2"
+           data-bs-toggle="dropdown">
+
+            <!-- SVG ICON (better than emoji) -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="7" r="4"></circle>
+                <path d="M5.5 21c1.5-4 11.5-4 13 0"></path>
+            </svg>
+
+            {{ Str::limit(auth()->user()->name, 10) }}
+        </a>
+
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+                <a class="dropdown-item" href="{{ route('dashboard') }}">
+                    My Account
+                </a>
+            </li>
+
+            <li>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="dropdown-item">
+                        Logout
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </div>
+@else
+    <a href="{{ route('login') }}" class="btn btn-orange ms-2">
+        Login / Sign Up
+    </a>
+@endauth
+
             </div>
           </div>
         </div>
       </div>
     </header>
 
-    <!-- Offcanvas Cart -->
-    <div
-      class="offcanvas offcanvas-end cart-drawer"
-      tabindex="-1"
-      id="cartDrawer"
-    >
-      <div class="offcanvas-header">
-        <h5>Your Cart</h5>
 
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="offcanvas"
-        ></button>
-      </div>
-
-      <div class="offcanvas-body d-flex flex-column">
-        <div class="cart-items" id="cartItems">
-          <!-- CART ITEM -->
-
-          <div class="cart-item" data-price="174.30">
-            <button class="remove-icon">✕</button>
-
-            {{-- <img src="{{ asset('/images/toy1.jpg')}}" class="cart-image" /> --}}
-
-            <div class="cart-details">
-              <h6 class="cart-title">HUFT Lady Buggs Plush Toy</h6>
-
-              <div class="cart-bottom">
-                <div class="qty-control">
-                  <button class="qty-minus">−</button>
-
-                  <input class="qty-input" value="1" readonly />
-
-                  <button class="qty-plus">+</button>
-                </div>
-
-                <div class="item-price">₹174.30</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Empty Cart State -->
-        <div class="empty-cart">
-          {{-- <img src="{{ asset('/images/empty-cart.png')}}" /> --}}
-
-          <h5>Your cart is empty</h5>
-
-          <p>Looks like you haven't added anything yet.</p>
-
-          <a href="/" class="start-shopping"> Start Shopping </a>
-        </div>
-
-        <!-- ORDER SUMMARY -->
-
-        <div class="cart-summary">
-          <div class="summary-row">
-            <span>Subtotal</span>
-            <span id="cartSubtotal">₹174.30</span>
-          </div>
-
-          <div class="summary-row">
-            <span>Shipping</span>
-            <span id="cartShipping">Free</span>
-          </div>
-
-          <div class="summary-row total">
-            <span>Total</span>
-            <span id="cartTotal">₹174.30</span>
-          </div>
-
-          <button class="checkout-btn">Proceed to Checkout</button>
-        </div>
-      </div>
-    </div>
 
     <!-- DESKTOP NAV -->
 
@@ -248,28 +213,27 @@
           </li>
 
           <li class="has-mega">
-            <a href="#">Brands</a>
-
+            <a href="{{route('front.shop')}}">Brands</a>
             <div class="mega-menu shadow">
               <div class="mega-inner container-xxl">
                 <div class="mega-column">
-                  <h6>Popular Brands</h6>
+                    <h6>Popular Brands</h6>
 
-                  {{-- <a href="#"
-                    ><img src="assets/images/brands/royal.jpg" /> Royal Canin</a
-                  >
-                  <a href="#"
-                    ><img src="assets/images/brands/pedigree.jpg" /> Pedigree</a
-                  >
-                  <a href="#"
-                    ><img src="assets/images/brands/meowsi.jpg" /> Meowsi</a
-                  > --}}
+                    @foreach($brands as $brand)
+                        <a href="">
+                            <img 
+                                src="{{ asset('storage/brand' . $brand->logo) }}" 
+                                alt="{{ $brand->name }}"
+                            >
+                            {{ $brand->name }}
+                        </a>
+                    @endforeach
                 </div>
               </div>
             </div>
           </li>
 
-          <li><a href="#">Wholesale</a></li>
+          <li><a href="{{route('front.wholesale')}}">Wholesale</a></li>
         </ul>
       </div>
     </nav>
@@ -291,7 +255,11 @@
           <span class="change">Change</span>
         </div>
 
-        <div class="wishlist">♡</div>
+        <div class="wishlist">
+          <a href="{{route('dashboard')}}" class="text-decoration-none text-dark">
+            ♡
+          </a>
+          </div>
       </div>
 
       <div class="mobile-search">
@@ -343,12 +311,12 @@
     <!-- MOBILE BOTTOM NAV -->
 
     <div class="mobile-bottom-nav d-lg-none">
-      <a href="#" class="active">
+      <a href="/" class="active">
         <div>🏠</div>
         <span>Home</span>
       </a>
 
-      <a href="#">
+      <a href="{{route('front.shop')}}">
         <div>⬜</div>
         <span>Category</span>
       </a>
@@ -358,12 +326,12 @@
         <span>HUFT Hub</span>
       </a>
 
-      <a href="#">
+      <a href="{{route('front.cart')}}">
         <div>🛒</div>
         <span>Cart</span>
       </a>
 
-      <a href="#">
+      <a href="{{route('dashboard')}}">
         <div>👤</div>
         <span>Account</span>
       </a>

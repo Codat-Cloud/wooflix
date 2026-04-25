@@ -198,7 +198,10 @@ inCartProducts = [...($event.detail.product_ids || [])]; adding = false; added =
                       </div>
 
                       <div>
-                          <button class="wishlist-btn">♡</button>
+                          @livewire('front.wishlist', [
+                                'productId' => $product->id,
+                                'variantId' => null
+                            ])
                       </div>
                   </div>
 
@@ -640,8 +643,59 @@ inCartProducts = [...($event.detail.product_ids || [])]; adding = false; added =
         </div>
     </div>
 
+    <div class="modal fade" id="loginModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3">
+
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Login</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <form id="loginForm">
+
+                    <div class="mb-3">
+                        <input 
+                            type="email" 
+                            class="form-control"
+                            placeholder="Email"
+                            id="loginEmail"
+                        >
+                    </div>
+
+                    <div class="mb-3">
+                        <input 
+                            type="password" 
+                            class="form-control"
+                            placeholder="Password"
+                            id="loginPassword"
+                        >
+                    </div>
+
+                    <button type="submit" class="btn btn-orange w-100">
+                        Login
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
     @push('scripts')
         <script>
+
+            // Open login Modal
+            window.addEventListener('open-login-modal', () => {
+                const modal = new bootstrap.Modal(document.getElementById('loginModal'));
+                modal.show();
+            });
+
+
             document.addEventListener('DOMContentLoaded', () => {
                 // 1. Dynamically build the array from PHP
                 const reviewImages = [

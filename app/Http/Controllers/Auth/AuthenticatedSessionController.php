@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\CartItem;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,6 +29,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $this->mergeCart();
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
@@ -43,5 +46,31 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
+    }
+
+    protected function mergeCart()
+    {
+        $user = auth()->user();
+        $sessionId = session()->getId();
+
+        $guestItems = CartItem::where('session_id', $sessionId)->get();
+
+        foreach ($guestItems as $item) {
+
+            $existing = CartItem::where('user_id', $user->id)
+                ->where('product_id', $item->product_id)
+                ->where('variant_id', $item->variant_id)
+                ->first();
+
+            if ($existing) {
+                $existing->increment('quantity', $item->quantity);
+                $item->delete();
+            } else {
+                $item->update([
+                    'user_id' => $user->id,
+                    'session_id' => null,
+                ]);
+            }
+        }
     }
 }

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Order;
+use App\Models\Review;
+use App\Models\Wishlist;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,13 +16,25 @@ class ProfileController extends Controller
 {
     public function dashboard()
     {
-        $orders = Order::with(['items.product'])
+        $orders = Order::with(['items.product:id,slug,name,main_image'])
             ->where('user_id', auth()->id())
             ->latest()
             ->take(6)
             ->get();
 
-        return view('dashboard', compact('orders'));
+        $latestReview = Review::with('product:id,slug,name')
+            ->where('user_id', auth()->id())
+            ->where('is_approved', true)
+            ->latest()
+            ->first();
+
+        $wishlist = Wishlist::with('product:id,slug,name,main_image')
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->take(6)
+            ->get();
+            
+        return view('dashboard', compact('orders', 'latestReview', 'wishlist'));
     }
     /**
      * Display the user's profile form.

@@ -101,7 +101,7 @@
                     <!-- EMPTY STATE -->
                     <div class="empty-cart text-center w-100">
 
-                        <img src="{{ asset('images/empty-cart.png') }}" />
+                        <img src="{{ asset('images/empty-cart.webp') }}" />
 
                         <h5>Your cart is empty</h5>
 
@@ -137,9 +137,9 @@
                         </span>
                     </div>
 
-                    <button class="checkout-btn">
+                    <a href="{{route('front.checkout')}}" class="checkout-btn w-100 text-decoration-none">
                         Proceed to Checkout
-                    </button>
+                    </a>
 
                 </div>
 

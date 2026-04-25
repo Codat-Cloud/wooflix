@@ -18,12 +18,16 @@
                         {{ $address->city }}, {{ $address->state }} - {{ $address->postal_code }}<br>
                         📞 {{ $address->phone }}
                     </p>
+                                    @if($address->is_default)
+                    <span class="badge bg-success ms-2">Primary</span>
+                @endif
                 </div>
 
                 <div class="d-flex gap-2">
                     <a wire:click="edit({{ $address->id }})" class="edit-address">Edit</a>
                     <a wire:click="delete({{ $address->id }})" class="text-danger">Delete</a>
                 </div>
+
 
             </label>
         @endforeach
@@ -56,16 +60,29 @@
                 <textarea wire:model.defer="form.address_line1" class="form-control" rows="2" placeholder="Address"></textarea>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <input type="text" wire:model.defer="form.city" class="form-control" placeholder="City">
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <input type="text" wire:model.defer="form.state" class="form-control" placeholder="State">
             </div>
 
-            <div class="col-md-4">
-                <input type="text" wire:model.defer="form.postal_code" class="form-control" placeholder="Pincode">
+            <div class="col-md-3">
+                <input type="text" wire:model.defer="form.postal_code" class="form-control" placeholder="Pincode" max="6">
+            </div>
+            <div class="col-md-3">
+                <div class="form-check">
+                    <input 
+                        type="checkbox"
+                        class="form-check-input"
+                        wire:model.defer="form.is_default"
+                        id="isDefault"
+                    >
+                    <label class="form-check-label" for="isDefault">
+                        Set as default address
+                    </label>
+                </div>
             </div>
 
             <div class="col-12">
