@@ -22,9 +22,9 @@ return new class extends Migration
             $table->unsignedBigInteger('item_id')->nullable();
 
             // Custom override (VERY IMPORTANT)
-            $table->string('title')->nullable();
-            $table->string('image')->nullable();
-            $table->string('link')->nullable();
+            $table->text('title')->nullable();
+            $table->text('image')->nullable();
+            $table->text('link')->nullable();
 
             $table->integer('sort_order')->default(0);
 

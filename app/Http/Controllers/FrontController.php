@@ -149,6 +149,17 @@ class FrontController extends Controller
             return redirect('/login');
         }
 
+        $hasItems = CartItem::when(auth()->check(),
+            fn($q) => $q->where('user_id', auth()->id()),
+            fn($q) => $q->where('session_id', $sessionId)
+        )->exists();
+
+        if (!$hasItems) {
+            return redirect()
+                ->route('front.shop')
+                ->with('error', 'Your cart is empty.');
+        }
+
         return view('front.checkout');
     }
 

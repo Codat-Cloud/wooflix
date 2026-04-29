@@ -18,7 +18,7 @@ return new class extends Migration
                 ->cascadeOnDelete()
                 ->nullable();
 
-            $table->string('session_id')->nullable(); // for guest user
+            $table->text('session_id')->nullable(); // for guest user
 
             $table->foreignId('product_id')
                 ->nullable()

@@ -37,17 +37,17 @@
                         <button wire:click="clearAll" class="clear-filters">Clear All</button>
                     </div>
 
-                    @if(count($selectedBrands) > 0)
-                    <div class="active-filters">
-                        
-                        @foreach($selectedBrands as $slug)
-                            <span class="filter-chip" wire:click="$set('selectedBrands', {{ json_encode(array_diff($selectedBrands, [$slug])) }})"> 
-                                {{ Str::headline($slug) }} ✕ 
-                            </span>
-                        @endforeach
-                        
-                    </div>
-                    @endif
+                    {{-- Separate checking for Brands and Categories --}}
+                       @if(count($this->selectedBrands) > 0 || count($this->selectedCategories) > 0)
+                            <div class="active-filters">
+                                @foreach($this->selectedBrands as $slug)
+                                    <span class="filter-chip" wire:click="toggleBrand('{{ $slug }}')">
+                                        {{ Str::headline($slug) }} ✕
+                                    </span>
+                                @endforeach
+                                {{-- Repeat for Categories --}}
+                            </div>
+                        @endif
 
                     <div class="filter-group">
                         <button class="filter-toggle">Brands <span class="arrow">⌄</span></button>
@@ -55,7 +55,11 @@
                             @foreach($brands as $brand)
                             <label class="filter-option">
                                 {{-- We now bind the 'slug' to the model --}}
-                                <input type="checkbox" wire:model.live="selectedBrands" value="{{ $brand->slug }}" />
+                                <input 
+                                    type="checkbox"
+                                    wire:click="toggleBrand('{{ $brand->slug }}')"
+                                    @checked(in_array($brand->slug, $selectedBrands ?? []))
+                                />
                                 <span class="checkmark"></span>
                                 {{ $brand->name }} <span class="count">({{ $brand->products_count }})</span>
                             </label>
@@ -68,7 +72,11 @@
                         <div class="filter-content">
                             @foreach($categories as $cat)
                             <label class="filter-option">
-                                <input type="checkbox" wire:model.live="selectedCategories" value="{{ $cat->slug }}" />
+                                <input 
+                                    type="checkbox"
+                                    wire:click="toggleCategory('{{ $cat->slug }}')"
+                                    @checked(in_array($cat->slug, $selectedCategories ?? []))
+                                />
                                 <span class="checkmark"></span>
                                 {{ $cat->name }} <span class="count">({{ $cat->products_count }})</span>
                             </label>
@@ -144,7 +152,11 @@
                 <h6>Brands</h6>
                 @foreach($brands as $brand)
                 <label class="filter-option d-block mb-2">
-                    <input type="checkbox" wire:model.live="selectedBrands" value="{{ $brand->id }}" />
+                    <input 
+                        type="checkbox" 
+                        wire:click="toggleBrand('{{ $brand->slug }}')"
+                        @checked(in_array($brand->slug, $selectedBrands ?? []))
+                    />
                     {{ $brand->name }}
                 </label>
                 @endforeach

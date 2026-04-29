@@ -8,6 +8,7 @@ use App\Models\Category;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Url;
+use Livewire\Attributes\Computed;
 
 class ProductGrid extends Component
 {
@@ -16,27 +17,59 @@ class ProductGrid extends Component
     #[Url(as: 'q')]
     public $search = '';
 
-    // #[Url(as: 'brand', history: true, keep: false)] 
-    public $selectedBrands = [];
+    #[Url(as: 'brand')]
+    public $brand = '';
 
-    // #[Url(as: 'cat', history: true, keep: false)]
-    public $selectedCategories = [];
+    #[Url(as: 'cat')]
+    public $cat = '';
 
-    // #[Url(history: true, keep: false)]
+    #[Url(as: 'sort')]
     public $sort = 'best_seller';
 
     public $perPage = 12;
 
-    public function updatedSelectedBrands()
+    public function getSelectedBrandsProperty()
     {
-        $this->resetPage();
-        $this->perPage = 12;
+        // Ensure we always return an array, even if empty
+        return array_filter(explode(',', $this->brand));
     }
-    public function updatedSelectedCategories()
+
+    public function getSelectedCategoriesProperty()
     {
-        $this->resetPage();
-        $this->perPage = 12;
+        // Ensure we always return an array, even if empty
+        return array_filter(explode(',', $this->cat));
     }
+
+    public function toggleBrand($slug)
+    {
+        // Use the computed property directly to get the current list
+        $brands = $this->selectedBrands;
+
+        if (in_array($slug, $brands)) {
+            $brands = array_values(array_diff($brands, [$slug]));
+        } else {
+            $brands[] = $slug;
+        }
+
+        // array_filter removes empty strings if the array was empty
+        $this->brand = implode(',', array_filter($brands));
+        $this->resetPage();
+    }
+
+    public function toggleCategory($slug)
+    {
+        $cats = $this->selectedCategories;
+
+        if (in_array($slug, $cats)) {
+            $cats = array_values(array_diff($cats, [$slug]));
+        } else {
+            $cats[] = $slug;
+        }
+
+        $this->cat = implode(',', array_filter($cats));
+        $this->resetPage();
+    }
+
     public function updatedSort()
     {
         $this->resetPage();
@@ -46,6 +79,18 @@ class ProductGrid extends Component
     public function loadMore()
     {
         $this->perPage += 12;
+    }
+
+    #[Computed]
+    public function selectedBrands()
+    {
+        return array_filter(explode(',', $this->brand));
+    }
+
+    #[Computed]
+    public function selectedCategories()
+    {
+        return array_filter(explode(',', $this->cat));
     }
 
     public function render()
@@ -82,23 +127,19 @@ class ProductGrid extends Component
             });
         }
 
-        // Filter Logic
-        if (!empty($this->selectedBrands)) {
-            $query->whereHas('brand', fn($q) => $q->whereIn('slug', $this->selectedBrands));
-
-            if (count($this->selectedBrands) === 1) {
-                $brandName = Brand::where('slug', $this->selectedBrands[0])->value('name');
-                $seoTitle = "Premium {$brandName} Products";
-            }
+        // Filter Logic - Ensure we have a valid array
+        $selectedBrands = $this->getSelectedBrandsProperty();
+        if (!empty($selectedBrands) && is_array($selectedBrands)) {
+            $query->whereHas('brand', function ($q) use ($selectedBrands) {
+                $q->whereIn('slug', $selectedBrands);
+            });
         }
 
-        if (!empty($this->selectedCategories)) {
-            $query->whereHas('category', fn($q) => $q->whereIn('slug', $this->selectedCategories));
-
-            if (count($this->selectedCategories) === 1 && $seoTitle === "Shop Pet Supplies") {
-                $catName = Category::where('slug', $this->selectedCategories[0])->value('name');
-                $seoTitle = "Best {$catName} for Pets";
-            }
+        $selectedCategories = $this->getSelectedCategoriesProperty();
+        if (!empty($selectedCategories) && is_array($selectedCategories)) {
+            $query->whereHas('category', function ($q) use ($selectedCategories) {
+                $q->whereIn('slug', $selectedCategories);
+            });
         }
 
         // Sorting
@@ -117,25 +158,21 @@ class ProductGrid extends Component
             'products' => $query->paginate($this->perPage),
             'brands' => Brand::withCount('products')->get(),
             'categories' => Category::withCount('products')->get(),
-            'seoTitle' => $seoTitle
+            'seoTitle' => $seoTitle,
+            'selectedBrands' => $this->selectedBrands,
+            'selectedCategories' => $this->selectedCategories,
         ]);
     }
 
     public function clearAll()
     {
-        // 1. Reset all component properties to their initial state
-        $this->selectedBrands = [];
-        $this->selectedCategories = [];
+        $this->brand = '';
+        $this->cat = '';
         $this->sort = 'best_seller';
         $this->perPage = 12;
 
-        // 2. Clear the session keys
-        session()->forget(['shop_brands', 'shop_cats', 'shop_sort']);
-
-        // 3. Reset Pagination to page 1
         $this->resetPage();
 
-        // 4. Optional: Dispatch the title update back to default
         $this->dispatch('page-title-updated', title: 'Shop Pet Supplies');
     }
 }

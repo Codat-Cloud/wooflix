@@ -16,19 +16,28 @@ return new class extends Migration
 
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
 
-            $table->string('order_number')->unique();
+            $table->text('order_number')->unique();
 
             $table->decimal('total_amount', 10, 2);
 
-            $table->string('status')->default('pending');
-            $table->string('payment_status')->default('pending');
-            $table->string('payment_method')->nullable();
+            $table->decimal('shipping_amount', 10, 2)->default(0)->after('total_amount');
 
-            $table->string('tracking_number')->nullable();
-            $table->string('tracking_url')->nullable();
+            $table->text('status')->default('pending');
+            $table->text('payment_status')->default('pending');
+            $table->text('payment_method')->nullable();
 
-            $table->foreignId('coupon_id')->nullable()->constrained()->nullOnDelete();
+            $table->text('tracking_number')->nullable();
+            $table->text('tracking_url')->nullable();
+
             $table->decimal('discount', 10, 2)->default(0);
+
+            $table->text('shipping_name')->after('user_id');
+            $table->text('shipping_phone')->after('shipping_name');
+            $table->text('shipping_address_line1')->after('shipping_phone');
+            $table->text('shipping_city')->after('shipping_address_line1');
+            $table->text('shipping_state')->after('shipping_city');
+            $table->text('shipping_postal_code')->after('shipping_state');
+            $table->text('shipping_country')->default('India');
 
             $table->timestamps();
         });

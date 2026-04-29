@@ -18,8 +18,11 @@ return new class extends Migration
             $table->foreignId('product_id')->nullable();
             $table->foreignId('variant_id')->nullable();
 
+            $table->text('tracking_number')->nullable();
+            $table->text('tracking_url')->nullable();
+
             // IMPORTANT: snapshot fields
-            $table->string('name');
+            $table->text('name');
             $table->decimal('price', 10, 2);
             $table->integer('quantity');
             

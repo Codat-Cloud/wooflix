@@ -18,8 +18,8 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
             
             // Content
-            $table->string('customer_name'); // For guests or custom display names
-            $table->string('customer_email');
+            $table->text('customer_name'); // For guests or custom display names
+            $table->text('customer_email');
             $table->integer('rating')->default(5); // 1 to 5 stars
             $table->text('comment');
             

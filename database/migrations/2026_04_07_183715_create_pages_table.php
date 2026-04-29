@@ -19,7 +19,7 @@ return new class extends Migration
             $table->longText('content')->nullable();
             
             // SEO Fields (Page-Specific)
-            $table->string('seo_title')->nullable();
+            $table->text('seo_title')->nullable();
             $table->text('seo_description')->nullable();
             
             $table->boolean('is_active')->default(true);

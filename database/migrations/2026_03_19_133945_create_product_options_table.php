@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
 
-            $table->string('name'); // Color, Size, Flavor
+            $table->text('name'); // Color, Size, Flavor
             $table->integer('position')->default(0);
 
             $table->timestamps();

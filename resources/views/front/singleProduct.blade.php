@@ -318,13 +318,9 @@ inCartProducts = [...($event.detail.product_ids || [])]; adding = false; added =
               <div class="delivery-info">
                 <h5 class="delivery-title">Delivery & Service Information</h5>
 
-                <div class="delivery-check">
-                  <input type="text" value="560034" class="pincode-input" />
+                @livewire('front.pincode-checker')
 
-                  <button class="btn btn-orange delivery-btn">Check</button>
-                </div>
-
-                <div class="delivery-items">
+                {{-- <div class="delivery-items">
                   <div class="delivery-item">
                     <span class="delivery-icon">⚡</span>
                     <span>Get it <strong>Today</strong></span>
@@ -333,7 +329,7 @@ inCartProducts = [...($event.detail.product_ids || [])]; adding = false; added =
                   <div class="delivery-item">
                     <span class="delivery-icon">🚚</span>
                     <span>Expected delivery date – <strong>Today</strong></span>
-                  </div>
+                  </div> --}}
 
                   <div class="delivery-item">
                     <span class="delivery-icon">📦</span>

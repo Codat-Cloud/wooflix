@@ -10,11 +10,21 @@ class Order extends Model
         'user_id',
         'order_number',
         'total_amount',
+        'shipping_amount',
         'status',
         'payment_status',
         'payment_method',
         'coupon_id',
         'discount',
+        'tracking_number',
+        'tracking_url',
+        'shipping_name',
+        'shipping_phone',
+        'shipping_address_line1',
+        'shipping_city',
+        'shipping_state',
+        'shipping_postal_code',
+        'shipping_country',
     ];
 
     public function items()

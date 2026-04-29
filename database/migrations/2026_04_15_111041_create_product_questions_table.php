@@ -18,8 +18,8 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             
             // Questioner Details
-            $table->string('name');
-            $table->string('email');
+            $table->text('name');
+            $table->text('email');
             $table->text('question');
             
             // Admin Response

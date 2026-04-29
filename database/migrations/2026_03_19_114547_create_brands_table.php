@@ -14,17 +14,17 @@ return new class extends Migration
         Schema::create('brands', function (Blueprint $table) {
             $table->id();
 
-            $table->string('name');
-            $table->string('slug')->unique();
+            $table->text('name');
+            $table->text('slug')->unique();
 
             $table->text('description')->nullable();
-            $table->string('logo')->nullable();
+            $table->text('logo')->nullable();
 
             $table->boolean('is_visible')->default(true);
 
             // SEO
-            $table->string('meta_title')->nullable();
-            $table->string('meta_description')->nullable();
+            $table->text('meta_title')->nullable();
+            $table->text('meta_description')->nullable();
 
             $table->timestamps();
 

@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\CartItem;
 use App\Models\Address;
 use App\Models\Coupon;
+use App\Models\CouponRedemption;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\Auth;
@@ -28,6 +29,17 @@ class Checkout extends Component
     public $couponError = '';
 
     public $defaultAddress;
+
+    // Define the listener
+    protected $listeners = ['cartUpdated' => 'refreshCheckout'];
+
+    // Razorpay
+    public $razorpay_order_id;
+
+    public function refreshCheckout()
+    {
+        $this->loadCart(); // This recalculates subtotal, shipping, and total
+    }
 
     public function mount()
     {
@@ -76,66 +88,29 @@ class Checkout extends Component
     // ================= DELIVERY =================
     public function updatedDeliveryType()
     {
-        $this->shippingCost = $this->deliveryType === 'express' ? 49 : 0;
         $this->calculateTotal();
     }
 
     public function calculateTotal()
     {
-        $this->total = max(
-            0,
-            $this->subtotal + $this->shippingCost - $this->discount
-        );
+        // Define constants to avoid "Magic Numbers"
+        $THRESHOLD = 699;
+        $STANDARD_FEE = 85;
+        $EXPRESS_FEE = 180;
+
+        // Ensure subtotal is treated as a float/int
+        $currentSubtotal = (float) $this->subtotal;
+
+        if ($this->deliveryType === 'express') {
+            $this->shippingCost = $EXPRESS_FEE;
+        } else {
+            // Standard logic
+            $this->shippingCost = ($currentSubtotal >= $THRESHOLD) ? 0 : $STANDARD_FEE;
+        }
+
+        $this->total = max(0, ($currentSubtotal + $this->shippingCost) - (float) $this->discount);
     }
 
-    // ================= PLACE ORDER =================
-    public function placeOrder()
-    {
-        if (!Auth::check()) {
-            $this->dispatch('open-login-modal');
-            return;
-        }
-
-        if (!$this->selectedAddress) {
-            session()->flash('error', 'Please select address');
-            return;
-        }
-
-        if ($this->items->isEmpty()) {
-            session()->flash('error', 'Cart is empty');
-            return;
-        }
-
-        // CREATE ORDER
-        $order = Order::create([
-            'user_id' => Auth::id(),
-            'total_amount' => $this->total,
-            'status' => 'pending',
-            'payment_status' => 'pending',
-            'payment_method' => 'cod',
-            // ✅ COUPON DATA
-            'coupon_id' => $this->appliedCoupon?->id,
-            'discount' => $this->discount,
-
-        ]);
-
-        // CREATE ITEMS
-        foreach ($this->items as $item) {
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $item->product_id,
-                'variant_id' => $item->variant_id,
-                'name' => $item->display_name,
-                'price' => $item->price,
-                'quantity' => $item->quantity,
-            ]);
-        }
-
-        // CLEAR CART
-        CartItem::where('session_id', session()->getId())->delete();
-
-        return redirect('/thank-you');
-    }
 
     public function applyCoupon()
     {
@@ -190,35 +165,6 @@ class Checkout extends Component
         $this->calculateTotal();
     }
 
-    public function saveAddress()
-    {
-        $this->validate([
-            'form.name' => 'required',
-            'form.phone' => 'required',
-            'form.address_line1' => 'required',
-            'form.city' => 'required',
-            'form.state' => 'required',
-            'form.postal_code' => 'required',
-        ]);
-
-        $address = Address::create([
-            ...$this->form,
-            'user_id' => auth()->id(),
-            'country' => 'India',
-        ]);
-
-        // 🔥 reload address list
-        $this->loadAddresses();
-
-        // 🔥 auto-select new address
-        $this->selectedAddress = $address->id;
-
-        // 🔥 reset form
-        $this->reset('form');
-
-        $this->dispatch('close-address-form');
-    }
-
     public function removeCoupon()
     {
         $this->couponCode = '';
@@ -232,5 +178,63 @@ class Checkout extends Component
     public function render()
     {
         return view('livewire.front.checkout');
+    }
+
+    // ================= PLACE ORDER =================
+
+    public function placeOrder()
+    {
+        if (!Auth::check()) {
+            $this->dispatch('open-login-modal');
+            return;
+        }
+
+        if (!$this->selectedAddress || $this->items->isEmpty()) {
+            session()->flash('error', 'Please check address and cart');
+            return;
+        }
+
+        try {
+            // 1. Create the Order in PostgreSQL
+            $order = Order::create([
+                'user_id' => Auth::id(),
+                'total_amount' => $this->total,
+                'shipping_amount' => $this->shippingCost,
+                'status' => 'pending',
+                'payment_status' => 'pending',
+                'payment_method' => 'online',
+                'shipping_name' => $this->defaultAddress->name,
+                'shipping_phone' => $this->defaultAddress->phone,
+                'shipping_address_line1' => $this->defaultAddress->address_line1,
+                'shipping_city' => $this->defaultAddress->city,
+                'shipping_state' => $this->defaultAddress->state,
+                'shipping_postal_code' => $this->defaultAddress->postal_code,
+            ]);
+
+            // 2. Save Items
+            foreach ($this->items as $item) {
+                $order->items()->create([
+                    'product_id' => $item->product_id,
+                    'variant_id' => $item->variant_id,
+                    'name' => $item->product->name,
+                    'price' => $item->price,
+                    'quantity' => $item->quantity,
+                ]);
+            }
+
+            // 3. Return data to JavaScript
+            return [
+                'success' => true,
+                'order_id' => $order->id,
+                'order_number' => $order->order_number,
+                'amount' => (int)($this->total * 100),
+                'customer_name' => Auth::user()->name,
+                'customer_email' => Auth::user()->email,
+                'customer_phone' => Auth::user()->phone ?? $this->defaultAddress->phone
+            ];
+        } catch (\Exception $e) {
+            \Log::error($e->getMessage());
+            return ['success' => false, 'message' => 'Database Error: ' . $e->getMessage()];
+        }
     }
 }

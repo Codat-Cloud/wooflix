@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\DB;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -31,7 +32,9 @@ class AuthenticatedSessionController extends Controller
 
         $this->mergeCart();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('dashboard'));
+
+        // return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**
@@ -50,27 +53,46 @@ class AuthenticatedSessionController extends Controller
 
     protected function mergeCart()
     {
-        $user = auth()->user();
+        $userId = auth()->id();
         $sessionId = session()->getId();
 
-        $guestItems = CartItem::where('session_id', $sessionId)->get();
+        DB::transaction(function () use ($userId, $sessionId) {
 
-        foreach ($guestItems as $item) {
+            // Get guest cart
+            $guestItems = CartItem::where('session_id', $sessionId)->get();
 
-            $existing = CartItem::where('user_id', $user->id)
-                ->where('product_id', $item->product_id)
-                ->where('variant_id', $item->variant_id)
-                ->first();
-
-            if ($existing) {
-                $existing->increment('quantity', $item->quantity);
-                $item->delete();
-            } else {
-                $item->update([
-                    'user_id' => $user->id,
-                    'session_id' => null,
-                ]);
+            if ($guestItems->isEmpty()) {
+                return;
             }
-        }
+
+            // Get user cart once
+            $userItems = CartItem::where('user_id', $userId)->get();
+
+            foreach ($guestItems as $guest) {
+
+                // Match existing item (handle NULL variant properly)
+                $existing = $userItems->first(function ($item) use ($guest) {
+                    return $item->product_id === $guest->product_id &&
+                        $item->variant_id == $guest->variant_id; // works for null
+                });
+
+                if ($existing) {
+                    // ✅ Merge quantity
+                    $existing->increment('quantity', $guest->quantity);
+
+                    // Remove guest row
+                    $guest->delete();
+                } else {
+                    // ✅ Assign to user
+                    $guest->update([
+                        'user_id' => $userId,
+                        'session_id' => null,
+                    ]);
+
+                    // Keep local collection in sync (important)
+                    $userItems->push($guest);
+                }
+            }
+        });
     }
 }

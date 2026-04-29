@@ -16,16 +16,16 @@ return new class extends Migration
 
                 $table->foreignId('user_id')->constrained()->cascadeOnDelete();
 
-                $table->string('name'); // person name
-                $table->string('phone')->nullable();
+                $table->text('name'); // person name
+                $table->text('phone')->nullable();
 
-                $table->string('address_line1');
-                $table->string('address_line2')->nullable();
+                $table->text('address_line1');
+                $table->text('address_line2')->nullable();
 
-                $table->string('city');
-                $table->string('state');
-                $table->string('postal_code');
-                $table->string('country')->default('India');
+                $table->text('city');
+                $table->text('state');
+                $table->text('postal_code');
+                $table->text('country')->default('India');
 
                 $table->boolean('is_default')->default(false);
                 

@@ -110,6 +110,8 @@ class Cart extends Component
     {
         CartItem::find($id)?->delete();
         $this->loadCart();
+
+        $this->dispatch('cartUpdated');
     }
 
     public function render()
@@ -155,6 +157,8 @@ class Cart extends Component
         }
 
         $this->updateTotals();
+
+        $this->dispatch('cartUpdated');
     }
 
     public function decrease($id)
@@ -174,6 +178,8 @@ class Cart extends Component
         }
 
         $this->updateTotals();
+
+        $this->dispatch('cartUpdated');
     }
 
     public function isInCart($variantId)

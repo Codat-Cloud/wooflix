@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
 
             // Section content
-            $table->string('title');
-            $table->string('subtitle')->nullable();
+            $table->text('title');
+            $table->text('subtitle')->nullable();
 
             // What this section shows
             $table->enum('type', ['brand', 'category', 'tabbed_category_products']);

@@ -13,16 +13,16 @@ return new class extends Migration
     {
         Schema::create('blogs', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('slug')->unique();
+            $table->text('title');
+            $table->text('slug')->unique();
             $table->longText('content');
             
             // Media
-            $table->string('featured_image'); // Original JPG/PNG
-            $table->string('image_alt')->nullable();
+            $table->text('featured_image'); // Original JPG/PNG
+            $table->text('image_alt')->nullable();
             
             // SEO
-            $table->string('seo_title')->nullable();
+            $table->text('seo_title')->nullable();
             $table->text('seo_description')->nullable();
             
             // Settings

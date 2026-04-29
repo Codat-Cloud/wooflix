@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('offers', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->nullable(); // for alt + admin label
-            $table->string('image');
+            $table->text('title')->nullable(); // for alt + admin label
+            $table->text('image');
 
-            $table->string('link')->nullable();
+            $table->text('link')->nullable();
 
             $table->integer('sort_order')->default(0);
             $table->boolean('is_active')->default(true);

@@ -11,7 +11,7 @@
           </li>
 
           <li class="breadcrumb-item">
-            <a href="/dogs">My Account</a>
+            <a href="{{route('dashboard')}}">My Account</a>
           </li>
         </ol>
       </div>
@@ -86,7 +86,7 @@
           <div class="profile-section">
             <div class="section-header">
                 <h6>Recent Orders</h6>
-                <a href="#">View All</a>
+                <a href="{{route('user.orders')}}">View All</a>
             </div>
 
             <div class="order-list">
@@ -147,14 +147,31 @@
             </div>
 
             <div class="row g-3">
-              <div class="col-md-4 col-6">
-                <div class="product-card">
-                  <img
-                    src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?q=80&w=200"
-                  />
-                  <p>Dog Chew Toy</p>
-                </div>
-              </div>
+            @forelse($wishlist as $item)
+                    <div class="col-md-3 col-6">
+                        <a href="{{ route('front.singleProduct', $item->product->slug) }}" class="text-decoration-none text-dark">
+                            <div class="product-card text-center border p-0 rounded h-100">
+                                <img 
+                                    src="{{ asset('storage/' . $item->product->main_image) }}" 
+                                    alt="{{ $item->product->name }}"
+                                    class="img-fluid rounded mb-2"
+                                    style="object-fit: cover; height: 150px; width: 100%;"
+                                />
+                                <p class="mb-1 fw-bold text-truncate">{{ $item->product->name }}</p>
+                                
+                                {{-- Optional: Show Price if you want to be extra helpful --}}
+                                @if($item->product->sale_price)
+                                    <span class="text-orange fw-bold">₹{{ number_format($item->product->sale_price) }}</span>
+                                @endif
+                            </div>
+                        </a>
+                    </div>
+                @empty
+                    <div class="col-12 text-center py-4">
+                        <p class="text-muted">Your wishlist is empty. 🦴</p>
+                        <a href="/collections" class="btn btn-orange btn-sm">Shop Now</a>
+                    </div>
+                @endforelse
             </div>
           </div>
 
@@ -166,16 +183,40 @@
               <a href="#">View All</a>
             </div>
 
-            <div class="review-card">
-              <div class="d-flex justify-content-between">
-                <strong>Dog Toy</strong>
-                <span class="rating">⭐ 5.0</span>
-              </div>
+            @if($latestReview)
+            <div class="review-card border p-3 rounded shadow-sm bg-white">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <a href="{{ route('front.singleProduct', $latestReview->product->slug) }}" class="text-decoration-none">
+                            <strong class="text-dark">{{ $latestReview->product->name }}</strong>
+                        </a>
+                        <div class="text-muted small">
+                            {{ $latestReview->created_at->format('d M, Y') }}
+                        </div>
+                    </div>
+                    <span class="badge bg-warning text-dark">
+                        ⭐ {{ number_format($latestReview->rating, 1) }}
+                    </span>
+                </div>
 
-              <p class="text-muted small">
-                Very good quality product. My dog loves it.
-              </p>
+                <p class="text-muted small mb-0 italic">
+                    "{{ $latestReview->comment }}"
+                </p>
+                
+                @if($latestReview->reply)
+                    <div class="admin-reply mt-2 p-2 bg-light rounded border-start border-orange border-4">
+                        <small class="d-block fw-bold text-orange">Wooflix Team replied:</small>
+                        <small class="text-muted">{{ $latestReview->reply }}</small>
+                    </div>
+                @endif
             </div>
+            @else
+              <div class="text-center py-4 border rounded bg-light">
+                  <p class="text-muted small mb-0">You haven't reviewed any products yet.</p>
+                  <small><a href="{{ route('dashboard') }}#orders" class="text-orange">Review your past purchases</a></small>
+              </div>
+            @endif
+
           </div>
 
           <!-- SUPPORT -->

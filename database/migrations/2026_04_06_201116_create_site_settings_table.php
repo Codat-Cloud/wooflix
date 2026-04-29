@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('site_settings', function (Blueprint $table) {
             $table->id();
-            $table->string('key')->unique(); // e.g., 'google_analytics', 'site_logo'
+            $table->text('key')->unique(); // e.g., 'google_analytics', 'site_logo'
             $table->text('value')->nullable();
-            $table->string('group')->default('general'); // To categorize in Filament
+            $table->text('group')->default('general'); // To categorize in Filament
             $table->timestamps();
         });
     }

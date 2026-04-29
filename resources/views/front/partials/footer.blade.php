@@ -137,9 +137,9 @@
                   @php $trimmed = trim($keyword); @endphp
                   
                   @if($trimmed)
-                      {{-- <a href="{{ url('/search?q='.$trimmed) }}" class="popular-link"> --}}
+                      <a href="{{ url('/collections?q='.$trimmed) }}" class="popular-link text-decoration-none text-dark">
                           {{ $trimmed }}
-                      {{-- </a> --}}
+                      </a>
 
                       {{-- Add the pipe separator only if it's NOT the last item --}}
                       @if (!$loop->last)

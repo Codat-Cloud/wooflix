@@ -19,17 +19,17 @@ return new class extends Migration
                 ->constrained('categories')
                 ->nullOnDelete();
 
-            $table->string('name');
-            $table->string('slug')->unique();
+            $table->text('name');
+            $table->text('slug')->unique();
 
             $table->text('description')->nullable();
 
             // Category image
-            $table->string('image')->nullable();
+            $table->text('image')->nullable();
 
             // SEO
-            $table->string('meta_title')->nullable();
-            $table->string('meta_description')->nullable();
+            $table->text('meta_title')->nullable();
+            $table->text('meta_description')->nullable();
 
             $table->timestamps();
         });

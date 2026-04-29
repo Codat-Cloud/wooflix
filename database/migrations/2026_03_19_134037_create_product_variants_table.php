@@ -16,16 +16,16 @@ return new class extends Migration
 
             
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
-            $table->string('name'); // important
+            $table->text('name'); // important
 
-            $table->string('sku')->unique();
+            $table->text('sku')->unique();
 
             $table->decimal('price', 10, 2);
             $table->decimal('sale_price', 10, 2)->nullable();
 
             $table->integer('stock')->default(0);
 
-            $table->string('barcode')->nullable();
+            $table->text('barcode')->nullable();
 
             $table->boolean('is_active')->default(true);
 

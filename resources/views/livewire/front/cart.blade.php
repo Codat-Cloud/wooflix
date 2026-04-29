@@ -137,11 +137,11 @@
                         </span>
                     </div>
 
-                    <a href="{{route('front.checkout')}}" class="checkout-btn w-100 text-decoration-none">
-                        Proceed to Checkout
-                    </a>
-
+                    
                 </div>
+                <a href="{{route('front.checkout')}}" class="checkout-btn w-100 text-decoration-none text-center">
+                    Proceed to Checkout
+                </a>
 
             @endif
 

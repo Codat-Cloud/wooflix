@@ -222,7 +222,7 @@
                     @foreach($brands as $brand)
                         <a href="">
                             <img 
-                                src="{{ asset('storage/brand' . $brand->logo) }}" 
+                                src="{{ asset('storage/' . $brand->logo) }}" 
                                 alt="{{ $brand->name }}"
                             >
                             {{ $brand->name }}

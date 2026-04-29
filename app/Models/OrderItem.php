@@ -12,7 +12,9 @@ class OrderItem extends Model
         'variant_id',
         'name',
         'price',
-        'quantity'
+        'quantity',
+        'tracking_number',
+        'tracking_url',
     ];
 
     public function order()
