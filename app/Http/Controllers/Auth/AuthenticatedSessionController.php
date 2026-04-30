@@ -32,9 +32,7 @@ class AuthenticatedSessionController extends Controller
 
         $this->mergeCart();
 
-        return redirect()->intended(route('dashboard'));
-
-        // return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**
@@ -54,42 +52,50 @@ class AuthenticatedSessionController extends Controller
     protected function mergeCart()
     {
         $userId = auth()->id();
-        $sessionId = session()->getId();
+        // It is safer to grab the session ID before any potential session regeneration
+        $sessionId = session()->getId(); 
 
         DB::transaction(function () use ($userId, $sessionId) {
-
-            // Get guest cart
-            $guestItems = CartItem::where('session_id', $sessionId)->get();
+            // 1. Fetch guest items using the session ID
+            $guestItems = CartItem::where('session_id', $sessionId)
+                ->whereNull('user_id')
+                ->get();
 
             if ($guestItems->isEmpty()) {
                 return;
             }
 
-            // Get user cart once
+            // 2. Fetch existing user items to compare
             $userItems = CartItem::where('user_id', $userId)->get();
 
             foreach ($guestItems as $guest) {
-
-                // Match existing item (handle NULL variant properly)
+                // 3. Look for a match in the user's existing cart
+                // We use == for variant_id to handle NULL (simple product) vs integer (variant)
                 $existing = $userItems->first(function ($item) use ($guest) {
                     return $item->product_id === $guest->product_id &&
-                        $item->variant_id == $guest->variant_id; // works for null
+                        $item->variant_id == $guest->variant_id;
                 });
 
                 if ($existing) {
-                    // ✅ Merge quantity
+                    // ✅ Item exists: Update quantity and delete the guest record
                     $existing->increment('quantity', $guest->quantity);
-
-                    // Remove guest row
                     $guest->delete();
                 } else {
-                    // ✅ Assign to user
+                    // ✅ Item is new to the user: Re-assign the guest record
+                    // Optional: We refresh the price here to ensure the user isn't 
+                    // getting an outdated price from a days-old guest session.
+                    $currentPrice = $guest->variant 
+                        ? ($guest->variant->sale_price ?: $guest->variant->price) 
+                        : ($guest->product->sale_price ?: $guest->product->base_price);
+
                     $guest->update([
-                        'user_id' => $userId,
-                        'session_id' => null,
+                        'user_id'    => $userId,
+                        'session_id' => null, // Clear the session binding
+                        'price'      => $currentPrice, 
                     ]);
 
-                    // Keep local collection in sync (important)
+                    // Update the local collection so the next loop iteration 
+                    // sees this item if there were duplicate guest rows (rare)
                     $userItems->push($guest);
                 }
             }

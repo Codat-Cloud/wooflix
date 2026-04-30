@@ -27,7 +27,8 @@ class BrandForm
                                 TextInput::make('name')
                                     ->required()
                                     ->live(onBlur: true)
-                                    ->afterStateUpdated(fn ($state, $set) =>
+                                    ->afterStateUpdated(
+                                        fn($state, $set) =>
                                         $set('slug', Str::slug($state))
                                     ),
 
@@ -35,25 +36,24 @@ class BrandForm
                                     ->nullable()
                                     ->unique(ignoreRecord: true),
 
-                                    
-                                ]),
-                                
+                            ]),
+
                         Grid::make(1)
                             ->schema([
                                 FileUpload::make('logo')
                                     ->image()
+                                    ->disk('public')
                                     ->directory('brands')
                                     ->imageEditor()
                                     ->nullable(),
 
                                 Textarea::make('description')
                                     ->columnSpanFull(),
-        
-                                    Toggle::make('is_visible')
-                                            ->label('Visibility')
-                                            ->default(true),
-                            ]),
 
+                                Toggle::make('is_visible')
+                                    ->label('Visibility')
+                                    ->default(true),
+                            ]),
 
                     ]),
 

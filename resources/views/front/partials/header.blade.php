@@ -77,44 +77,44 @@
                 <span class="cart-count">12</span>
               </span> --}}
 
-@auth
-    <div class="dropdown d-inline-block ms-2">
-        <a class="btn btn-light dropdown-toggle d-flex align-items-center gap-2"
-           data-bs-toggle="dropdown">
+              @auth
+                  <div class="dropdown d-inline-block ms-2">
+                      <a class="btn btn-light dropdown-toggle d-flex align-items-center gap-2"
+                        data-bs-toggle="dropdown">
 
-            <!-- SVG ICON (better than emoji) -->
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="7" r="4"></circle>
-                <path d="M5.5 21c1.5-4 11.5-4 13 0"></path>
-            </svg>
+                          <!-- SVG ICON (better than emoji) -->
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                              viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                              stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                              <circle cx="12" cy="7" r="4"></circle>
+                              <path d="M5.5 21c1.5-4 11.5-4 13 0"></path>
+                          </svg>
 
-            {{ Str::limit(auth()->user()->name, 10) }}
-        </a>
+                          {{ Str::limit(auth()->user()->name, 10) }}
+                      </a>
 
-        <ul class="dropdown-menu dropdown-menu-end">
-            <li>
-                <a class="dropdown-item" href="{{ route('dashboard') }}">
-                    My Account
-                </a>
-            </li>
+                      <ul class="dropdown-menu dropdown-menu-end">
+                          <li>
+                              <a class="dropdown-item" href="{{ route('dashboard') }}">
+                                  My Account
+                              </a>
+                          </li>
 
-            <li>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="dropdown-item">
-                        Logout
-                    </button>
-                </form>
-            </li>
-        </ul>
-    </div>
-@else
-    <a href="{{ route('login') }}" class="btn btn-orange ms-2">
-        Login / Sign Up
-    </a>
-@endauth
+                          <li>
+                              <form method="POST" action="{{ route('logout') }}">
+                                  @csrf
+                                  <button type="submit" class="dropdown-item">
+                                      Logout
+                                  </button>
+                              </form>
+                          </li>
+                      </ul>
+                  </div>
+              @else
+                  <a href="{{ route('login') }}" class="btn btn-orange ms-2">
+                      Login / Sign Up
+                  </a>
+              @endauth
 
             </div>
           </div>

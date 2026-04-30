@@ -36,6 +36,9 @@ class ProductQuestionsTable
                     ->label('Live')
                     ->boolean(),
             ])
+            ->headerActions([
+                //
+            ])
             ->filters([
                 //
             ])

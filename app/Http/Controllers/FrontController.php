@@ -195,4 +195,18 @@ class FrontController extends Controller
 
         return back()->with('success', 'Request submitted');
     }
+    public function blogsView($slug)
+    {
+        $blog = Blog::where('slug', $slug)
+                ->where('is_published', true)
+                ->with('categories')
+                ->firstOrFail();
+
+        // Fetch related posts if the IDs exist in the JSON array
+        $relatedPosts = !empty($blog->related_posts) 
+            ? Blog::whereIn('id', $blog->related_posts)->where('is_published', true)->get()
+            : collect();
+
+        return view('front.blogs.view', compact('blog', 'relatedPosts'));
+    }
 }

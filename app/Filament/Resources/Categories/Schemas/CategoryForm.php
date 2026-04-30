@@ -26,8 +26,10 @@ class CategoryForm
 
                             Select::make('parent_id')
                                 ->label('Parent Category')
-                                ->relationship('parent', 'name')
+                                ->relationship('parent', 'name', fn ($query, $record) => 
+                                    $query->when($record, fn ($q) => $q->where('id', '!=', $record->id)))
                                 ->searchable()
+                                ->preload()
                                 ->nullable(),
 
                             TextInput::make('name')

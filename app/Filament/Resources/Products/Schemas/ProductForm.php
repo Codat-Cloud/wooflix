@@ -31,14 +31,20 @@ class ProductForm
                             ->label('Published')
                             ->visible(fn($record) => $record !== null),
 
-                        Toggle::make('is_featured')
-                                ->label('Added In Deals Tab')
-                                ->default(0),
+                        // Toggle::make('is_featured')
+                        //         ->label('Added In Deals Tab')
+                        //         ->default(0),
 
                         Select::make('category_id')
-                            ->relationship('category', 'name')
+                            ->relationship('category', 'name', fn ($query) => $query->with('parent')) // Eager load parent
+                            ->getOptionLabelFromRecordUsing(function ($record) {
+                                // If there is a parent, show "Parent - Child", otherwise just "Child"
+                                return $record->parent 
+                                    ? "{$record->parent->name} — {$record->name}" 
+                                    : $record->name;
+                            })
                             ->searchable()
-                            ->preload() 
+                            ->preload()
                             ->required(),
 
                         Select::make('brand_id')

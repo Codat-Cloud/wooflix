@@ -19,14 +19,14 @@ class CouponsTable
         return $table
             ->columns([
                 TextColumn::make('code')
-                ->fontFamily('mono')
-                ->searchable()
-                ->sortable()
-                ->copyable(), // Admin can copy-paste for customers
+                    ->fontFamily('mono')
+                    ->searchable()
+                    ->sortable()
+                    ->copyable(), // Admin can copy-paste for customers
 
                 TextColumn::make('type')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'percentage' => 'info',
                         'fixed' => 'success',
                         'free_shipping' => 'warning',
@@ -34,26 +34,30 @@ class CouponsTable
 
                 TextColumn::make('value')
                     ->label('Benefit')
-                    ->formatStateUsing(fn ($record) => $record->type === 'percentage' ? $record->value . '%' : '₹' . $record->value)
+                    ->formatStateUsing(fn($record) => $record->type === 'percentage' ? $record->value . '%' : '₹' . $record->value)
                     ->sortable(),
 
                 TextColumn::make('usage_count')
                     ->label('Used')
-                    ->getStateUsing(fn ($record) => $record->redemptions()->count() . ($record->usage_limit ? " / {$record->usage_limit}" : "")),
+                    ->getStateUsing(fn($record) => $record->redemptions()->count() . ($record->usage_limit ? " / {$record->usage_limit}" : "")),
 
                 IconColumn::make('is_active')
                     ->boolean()
                     ->label('Active'),
 
+                IconColumn::make('is_best')
+                    ->boolean()
+                    ->label('Best'),
+
                 TextColumn::make('expires_at')
                     ->dateTime('d M, Y')
-                    ->color(fn ($state) => $state && $state->isPast() ? 'danger' : null)
+                    ->color(fn($state) => $state && $state->isPast() ? 'danger' : null)
                     ->sortable(),
-                ])
+            ])
             ->filters([
                 TernaryFilter::make('is_active'),
                 Filter::make('expired')
-                    ->query(fn (Builder $query): Builder => $query->where('expires_at', '<', now())),
+                    ->query(fn(Builder $query): Builder => $query->where('expires_at', '<', now())),
             ])
             ->recordActions([
                 EditAction::make(),

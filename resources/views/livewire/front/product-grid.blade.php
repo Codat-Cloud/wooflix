@@ -88,54 +88,99 @@
 
             <div class="col-lg-9">
                 <div class="row g-4" wire:loading.class="opacity-50">
-                    @forelse($products as $product)
+                @forelse($products as $product)
                     <div class="col-6 col-md-4 col-lg-3">
-                        <div class="product-card">
+                        <div class="product-card h-100">
+                            @php
+                                // Pre-select the first variant ID if not already selected by the user
+                                if (!isset($selectedVariants[$product->id]) && $product->variants->isNotEmpty()) {
+                                    $selectedVariants[$product->id] = $product->variants->first()->id;
+                                }
+
+                                // Identify current data based on selection
+                                $selectedId = $selectedVariants[$product->id] ?? null;
+                                $variant = $selectedId ? $product->variants->firstWhere('id', $selectedId) : null;
+                                
+                                // Display logic: Variant price first, then product price
+                                $displayPrice = $variant ? ($variant->sale_price ?? $variant->price) : $product->display_price;
+                                $basePrice = $variant ? $variant->price : $product->base_price;
+                                $discount = ($basePrice > 0 && $displayPrice < $basePrice) 
+                                            ? round((($basePrice - $displayPrice) / $basePrice) * 100) 
+                                            : 0;
+                            @endphp
+
                             <div class="product-image">
-                                @if($product->discount_percentage)
+                                @if($discount > 0)
+                                    <span class="product-badge">{{ $discount }}% OFF</span>
+                                @elseif($product->discount_percentage)
                                     <span class="product-badge">{{ $product->discount_percentage }}% OFF</span>
                                 @endif
+
                                 <a href="{{ route('front.singleProduct', $product->slug) }}">
                                     <img src="{{ asset('storage/' . $product->main_image) }}" alt="{{ $product->name }}" />
                                 </a>
+
                                 @if($product->rating)
                                     <span class="product-rating">⭐ {{ $product->rating }}</span>
                                 @endif
                             </div>
 
-                            <div class="product-info">
-                                <a href="{{ route('front.singleProduct', $product->slug) }}" class="text-decoration-none">
-                                <h6 class="product-brand">{{ $product->brand->name ?? 'Wooflix' }}</h6>
-                                <p class="product-title">{{ $product->name }}</p>
+                            {{-- Dropdown Section: Variation selection --}}
+                            <div class="product-selection px-2 pt-2">
+                                @if($product->variants->isNotEmpty())
+                                    <select class="form-select form-select-sm border-light-subtle shadow-none" 
+                                            wire:model.live="selectedVariants.{{ $product->id }}"
+                                            style="font-size: 0.8rem; cursor: pointer;">
+                                        @foreach($product->variants as $v)
+                                            <option value="{{ $v->id }}">
+                                                {{ $v->name }} 
+                                                @if($v->price > $v->sale_price && $v->sale_price > 0)
+                                                    ({{ round((($v->price - $v->sale_price) / $v->price) * 100) }}% Off)
+                                                @endif
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                @else
+                                    <div style="height: 31px;"></div> {{-- Maintains height alignment --}}
+                                @endif
+                            </div>
+
+                            <div class="product-info border-bottom">
+                                <a href="{{ route('front.singleProduct', $product->slug) }}" class="text-decoration-none text-dark">
+                                    <h6 class="product-brand">{{ $product->brand->name ?? 'Wooflix' }}</h6>
+                                    <h5 class="product-title p" title="{{$product->name}}">
+                                        {{ Str::limit($product->name, 70, '...') }}
+                                    </h5>
                                 </a>
 
                                 <div class="product-price">
                                     <div>
-                                        <span class="price">₹{{ number_format($product->sale_price, 2) }}</span>
-                                        @if($product->regular_price > $product->sale_price)
-                                            <span class="old-price">₹{{ number_format($product->regular_price) }}</span>
+                                        <span class="price">₹{{ number_format($displayPrice, 2) }}</span>
+                                        @if($discount > 0)
+                                            <div class="old-price text-muted text-decoration-line-through small ms-1">
+                                                ₹{{ number_format($basePrice, 2) }}
+                                            </div>
                                         @endif
                                     </div>
+                                    
                                     <div class="product-action">
-                                        <button class="add-btn">Add</button>
+<button class="add-btn" 
+        wire:click="addToCart({{ $product->id }})"
+        wire:loading.attr="disabled"
+        wire:target="addToCart({{ $product->id }})">
+    <span wire:loading.remove wire:target="addToCart({{ $product->id }})">Add</span>
+    <span wire:loading wire:target="addToCart({{ $product->id }})">...</span>
+</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    @empty
+                @empty
                     <div class="col-12 text-center py-5">
                         <p class="text-muted">No products found matching your criteria.</p>
                     </div>
-                    @endforelse
-                </div>
-
-                @if($products->hasMorePages())
-                    <div x-intersect="$wire.loadMore()" class="loading-state text-center py-5">
-                        <div class="spinner-border text-warning" role="status"></div>
-                        <p class="mt-3">Loading products...</p>
-                    </div>
-                @endif
+                @endforelse
             </div>
         </div>
     </div>

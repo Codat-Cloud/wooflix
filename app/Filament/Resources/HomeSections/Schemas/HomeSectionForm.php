@@ -143,6 +143,7 @@ class HomeSectionForm
                                 // FileUpload for non-deal sections (Brands/General Categories)
                                 FileUpload::make('image')
                                     ->image()
+                                    ->disk('public')
                                     ->directory('home')
                                     ->columnSpanFull()
                                     ->hidden(fn($get) => $get('../../type') === 'tabbed_category_products')

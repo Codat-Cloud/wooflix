@@ -16,6 +16,9 @@ class WholesalesTable
     {
         return $table
             ->columns([
+                TextColumn::make('created_at')
+                    ->label('Lead Date')
+                    ->dateTime('d M, Y'),
                 TextColumn::make('full_name')
                     ->searchable(),
                 TextColumn::make('business_name')

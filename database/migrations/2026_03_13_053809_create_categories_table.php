@@ -20,7 +20,7 @@ return new class extends Migration
                 ->nullOnDelete();
 
             $table->text('name');
-            $table->text('slug')->unique();
+            $table->text('slug')->unique(['parent_id', 'slug']);
 
             $table->text('description')->nullable();
 

@@ -15,8 +15,11 @@ class OffersTable
     public static function configure(Table $table): Table
     {
         return $table
+        ->reorderable('sort_order')
             ->columns([
                 ImageColumn::make('image')
+                ->disk('public')
+                ->circular()
                 ->label('Image'),
 
                 TextColumn::make('title')

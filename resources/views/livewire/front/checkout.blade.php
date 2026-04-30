@@ -228,7 +228,15 @@
                 "name": "Wooflix",
                 "description": "Order #" + result.order_number,
                 "handler": function (response) {
-                    window.location.href = `/payment/verify?order_id=${result.order_id}&razorpay_payment_id=${response.razorpay_payment_id}`;
+                    // Construct the URL with all necessary verification tokens
+                    const queryParams = new URLSearchParams({
+                        order_id: result.order_id, // Your internal DB ID
+                        razorpay_order_id: response.razorpay_order_id, // Razorpay's internal ID
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        razorpay_signature: response.razorpay_signature // The secret handshake
+                    });
+
+                    window.location.href = `/payment/verify?${queryParams.toString()}`;
                 },
                 "prefill": {
                     "name": result.customer_name,

@@ -66,7 +66,7 @@ class Cart extends Component
                 'product_id' => $variant->product_id,
                 'variant_id' => $variant_id,
                 'quantity' => 1,
-                'price' => $variant->sale_price,
+                'price' => ($variant->sale_price > 0) ? $variant->sale_price : $variant->price,
             ]);
         } elseif ($product_id) {
 

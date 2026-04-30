@@ -22,33 +22,25 @@ class BrandsTable
                 TextColumn::make('name')
                     ->searchable(),
                 ImageColumn::make('logo')
+                    ->disk('public')
                     ->label('Logo')
                     ->circular(),
                 TextColumn::make('slug')
-                ->searchable(),
+                    ->searchable(),
                 IconColumn::make('is_visible')
                     ->boolean(),
-                TextColumn::make('meta_title')
-                    ->limit(30)
-                    ->searchable(),
-                TextColumn::make('meta_description')
-                    ->limit(30)
-                    ->searchable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                // TextColumn::make('meta_title')
+                //     ->limit(30)
+                //     ->searchable(),
+                // TextColumn::make('meta_description')
+                //     ->limit(30)
+                //     ->searchable(),
             ])
             ->filters([
-                TernaryFilter::make('is_visible')
-                    ->label('Visibility'),
+                //
             ])
             ->recordActions([
-                ViewAction::make(),
+                // ViewAction::make(),
                 EditAction::make(),
             ])
             ->toolbarActions([

@@ -19,7 +19,7 @@ class ProfileController extends Controller
         $orders = Order::with(['items.product:id,slug,name,main_image'])
             ->where('user_id', auth()->id())
             ->latest()
-            ->take(6)
+            ->take(2)
             ->get();
 
         $latestReview = Review::with('product:id,slug,name')

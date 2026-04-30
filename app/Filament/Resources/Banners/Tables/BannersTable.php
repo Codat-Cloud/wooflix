@@ -15,9 +15,17 @@ class BannersTable
     public static function configure(Table $table): Table
     {
         return $table
+        ->reorderable('sort_order')
             ->columns([
                 ImageColumn::make('desktop_image')
-                ->label('Banner'),
+                ->disk('public')
+                ->circular()
+                ->label('Desktop Banner'),
+                
+                ImageColumn::make('mobile_image')
+                ->disk('public')
+                ->circular()
+                ->label('Mobile Banner'),
 
                 TextColumn::make('title')
                     ->limit(30)

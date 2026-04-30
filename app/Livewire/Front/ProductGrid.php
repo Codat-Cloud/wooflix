@@ -14,6 +14,8 @@ class ProductGrid extends Component
 {
     use WithPagination;
 
+    protected $listeners = ['add-to-cart' => 'add'];
+
     #[Url(as: 'q')]
     public $search = '';
 
@@ -27,6 +29,14 @@ class ProductGrid extends Component
     public $sort = 'best_seller';
 
     public $perPage = 12;
+
+    public $selectedVariants = [];
+    protected $cart;
+
+    public function boot(Cart $cart)
+    {
+        $this->cart = $cart;
+    }
 
     public function getSelectedBrandsProperty()
     {
@@ -174,5 +184,38 @@ class ProductGrid extends Component
         $this->resetPage();
 
         $this->dispatch('page-title-updated', title: 'Shop Pet Supplies');
+    }
+
+// Add the namespace at the top of your file
+// use App\Services\Cart; (Or wherever your Cart class is located)
+
+public function addToCart($productId, Cart $cart) 
+{
+    $product = \App\Models\Product::with('variants')->find($productId);
+
+    if (!$product) return;
+
+    $variantId = $this->selectedVariants[$productId] ?? null;
+
+    if ($product->variants->isNotEmpty()) {
+        // Default to first variant if somehow not set
+        $variantId = $variantId ?? $product->variants->first()->id;
+        $cart->add($variantId, null);
+    } else {
+        $cart->add(null, $productId);
+    }
+
+    $this->dispatch('cart-updated');
+    $this->dispatch('notify', ['type' => 'success', 'message' => 'Added to your paw-basket!']);
+}
+
+    public function updatedProducts()
+    {
+        // Optional: Pre-select first variant for every product on the page
+        foreach ($this->products() as $product) {
+            if ($product->variants->isNotEmpty() && !isset($this->selectedVariants[$product->id])) {
+                $this->selectedVariants[$product->id] = $product->variants->first()->id;
+            }
+        }
     }
 }

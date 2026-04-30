@@ -335,6 +335,7 @@ inCartProducts = [...($event.detail.product_ids || [])]; adding = false; added =
                     <span class="delivery-icon">📦</span>
                     <span>No Exchange & Returns</span>
                   </div>
+                  <br>
 
                   <div class="delivery-item">
                     <span class="delivery-icon free">FREE</span>

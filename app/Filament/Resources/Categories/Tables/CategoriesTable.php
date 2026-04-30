@@ -15,6 +15,9 @@ class CategoriesTable
     {
         return $table
             ->columns([
+                ImageColumn::make('image')
+                    ->label('Image')
+                    ->circular(),
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('parent.name')
@@ -22,23 +25,12 @@ class CategoriesTable
                     ->searchable()
                     ->sortable()
                     ->placeholder('None (Top Level)'),
-                ImageColumn::make('image')
-                    ->label('Image')
-                    ->circular(),
                 TextColumn::make('slug')
                     ->searchable(),
-                TextColumn::make('meta_title')
-                    ->searchable(),
-                TextColumn::make('meta_description')
-                    ->searchable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                // TextColumn::make('meta_title')
+                //     ->searchable(),
+                // TextColumn::make('meta_description')
+                //     ->searchable(),
             ])
             ->filters([
                 //

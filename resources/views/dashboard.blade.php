@@ -50,14 +50,14 @@
                 <span class="arrow">›</span>
               </a>
 
-              <a href="#" class="profile-action"
+              {{-- <a href="#" class="profile-action"
                 data-bs-toggle="offcanvas" 
                 data-bs-target="#profileDrawer"
                 onclick="setDrawer('refunds')"
               >
                 <span>Payments & Refunds</span>
                 <span class="arrow">›</span>
-              </a>
+              </a> --}}
 
               <a href="#" class="profile-action"
                 data-bs-toggle="offcanvas" 
@@ -168,7 +168,7 @@
                     </div>
                 @empty
                     <div class="col-12 text-center py-4">
-                        <p class="text-muted">Your wishlist is empty. 🦴</p>
+                        <p class="text-muted">Your wishlist is empty.</p>
                         <a href="/collections" class="btn btn-orange btn-sm">Shop Now</a>
                     </div>
                 @endforelse

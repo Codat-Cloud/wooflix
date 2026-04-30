@@ -7,6 +7,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [FrontController::class, 'index'])->name('front.index');
+Route::get('/blogs', [FrontController::class, 'blogs'])->name('front.blogs.index');
+Route::get('/blog/{slug}', [FrontController::class, 'blogsView'])->name('front.blogs.view');
 Route::get('/collections', [FrontController::class, 'shop'])->name('front.shop');
 Route::get('/collection/{product_slug}', [FrontController::class, 'singleProduct'])->name('front.singleProduct');
 Route::get('/cart', [FrontController::class, 'cart'])->name('front.cart');

@@ -229,7 +229,7 @@
       <div class="row g-4">
           @forelse($latestBlogs as $post)
               <div class="col-6 col-md-3">
-                  <a href="{{ url('blog/' . $post->slug) }}" class="blog-card">
+                  <a href="{{route('front.blogs.view', $post->slug)}}" class="blog-card">
                       <div class="blog-image">
                           <picture>
                               {{-- Try loading WebP first --}}

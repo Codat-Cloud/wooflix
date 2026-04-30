@@ -123,4 +123,23 @@ class Product extends Model
                     ->where('is_visible', true)
                     ->latest();
     }
+
+    public function getDisplayPriceAttribute()
+    {
+        return $this->sale_price > 0 ? $this->sale_price : $this->base_price;
+    }
+
+    public function getHasDiscountAttribute()
+    {
+        return $this->sale_price > 0 && $this->base_price > $this->sale_price;
+    }
+
+    public function getDiscountPercentageAttribute(): int
+    {
+        if ($this->base_price <= 0 || $this->sale_price <= 0 || $this->sale_price >= $this->base_price) {
+            return 0;
+        }
+
+        return (int) round((($this->base_price - $this->sale_price) / $this->base_price) * 100);
+    }
 }
