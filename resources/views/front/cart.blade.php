@@ -23,7 +23,7 @@
 
     <!-- EMPTY CART -->
     <section class="empty-cart text-center py-5">
-        <img src="https://placehold.co/200x150" />
+        <img src="{{asset('images/empty-cart.webp')}}" />
         <h5>Your cart is empty</h5>
         <a href="/" class="btn btn-orange mt-2">Shop Now</a>
     </section>
@@ -82,17 +82,17 @@
                 <div class="cart-summary">
                     <h5>Order Summary</h5>
 
-                    <div class="summary-row">
+                    {{-- <div class="summary-row">
                         <span>Subtotal</span>
                         <span>
                             ₹{{ number_format($items->sum(fn($i) => $i->total), 2) }}
                         </span>
-                    </div>
+                    </div> --}}
 
-                    <div class="summary-row">
+                    {{-- <div class="summary-row">
                         <span>Shipping</span>
                         <span class="text-success">Free</span>
-                    </div>
+                    </div> --}}
 
                     <div class="summary-row total">
                         <span>Total</span>

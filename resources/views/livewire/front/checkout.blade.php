@@ -227,6 +227,7 @@
                 "currency": "INR",
                 "name": "Wooflix",
                 "description": "Order #" + result.order_number,
+                "order_id": result.razorpay_order_id,
                 "handler": function (response) {
                     // Construct the URL with all necessary verification tokens
                     const queryParams = new URLSearchParams({

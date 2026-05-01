@@ -133,10 +133,17 @@ class FrontController extends Controller
 
     public function cart()
     {
-        $sessionId = session()->getId();
+
+        if (!auth()->check()) {
+            return redirect('/login');
+        }
+
+        $userId = auth()->id();
+
+        // dd($sessionId);
 
         $items = CartItem::with(['product', 'variant'])
-            ->where('session_id', $sessionId)
+            ->where('user_id', $userId)
             ->get();
 
         return view('front.cart', compact('items'));

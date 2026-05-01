@@ -39,6 +39,10 @@ return new class extends Migration
             $table->text('shipping_postal_code')->after('shipping_state');
             $table->text('shipping_country')->default('India');
 
+            $table->text('razorpay_order_id')->nullable();
+            $table->text('razorpay_payment_id')->nullable();
+            $table->text('razorpay_signature')->nullable();
+
             $table->timestamps();
         });
     }
