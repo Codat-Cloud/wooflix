@@ -48,61 +48,60 @@ class Cart extends Component
 
     public function add($variant_id = null, $product_id = null)
     {
-        $sessionId = session()->getId();
-
-        if ($variant_id) {
-
-            $variant = \App\Models\ProductVariant::findOrFail($variant_id);
-
-            $exists = \App\Models\CartItem::where('session_id', $sessionId)
-                ->where('variant_id', $variant_id)
-                ->exists();
-
-            if ($exists) return;
-
-            CartItem::create([
-                'user_id' => auth()->id() ?? null,
-                'session_id' => $sessionId,
-                'product_id' => $variant->product_id,
-                'variant_id' => $variant_id,
-                'quantity' => 1,
-                'price' => ($variant->sale_price > 0) ? $variant->sale_price : $variant->price,
-            ]);
-        } elseif ($product_id) {
-
-            $product = Product::findOrFail($product_id);
-
-            $exists = CartItem::where('session_id', $sessionId)
-                ->where('product_id', $product_id)
-                ->whereNull('variant_id')
-                ->exists();
-
-            if ($exists) return;
-
-            CartItem::create([
-                'user_id' => auth()->id() ?? null,
-                'session_id' => $sessionId,
-                'product_id' => $product_id,
-                'variant_id' => null,
-                'quantity' => 1,
-                'price' => $product->sale_price ?? $product->base_price,
-            ]);
+        // Support both named object and positional arguments
+        if (is_array($variant_id)) {
+            $data = $variant_id;
+            $variant_id = $data['variant_id'] ?? null;
+            $product_id = $data['product_id'] ?? null;
         }
+
+
+        $sessionId = session()->getId();
+        $userId = auth()->id();
+
+        // 1. Create/Update Cart Item
+        $variant = ProductVariant::find($variant_id);
+
+        if (!$variant || $variant->stock <= 0) {
+            $this->dispatch('notify', [
+                'type' => 'error', 
+                'message' => 'Sorry, this item just went out of stock!'
+            ]);
+            return;
+        }
+
+        if (!$variant) return;
+
+        CartItem::updateOrCreate(
+            [
+                'variant_id' => $variant_id,
+                'user_id'    => $userId,
+                'session_id' => $userId ? null : $sessionId,
+            ],
+            [
+                'product_id' => $product_id,
+                'price'      => $variant->display_price,
+                'quantity'   => 1, // Or increment logic
+            ]
+        );
 
         $this->loadCart();
 
-        $this->dispatch('cart-updated', [
-            'count' => $this->count,
-            'variant_ids' => \App\Models\CartItem::where('session_id', session()->getId())
-                ->pluck('variant_id')
-                ->filter()
-                ->values()
-                ->toArray(),
+        // 2. CRITICAL: Get all variant IDs currently in the cart to sync with Frontend
+        $currentCartIds = CartItem::where(function ($q) use ($userId, $sessionId) {
+            if ($userId) $q->where('user_id', $userId);
+            else $q->where('session_id', $sessionId);
+        })
+            ->pluck('variant_id')
+            ->filter()
+            ->map(fn($id) => (int)$id) // Cast to integers for JS
+            ->values()
+            ->toArray();
 
-            'product_ids' => \App\Models\CartItem::where('session_id', session()->getId())
-                ->pluck('product_id')
-                ->values()
-                ->toArray(),
+        // 3. Dispatch the event that Alpine.js is listening for (@cart-updated.window)
+        $this->dispatch('cart-updated', [
+            'variant_ids' => $currentCartIds,
+            'count' => count($currentCartIds)
         ]);
     }
 
@@ -131,9 +130,7 @@ class Cart extends Component
                 if (!$dbItem) return;
 
                 // Determine stock source
-                $stock = $dbItem->variant->stock
-                    ?? $dbItem->product->stock
-                    ?? 0;
+                $stock = $dbItem->variant?->stock ?? 0;
 
                 // ✅ Stock check
                 if ($dbItem->quantity >= $stock) {

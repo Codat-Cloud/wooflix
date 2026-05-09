@@ -7,19 +7,34 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [FrontController::class, 'index'])->name('front.index');
+
+
+
 Route::get('/blogs', [FrontController::class, 'blogs'])->name('front.blogs.index');
 Route::get('/blog/{slug}', [FrontController::class, 'blogsView'])->name('front.blogs.view');
+
+
+
 Route::get('/collections', [FrontController::class, 'shop'])->name('front.shop');
-Route::get('/collection/{product_slug}', [FrontController::class, 'singleProduct'])->name('front.singleProduct');
+Route::get('/collection/{product_slug}/{variant_slug?}', [FrontController::class, 'singleProduct'])->name('front.singleProduct');
+
+
+
 Route::get('/cart', [FrontController::class, 'cart'])->name('front.cart');
+
+
+
 Route::get('/wholesale', [FrontController::class, 'wholesale'])->name('front.wholesale');
 Route::post('/wholesale/save', [FrontController::class, 'wholesaleSave'])->name('front.wholesale.save');
 
-Route::get('/payment/verify', [PaymentController::class, 'verify'])->name('payment.verify');
 
+
+Route::get('/payment/verify', [PaymentController::class, 'verify'])->name('payment.verify');
 Route::get('/order-success/{order}', [PaymentController::class, 'success'])->name('front.success');
 
-// Grouping cart routes makes it even more scalable
+
+
+// Grouping cart routes
 Route::prefix('cart')->group(function () {
     Route::post('/add', [CartController::class, 'add'])->name('cart.add');
 });

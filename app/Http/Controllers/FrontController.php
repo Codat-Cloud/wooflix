@@ -91,7 +91,7 @@ class FrontController extends Controller
     public function shop(Request $request)
     {
         // 1. Start Query
-        $query = Product::query()->where('is_active', true);
+        $query = Product::query()->where('is_active', true)->with('defaultVariant');
 
         // 2. Apply Filters (We will implement the logic for these later)
         if ($request->has('brand')) {
@@ -108,17 +108,44 @@ class FrontController extends Controller
         return view('front.shop', compact('products', 'brands', 'categories'));
     }
 
-    public function singleProduct($slug)
+    public function singleProduct($product_slug,  $variant_slug = null)
     {
-        $product = Product::where('slug', $slug)
+        // dd($variant_slug);
+        $product = Product::where('slug', $product_slug)
             ->where('is_active', true)
-            ->with(['brand', 'category', 'images', 'variants', 'variants.optionValues', 'reviews'])
+            ->with(['brand', 'category', 'images', 'variants', 'variants.optionValues', 'reviews', 'defaultVariant'])
             ->firstOrFail();
+
+            // dd($product);
+
+        // 
+        $selectedVariant = null;
+
+        // If variant exists in URL
+        if ($variant_slug) {
+
+            $selectedVariant = $product->variants()
+                ->where('slug', $variant_slug)
+                ->where('is_active', true)
+                ->first();
+        }
+
+        // Fallback to default variant
+        if (!$selectedVariant) {
+
+            $selectedVariant = $product->variants
+                ->firstWhere('is_default', true)
+
+                ?? $product->variants->first();
+        }
+
+        abort_if(!$selectedVariant, 404);
 
         // Fetch related products from the same category
         $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->where('is_active', true)
+            ->with('defaultVariant')
             ->take(10)
             ->get();
 
@@ -128,7 +155,7 @@ class FrontController extends Controller
             ->orderBy('is_best', 'desc') // Show 'BEST' coupons first
             ->get();
 
-        return view('front.singleProduct', compact('product', 'relatedProducts', 'coupons'));
+        return view('front.singleProduct', compact('product', 'relatedProducts', 'coupons', 'selectedVariant'));
     }
 
     public function cart()
@@ -156,7 +183,8 @@ class FrontController extends Controller
             return redirect('/login');
         }
 
-        $hasItems = CartItem::when(auth()->check(),
+        $hasItems = CartItem::when(
+            auth()->check(),
             fn($q) => $q->where('user_id', auth()->id()),
             fn($q) => $q->where('session_id', $sessionId)
         )->exists();
@@ -205,12 +233,12 @@ class FrontController extends Controller
     public function blogsView($slug)
     {
         $blog = Blog::where('slug', $slug)
-                ->where('is_published', true)
-                ->with('categories')
-                ->firstOrFail();
+            ->where('is_published', true)
+            ->with('categories')
+            ->firstOrFail();
 
         // Fetch related posts if the IDs exist in the JSON array
-        $relatedPosts = !empty($blog->related_posts) 
+        $relatedPosts = !empty($blog->related_posts)
             ? Blog::whereIn('id', $blog->related_posts)->where('is_published', true)->get()
             : collect();
 

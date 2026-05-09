@@ -12,13 +12,13 @@ class Product extends Model
         'brand_id',
         'name',
         'slug',
+        'asin',
+        'filters',
         'main_image',
         'short_description',
         'description',
         'is_active',
         'is_featured',
-        'base_price',
-        'sale_price',
         'meta_title',
         'meta_description',
         'custom_tracking_script',
@@ -27,6 +27,7 @@ class Product extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'is_featured' => 'boolean',
+        'filters' => 'array',
     ];
 
     protected static function booted()
@@ -65,7 +66,21 @@ class Product extends Model
 
     public function variants()
     {
-        return $this->hasMany(ProductVariant::class);
+        return $this->hasMany(ProductVariant::class)
+            ->where('is_active', true);
+    }
+
+    public function defaultVariant()
+    {
+        return $this->hasOne(ProductVariant::class)
+            ->where('is_default', true);
+    }
+
+    public function getDefaultVariantNameAttribute()
+    {
+        return $this->defaultVariant?->name
+            ?? $this->variants()->value('name')
+            ?? '-';
     }
 
     public function images()
@@ -92,7 +107,7 @@ class Product extends Model
     public function getRatingStatsAttribute()
     {
         $total = $this->reviews()->count();
-        
+
         // Returns count for each star level [5 => 20, 4 => 3, etc.]
         $counts = $this->reviews()
             ->selectRaw('rating, count(*) as count')
@@ -120,26 +135,41 @@ class Product extends Model
     public function questions()
     {
         return $this->hasMany(ProductQuestion::class)
-                    ->where('is_visible', true)
-                    ->latest();
+            ->where('is_visible', true)
+            ->latest();
     }
 
     public function getDisplayPriceAttribute()
     {
-        return $this->sale_price > 0 ? $this->sale_price : $this->base_price;
-    }
+        $variant = $this->defaultVariant;
 
-    public function getHasDiscountAttribute()
-    {
-        return $this->sale_price > 0 && $this->base_price > $this->sale_price;
+        if (!$variant) {
+            return 0;
+        }
+
+        return $variant->sale_price > 0
+            ? $variant->sale_price
+            : $variant->price;
     }
 
     public function getDiscountPercentageAttribute(): int
     {
-        if ($this->base_price <= 0 || $this->sale_price <= 0 || $this->sale_price >= $this->base_price) {
+        $variant = $this->defaultVariant;
+
+        if (
+            !$variant ||
+            $variant->price <= 0 ||
+            $variant->sale_price <= 0 ||
+            $variant->sale_price >= $variant->price
+        ) {
             return 0;
         }
 
-        return (int) round((($this->base_price - $this->sale_price) / $this->base_price) * 100);
+        return (int) round(
+            (
+                ($variant->price - $variant->sale_price)
+                / $variant->price
+            ) * 100
+        );
     }
 }

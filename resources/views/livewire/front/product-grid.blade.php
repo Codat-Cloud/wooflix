@@ -32,22 +32,21 @@
         <div class="row">
             <div class="col-lg-3 d-none d-lg-block">
                 <div class="filter-sidebar">
-                    <div class="filter-header">
+                    {{-- <div class="filter-header">
                         <h5>Filters</h5>
                         <button wire:click="clearAll" class="clear-filters">Clear All</button>
-                    </div>
+                    </div> --}}
 
                     {{-- Separate checking for Brands and Categories --}}
-                       @if(count($this->selectedBrands) > 0 || count($this->selectedCategories) > 0)
+                       {{-- @if(count($this->selectedBrands) > 0 || count($this->selectedCategories) > 0)
                             <div class="active-filters">
                                 @foreach($this->selectedBrands as $slug)
                                     <span class="filter-chip" wire:click="toggleBrand('{{ $slug }}')">
                                         {{ Str::headline($slug) }} ✕
                                     </span>
                                 @endforeach
-                                {{-- Repeat for Categories --}}
                             </div>
-                        @endif
+                        @endif --}}
 
                     <div class="filter-group">
                         <button class="filter-toggle">Brands <span class="arrow">⌄</span></button>
@@ -116,7 +115,7 @@
                                     <span class="product-badge">{{ $product->discount_percentage }}% OFF</span>
                                 @endif
 
-                                <a href="{{ route('front.singleProduct', $product->slug) }}">
+                                <a href="{{ route('front.singleProduct', ['product_slug' => $product->slug, 'variant_slug' => $product->defaultVariant->slug]) }}">
                                     <img src="{{ asset('storage/' . $product->main_image) }}" alt="{{ $product->name }}" />
                                 </a>
 
@@ -146,7 +145,8 @@
                             </div>
 
                             <div class="product-info border-bottom">
-                                <a href="{{ route('front.singleProduct', $product->slug) }}" class="text-decoration-none text-dark">
+                                <a href="{{ route('front.singleProduct', ['product_slug' => $product->slug, 'variant_slug' => $product->defaultVariant->slug]) }}" class="text-decoration-none text-dark">
+                                    {{-- {{ dd($product->defaultVariant) }} --}}
                                     <h6 class="product-brand">{{ $product->brand->name ?? 'Wooflix' }}</h6>
                                     <h5 class="product-title p" title="{{$product->name}}">
                                         {{ Str::limit($product->name, 70, '...') }}
@@ -164,13 +164,13 @@
                                     </div>
                                     
                                     <div class="product-action">
-<button class="add-btn" 
-        wire:click="addToCart({{ $product->id }})"
-        wire:loading.attr="disabled"
-        wire:target="addToCart({{ $product->id }})">
-    <span wire:loading.remove wire:target="addToCart({{ $product->id }})">Add</span>
-    <span wire:loading wire:target="addToCart({{ $product->id }})">...</span>
-</button>
+                                        <button class="add-btn" 
+                                                wire:click="addToCart({{ $product->id }})"
+                                                wire:loading.attr="disabled"
+                                                wire:target="addToCart({{ $product->id }})">
+                                            <span wire:loading.remove wire:target="addToCart({{ $product->id }})">Add</span>
+                                            <span wire:loading wire:target="addToCart({{ $product->id }})">...</span>
+                                        </button>
                                     </div>
                                 </div>
                             </div>

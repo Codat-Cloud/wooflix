@@ -107,7 +107,7 @@ class ProductGrid extends Component
     {
         // dd(request()->query('q'), $this->search);
 
-        $seoTitle = "Shop Pet Supplies";
+        $seoTitle = "Best store to buy pet products";
         $query = Product::query()
             ->with(['brand', 'variants'])
             ->where('is_active', true);
@@ -167,7 +167,7 @@ class ProductGrid extends Component
         return view('livewire.front.product-grid', [
             'products' => $query->paginate($this->perPage),
             'brands' => Brand::withCount('products')->get(),
-            'categories' => Category::withCount('products')->get(),
+            'categories' => Category::whereNull('parent_id')->withCount('products')->get(),
             'seoTitle' => $seoTitle,
             'selectedBrands' => $this->selectedBrands,
             'selectedCategories' => $this->selectedCategories,

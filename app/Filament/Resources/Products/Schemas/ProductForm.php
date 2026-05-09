@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Products\Schemas;
 
+use App\Models\ProductFilterTag;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
@@ -34,13 +36,17 @@ class ProductForm
                         // Toggle::make('is_featured')
                         //         ->label('Added In Deals Tab')
                         //         ->default(0),
+                        
+                        TextInput::make('asin')
+                            ->label('ASIN')
+                            ->helperText('Applicable to non-variation product.'),
 
                         Select::make('category_id')
-                            ->relationship('category', 'name', fn ($query) => $query->with('parent')) // Eager load parent
+                            ->relationship('category', 'name', fn($query) => $query->with('parent')) // Eager load parent
                             ->getOptionLabelFromRecordUsing(function ($record) {
                                 // If there is a parent, show "Parent - Child", otherwise just "Child"
-                                return $record->parent 
-                                    ? "{$record->parent->name} — {$record->name}" 
+                                return $record->parent
+                                    ? "{$record->parent->name} — {$record->name}"
                                     : $record->name;
                             })
                             ->searchable()
@@ -49,12 +55,13 @@ class ProductForm
 
                         Select::make('brand_id')
                             ->relationship('brand', 'name')
-                            ->preload() 
+                            ->preload()
                             ->searchable(),
 
                         TextInput::make('name')
                             ->required()
                             ->live(onBlur: true)
+                            ->columnSpanFull()
                             ->afterStateUpdated(
                                 fn($state, $set) =>
                                 $set('slug', Str::slug($state))
@@ -62,21 +69,10 @@ class ProductForm
 
                         TextInput::make('slug')
                             ->nullable()
+                            ->columnSpanFull()
+                            ->helperText('This will be product url.')
                             ->unique(ignoreRecord: true),
 
-                        TextInput::make('base_price')
-                            ->helperText('Maximum Retail Price.')
-                            ->prefix('₹')
-                            ->required(),
-                        TextInput::make('sale_price')
-                            ->label('Sale Price')
-                            ->prefix('₹')
-                            ->helperText('Leave blank if there is no discount.')
-                            ->lte('base_price'),
-
-                        TextInput::make('stock')
-                            ->label('Total Stock')
-                            ->helperText('Applicable to non-variation product.'),
 
                     ]),
 
@@ -91,30 +87,57 @@ class ProductForm
                     Textarea::make('meta_description'),
                     Textarea::make('custom_tracking_script'),
 
+
+
+                    // ================ Product Filter ===================
+
+                    Section::make('Select Filters')
+                        ->schema(
+
+                            ProductFilterTag::query()
+                                ->where('is_active', true)
+                                ->get()
+                                ->groupBy('type')
+                                ->map(function ($filters, $type) {
+
+                                    return CheckboxList::make("filters.$type")
+                                        ->label(str($type)->replace('_', ' ')->title())
+                                        ->options(
+                                            $filters->pluck('name', 'id')->toArray()
+                                        )
+                                        ->columns(2);
+                                })
+                                ->values()
+                                ->toArray()
+
+                        )
+                        ->collapsed()
+                        ->collapsible(),
+
                 ]),
 
             // ================= PRODUCT IMAGES =================
             Section::make('Product Images')
                 ->schema([
 
-                FileUpload::make('main_image')
-                    ->label('Main Image')
-                    ->image()
-                    ->disk('public')
-                    ->directory('products')
-                    ->imagePreviewHeight('150'),
+                    FileUpload::make('main_image')
+                        ->label('Main Image')
+                        ->image()
+                        ->disk('public')
+                        ->directory('products')
+                        ->imagePreviewHeight('150'),
 
                     // ================= PRODUCT IMAGES =================
-        
-                Repeater::make('images')
-                    ->relationship()
-                    ->schema([
-                        FileUpload::make('image')
-                            ->image()
-                            ->disk('public') 
-                            ->directory('products')
-                    ])
-        
+
+                    Repeater::make('images')
+                        ->relationship()
+                        ->schema([
+                            FileUpload::make('image')
+                                ->image()
+                                ->disk('public')
+                                ->directory('products')
+                        ])
+
                 ]),
 
         ]);

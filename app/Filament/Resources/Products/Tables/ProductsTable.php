@@ -28,6 +28,9 @@ class ProductsTable
                     ->label('Brand')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('default_variant_name')
+                    ->label('Default Variant')
+                    ->badge(),
                 ImageColumn::make('main_image')
                     ->label('Image')
                     ->disk('public')
@@ -35,18 +38,10 @@ class ProductsTable
                     ->circular(),
                 TextColumn::make('name')
                     ->limit(30)
-                    ->tooltip(fn (Product $record): string => $record->name)
+                    ->tooltip(fn(Product $record): string => $record->name)
                     ->searchable(),
                 IconColumn::make('is_active')
                     ->boolean(),
-                TextColumn::make('base_price')
-                    ->money('INR')
-                    ->sortable(),
-                TextColumn::make('sale_price')
-                    ->label('Sale Price')
-                    ->money('INR')
-                    ->color('success') // Makes the sale price green
-                    ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -60,7 +55,7 @@ class ProductsTable
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
+                // ViewAction::make(),
                 EditAction::make(),
                 Action::make('variants')
                     ->label(
@@ -79,9 +74,9 @@ class ProductsTable
                     ),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                // BulkActionGroup::make([
+                // DeleteBulkAction::make(),
+                // ]),
             ]);
     }
 }

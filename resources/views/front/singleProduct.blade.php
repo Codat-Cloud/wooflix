@@ -8,19 +8,20 @@
 $variants = $product->variants->map(function ($v) {
     return [
         'id' => $v->id,
-        'name' => $v->optionValues->pluck('value')->join(' / '), // 🔥 CORRECT
+        'name' => $v->name,
+        'slug' => $v->slug,
         'price' => $v->price,
         'sale_price' => $v->sale_price,
     ];
 });
 @endphp
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     window.productVariants = {!! json_encode($variants) !!};
 
     window.productBase = {
-        price: {{ $product->base_price }},
-        sale_price: {{ $product->sale_price ?? 'null' }}
+        price: {{ $product->defaultVariant->price }},
+        sale_price: {{ $product->defaultVariant->sale_price ?? 'null' }}
     };
 
 </script>
@@ -33,15 +34,16 @@ $variants = $product->variants->map(function ($v) {
     } else {
         $cartQuery->where('session_id', session()->getId());
     }
+
+    $cartVariantIds = $cartQuery->pluck('variant_id')
+        ->filter()
+        ->map(fn($id) => (int)$id)
+        ->toArray();
     
-    $cartItemsInDB = $cartQuery->get();
-    $cartVariantIds = $cartItemsInDB->pluck('variant_id')->filter()->toArray();
-    $cartProductIds = $cartItemsInDB->whereNull('variant_id')->pluck('product_id')->toArray();
 @endphp
 
 <script>
     window.cartVariantIds = @json($cartVariantIds);
-    window.cartProductIds = @json($cartProductIds);
 </script>
 
 
@@ -64,8 +66,8 @@ $variants = $product->variants->map(function ($v) {
     <section class="single-product-info">
       <div class="container-xxl product-page">
         <div class="row g-4">
-          <!-- PRODUCT IMAGES -->
 
+          <!-- PRODUCT IMAGES -->
           <div class="col-lg-6">
               <div class="product-gallery" 
                 x-data="{ 
@@ -115,7 +117,6 @@ $variants = $product->variants->map(function ($v) {
           </div>
 
           <!-- PRODUCT INFO -->
-
           <div class="col-lg-6">
             <div class="product-info">
               <div class="single-product-rating">
@@ -131,7 +132,9 @@ $variants = $product->variants->map(function ($v) {
                   </span>
               </div>
 
-              <h1 class="single-product-title">{{ $product->name }}</h1>
+            <h1 class="single-product-title">
+                {{$product->name}}
+            </h1>
 
               <h2 class="product-brand">
                   <b class="text-dark">From </b>
@@ -139,47 +142,52 @@ $variants = $product->variants->map(function ($v) {
               </h2>
 
               <!-- Price -->
-              <div x-data="{
-                  variants: window.productVariants || [],
-                  selected: null,
-                  inCartVariants: window.cartVariantIds || [],
-                  inCartProducts: window.cartProductIds || [],
-                  price: 0,
-                  mrp: null,
-                  adding: false,
-                  added: false,
+<div x-data="{
+    variants: window.productVariants || [],
+    selected: null,
+    inCartVariants: window.cartVariantIds || [],
+    price: 0,
+    mrp: null,
+    adding: false,
+    added: false,
 
-                  init() {
-                      if (this.variants.length > 0) {
-                          this.select(this.variants[0]);
-                      } else {
-                          this.price = window.productBase.sale_price ?? window.productBase.price;
-                          this.mrp = window.productBase.sale_price ? window.productBase.price : null;
-                      }
-                  },
+    init() {
+        if (this.variants.length > 0) {
+            // Added null coalescing for safety
+            const currentVariant = this.variants.find(
+                v => Number(v.id) === Number({{ $selectedVariant->id ?? 0 }})
+            );
+            this.select(currentVariant || this.variants[0]);
+        } else {
+            this.price = window.productBase.sale_price ?? window.productBase.price;
+            this.mrp = window.productBase.sale_price ? window.productBase.price : null;
+        }
+    },
 
-                  select(v) {
-                      this.selected = v;
-                      this.price = v.sale_price ?? v.price;
-                      this.mrp = v.sale_price ? v.price : null;
-                  },
+    select(v) {
+        this.selected = v;
+        this.price = v.sale_price ?? v.price;
+        this.mrp = v.sale_price ? v.price : null;
 
-                  isAdded() {
-                      if (this.variants.length > 0) {
-                          return this.selected ? this.inCartVariants.includes(this.selected.id) : false;
-                      }
-                      return this.inCartProducts.includes({{ $product->id }});
-                  },
+        window.history.replaceState(
+            {},
+            '',
+            '/collection/{{ $product->slug }}/' + v.slug
+        );
+    },
 
-                  discount() {
-                      if (!this.mrp) return null;
-                      return Math.round(((this.mrp - this.price) / this.mrp) * 100);
-                  }
+    isAdded() {
+        if (!this.selected || !this.selected.id) return false;
+        const cartIds = Array.isArray(this.inCartVariants) ? this.inCartVariants : [];
+        return cartIds.some(id => Number(id) === Number(this.selected.id));
+    },
 
-              }" 
-              @cart-updated.window="inCartVariants = [...($event.detail.variant_ids || [])];
-inCartProducts = [...($event.detail.product_ids || [])]; adding = false; added = true; setTimeout(() => added = false, 2000);"
-              >
+    discount() {
+        if (!this.mrp) return null;
+        return Math.round(((this.mrp - this.price) / this.mrp) * 100);
+    }
+}" 
+@cart-updated.window="inCartVariants = [...($event.detail.variant_ids || [])]; adding = false; added = true; setTimeout(() => added = false, 2000);">
 
               <!-- PRICE -->
               <div class="product-price border-bottom">
@@ -206,7 +214,7 @@ inCartProducts = [...($event.detail.product_ids || [])]; adding = false; added =
                   </div>
 
                   <!-- VARIANTS -->
-              <div class="product-variants py-2" x-show="variants.length > 0">
+              <div class="product-variants py-2" x-show="variants.length > 1">
                   <h6 class="fw-bold">Select</h6>
 
                   <div class="variant-options">
@@ -238,37 +246,46 @@ inCartProducts = [...($event.detail.product_ids || [])]; adding = false; added =
                   </div>
               </div>
 
-              <button 
-                class="btn add-cart-btn w-100"
 
-                :class="{
-                    'btn-orange': !adding && !isAdded(),
-                    'btn-secondary': adding,
-                    'btn-success': isAdded()
-                }"
+              {{-- <div class="alert alert-info small mt-2">
+    <strong>Debug Info:</strong><br>
+    Selected Variant ID: <span x-text="selected ? selected.id : 'None'"></span><br>
+    IDs in Cart: <span x-text="JSON.stringify(inCartVariants)"></span><br>
+    Is Added Check: <span x-text="isAdded() ? 'TRUE' : 'FALSE'"></span>
+</div> --}}
 
-                @click="
-                    if (adding || isAdded()) return;
 
-                    if (variants.length > 0 && !selected) {
-                        alert('Select variant');
-                        return;
-                    }
+                <button 
+                    class="btn add-cart-btn w-100"
+                    :class="{
+                        'btn-orange': !adding && !isAdded(),
+                        'btn-secondary': adding,
+                        'btn-success': isAdded()
+                    }"
+                    @click="
+                        if (adding || isAdded()) return;
 
-                    adding = true;
+                        // Since all products must have a variant, 'selected' should never be null
+                        if (!selected || !selected.id) {
+                            alert('Please select a variant first');
+                            return;
+                        }
 
-                    window.dispatchEvent(new CustomEvent('add-to-cart', {
-                        detail: [
-                            selected ? selected.id : null,
-                            variants.length === 0 ? {{ $product->id }} : null
-                        ]
-                    }));
-                "
-            >
-                <span x-show="!adding && !isAdded()">Add To Cart</span>
-                <span x-show="adding">Adding...</span>
-                <span x-show="isAdded()">Already in Cart ✓</span>
-            </button>
+                        adding = true;
+
+                        // Send a named object to the Livewire listener
+                        window.dispatchEvent(new CustomEvent('add-to-cart', {
+                            detail: {
+                                variant_id: selected.id,
+                                product_id: {{ $product->id }}
+                            }
+                        }));
+                    "
+                >
+                    <span x-show="!adding && !isAdded()">Add To Cart</span>
+                    <span x-show="adding">Adding...</span>
+                    <span x-show="isAdded()">Already in Cart ✓</span>
+                </button>
               </div>
 
 
@@ -729,6 +746,22 @@ inCartProducts = [...($event.detail.product_ids || [])]; adding = false; added =
                 // Update the image src
                 document.getElementById("reviewGalleryImage").src = reviewImages[reviewImageIndex];
             }
+
+            window.addEventListener('notify', event => {
+                const data = event.detail[0] || event.detail;
+                
+                Swal.fire({
+                    title: data.type === 'error' ? 'Oops!' : 'Success!',
+                    text: data.message,
+                    icon: data.type, // 'error', 'success', 'info', or 'warning'
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                });
+            });
+
         </script>
     @endpush
  

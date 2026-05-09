@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('product_variants', function (Blueprint $table) {
             $table->id();
-
             
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->text('name'); // important
+
+            $table->string('slug')->nullable()->after('name');
 
             $table->text('sku')->unique();
 
@@ -26,6 +27,16 @@ return new class extends Migration
             $table->integer('stock')->default(0);
 
             $table->text('barcode')->nullable();
+
+            // Shipping
+            $table->decimal('weight', 8, 2)->nullable();
+            
+            $table->decimal('length', 8, 2)->nullable();
+            $table->decimal('width', 8, 2)->nullable();
+            $table->decimal('height', 8, 2)->nullable();
+
+            // UX
+            $table->boolean('is_default')->default(false);
 
             $table->boolean('is_active')->default(true);
 

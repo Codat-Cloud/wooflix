@@ -24,6 +24,8 @@ return new class extends Migration
             $table->text('slug')->unique();
             $table->text('main_image');
             
+            $table->text('asin')->nullable();
+            $table->json('filters')->nullable();
 
             $table->longText('short_description')->nullable();
             $table->longText('description')->nullable();
@@ -31,12 +33,6 @@ return new class extends Migration
             // product flags
             $table->boolean('is_active')->default(true);
             $table->boolean('is_featured')->default(false);
-
-            $table->integer('stock')->default(0);
-
-            // base price (fallback if no variants)
-            $table->decimal('base_price', 10, 2)->nullable();
-            $table->decimal('sale_price', 10, 2)->nullable();
 
             // SEO
             $table->text('meta_title')->nullable();
