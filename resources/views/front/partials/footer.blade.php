@@ -80,10 +80,15 @@
               <li><a href="#">About Us</a></li>
               <li><a href="#">Contact Us</a></li>
               <li><a href="#">Track Your Order</a></li>
-              <li><a href="#">FAQ's</a></li>
-              <li><a href="#">Returns & Exchange Policy</a></li>
-              <li><a href="#">Terms Of Use</a></li>
-              <li><a href="#">Privacy Policy</a></li>
+            <ul>
+                @foreach($footerPages as $p)
+                    <li>
+                        <a href="{{ route('front.page', $p->slug) }}">
+                            {{ $p->title }}
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
             </ul>
           </div>
 
@@ -95,36 +100,23 @@
               <li><a href="#">Birthday Club</a></li>
               <li><a href="#">Learn With Wooflix</a></li>
               <li><a href="#">Customers Love</a></li>
-              <li><a href="#">XXX</a></li>
-              <li><a href="#">XXX</a></li>
-              <li><a href="#">XXX</a></li>
             </ul>
           </div>
 
           <div class="col-md-3">
-            <h6>DOWNLOAD WOOFLIX APP</h6>
+            {{-- <h6>DOWNLOAD WOOFLIX APP</h6>
 
             <div class="app-buttons">
-              {{-- <img src="assets/images/google-play.png" /> --}}
+              <img src="assets/images/google-play.png" />
 
-              {{-- <img src="assets/images/app-store.png" /> --}}
-            </div>
+              <img src="assets/images/app-store.png" />
+            </div> --}}
 
-            <h6 class="subscribe-title">
+            <h6 class="subscribe-title mt-0">
               SUBSCRIBE FOR LATEST OFFERS AND DISCOUNTS
             </h6>
 
-            <form class="subscribe-form">
-              <div class="form-group">
-                <input
-                  type="email"
-                  class="form-control"
-                  placeholder="Enter your email"
-                />
-              </div>
-
-              <button type="submit" class="btn btn-orange w-100 mt-1">Submit</button>
-            </form>
+            @livewire('front.newsletter-form')
           </div>
         </div>
       </div>
@@ -157,11 +149,32 @@
         >
           <p>© 2024, VKY TECHNOLOGIES. ALL RIGHTS RESERVED.</p>
 
-          <div class="social-icons">
-            <a href="#">YouTube</a> <a href="#">Twitter</a>
-            <a href="#">LinkedIn</a> <a href="#">Facebook</a>
-            <a href="#">Instagram</a>
-          </div>
+            <div class="social-icons">
+                @if(!empty($socialLinks['facebook']))
+                    <a href="{{ $socialLinks['facebook'] }}" target="_blank" title="Facebook">Facebook</a>
+                @endif
+
+                @if(!empty($socialLinks['instagram']))
+                    <a href="{{ $socialLinks['instagram'] }}" target="_blank" title="Instagram">Instagram</a>
+                @endif
+
+                @if(!empty($socialLinks['youtube']))
+                    <a href="{{ $socialLinks['youtube'] }}" target="_blank" title="YouTube">YouTube</a>
+                @endif
+
+                @if(!empty($socialLinks['linkedin']))
+                    <a href="{{ $socialLinks['linkedin'] }}" target="_blank" title="LinkedIn">LinkedIn</a>
+                @endif
+
+                @if(!empty($socialLinks['twitter']))
+                    <a href="{{ $socialLinks['twitter'] }}" target="_blank" title="Twitter">Twitter</a>
+                @endif
+
+                @if(!empty($socialLinks['pinterest']))
+                    <a href="{{ $socialLinks['pinterest'] }}" target="_blank" title="Pinterest">Pinterest</a>
+                @endif
+            </div>
+
         </div>
       </div>
 

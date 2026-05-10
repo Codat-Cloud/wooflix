@@ -4,9 +4,16 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\FrontController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
+use App\Models\Page;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [FrontController::class, 'index'])->name('front.index');
+
+
+Route::get('/policy/{slug}', function ($slug) {
+    $page = Page::where('slug', $slug)->where('is_active', true)->firstOrFail();
+    return view('front.page', compact('page'));
+})->name('front.page');
 
 
 

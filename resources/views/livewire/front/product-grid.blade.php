@@ -60,7 +60,8 @@
                                     @checked(in_array($brand->slug, $selectedBrands ?? []))
                                 />
                                 <span class="checkmark"></span>
-                                {{ $brand->name }} <span class="count">({{ $brand->products_count }})</span>
+                                {{ $brand->name }} 
+                                {{-- <span class="count">({{ $brand->products_count }})</span> --}}
                             </label>
                             @endforeach
                         </div>
@@ -77,11 +78,36 @@
                                     @checked(in_array($cat->slug, $selectedCategories ?? []))
                                 />
                                 <span class="checkmark"></span>
-                                {{ $cat->name }} <span class="count">({{ $cat->products_count }})</span>
+                                {{ $cat->name }} 
+                                {{-- <span class="count">({{ $cat->products_count }})</span> --}}
                             </label>
                             @endforeach
                         </div>
                     </div>
+
+                    @foreach($filterGroups as $type => $tags)
+                    <div class="filter-group">
+                        <button class="filter-toggle">
+                            {{ ucfirst(str_replace('_', ' ', $type)) }} <span class="arrow">⌄</span>
+                        </button>
+                        <div class="filter-content">
+                            @foreach($tags as $tag)
+                            <label class="filter-option">
+                                <input 
+                                    type="checkbox"
+                                    wire:click="toggleTag('{{ $tag->slug }}')"
+                                    @if(in_array($tag->slug, $this->selectedTags)) checked @endif
+                                    {{-- @checked(in_array($tag->slug, $selectedTags)) --}}
+                                />
+                                <span class="checkmark"></span>
+                                {{ $tag->name }}
+                            </label>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endforeach
+
+
                 </div>
             </div>
 
@@ -164,14 +190,26 @@
                                     </div>
                                     
                                     <div class="product-action">
-                                        <button class="add-btn" 
+                                        @php
+                                            $isInCart = in_array((int)$selectedId, $cartVariantIds);
+                                        @endphp
+
+                                        <button class="add-btn {{ $isInCart ? 'btn-success' : '' }}" 
                                                 wire:click="addToCart({{ $product->id }})"
                                                 wire:loading.attr="disabled"
-                                                wire:target="addToCart({{ $product->id }})">
-                                            <span wire:loading.remove wire:target="addToCart({{ $product->id }})">Add</span>
-                                            <span wire:loading wire:target="addToCart({{ $product->id }})">...</span>
+                                                wire:target="addToCart({{ $product->id }})"
+                                                {{ $isInCart ? 'disabled' : '' }}>
+                                            
+                                            <span wire:loading.remove wire:target="addToCart({{ $product->id }})">
+                                                {{ $isInCart ? 'In Cart' : 'Add' }}
+                                            </span>
+                                            
+                                            <span wire:loading wire:target="addToCart({{ $product->id }})">
+                                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                            </span>
                                         </button>
                                     </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -191,21 +229,51 @@
             <button class="btn-close" data-bs-dismiss="offcanvas"></button>
         </div>
         <div class="offcanvas-body">
-            <button wire:click="clearAll" class="clear-filters mb-3">Clear All</button>
+            {{-- <button wire:click="clearAll" class="clear-filters mb-3">Clear All</button> --}}
             {{-- Brands for Mobile --}}
-            <div class="filter-group mb-4">
-                <h6>Brands</h6>
-                @foreach($brands as $brand)
-                <label class="filter-option d-block mb-2">
-                    <input 
-                        type="checkbox" 
-                        wire:click="toggleBrand('{{ $brand->slug }}')"
-                        @checked(in_array($brand->slug, $selectedBrands ?? []))
-                    />
-                    {{ $brand->name }}
-                </label>
-                @endforeach
-            </div>
+<div class="filter-group mb-4">
+    <h6>Brands</h6>
+    @foreach($brands as $brand)
+    <label class="filter-option d-block mb-2">
+        <input 
+            type="checkbox" 
+            wire:click="toggleBrand('{{ $brand->slug }}')"
+            @checked(in_array($brand->slug, $selectedBrands ?? []))
+        />
+        {{ $brand->name }}
+    </label>
+    @endforeach
+</div>
+
+<div class="filter-group mb-4">
+    <h6>Categories</h6>
+    @foreach($categories as $cat)
+    <label class="filter-option d-block mb-2">
+        <input 
+            type="checkbox" 
+            wire:click="toggleCategory('{{ $cat->slug }}')"
+            @checked(in_array($cat->slug, $selectedCategories ?? []))
+        />
+        {{ $cat->name }}
+    </label>
+    @endforeach
+</div>
+
+@foreach($filterGroups as $type => $tags)
+<div class="filter-group mb-4">
+    <h6>{{ ucfirst(str_replace('_', ' ', $type)) }}</h6>
+    @foreach($tags as $tag)
+    <label class="filter-option d-block mb-2">
+        <input 
+            type="checkbox"
+            wire:click="toggleTag('{{ $tag->slug }}')"
+            @checked(in_array($tag->slug, $this->selectedTags))
+        />
+        {{ $tag->name }}
+    </label>
+    @endforeach
+</div>
+@endforeach
         </div>
     </div>
 </div>

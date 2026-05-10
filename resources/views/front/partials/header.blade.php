@@ -219,15 +219,21 @@
                 <div class="mega-column">
                     <h6>Popular Brands</h6>
 
-                    @foreach($brands as $brand)
-                        <a href="">
-                            <img 
-                                src="{{ asset('storage/' . $brand->logo) }}" 
-                                alt="{{ $brand->name }}"
-                            >
-                            {{ $brand->name }}
-                        </a>
-                    @endforeach
+                    <div class="row">
+                      @foreach($brands as $brand)
+                      <div class="col">
+                            <a href="{{route('front.shop')}}">
+                                <img 
+                                    src="{{ asset('storage/' . $brand->logo) }}" 
+                                    alt="{{ $brand->name }}"
+                                >
+                                {{ $brand->name }}
+                            </a>
+                            
+                          </div>
+                          @endforeach
+                    </div>
+
                 </div>
               </div>
             </div>

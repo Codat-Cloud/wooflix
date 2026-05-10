@@ -18,4 +18,16 @@ class SiteSetting extends Model
             return self::where('key', $key)->value('value') ?? $default;
         });
     }
+
+    protected static function booted()
+    {
+        static::saved(function ($setting) {
+            // Forget the cache for this specific key so the footer updates immediately
+            Cache::forget("setting.{$setting->key}");
+        });
+
+        static::deleted(function ($setting) {
+            Cache::forget("setting.{$setting->key}");
+        });
+    }
 }

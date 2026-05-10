@@ -14,7 +14,13 @@ class ProductGrid extends Component
 {
     use WithPagination;
 
-    protected $listeners = ['add-to-cart' => 'add'];
+    #[Url(as: 'tags')]
+    public $tags = '';
+
+    protected $listeners = [
+        'add-to-cart' => 'add',
+        'cart-updated' => 'loadCartVariantIds'
+    ];
 
     #[Url(as: 'q')]
     public $search = '';
@@ -33,9 +39,31 @@ class ProductGrid extends Component
     public $selectedVariants = [];
     protected $cart;
 
+    public $cartVariantIds = [];
+
+    public function mount()
+    {
+        $this->loadCartVariantIds();
+    }
+
     public function boot(Cart $cart)
     {
         $this->cart = $cart;
+    }
+
+    public function loadCartVariantIds()
+    {
+        $userId = auth()->id();
+        $sessionId = session()->getId();
+
+        $this->cartVariantIds = \App\Models\CartItem::where(function ($q) use ($userId, $sessionId) {
+            if ($userId) $q->where('user_id', $userId);
+            else $q->where('session_id', $sessionId);
+        })
+            ->pluck('variant_id')
+            ->filter()
+            ->map(fn($id) => (int)$id)
+            ->toArray();
     }
 
     public function getSelectedBrandsProperty()
@@ -48,6 +76,29 @@ class ProductGrid extends Component
     {
         // Ensure we always return an array, even if empty
         return array_filter(explode(',', $this->cat));
+    }
+
+    #[Computed]
+    public function selectedTags()
+    {
+        if (!$this->tags) return [];
+
+        // Use explode and filter out any empty values immediately
+        return array_values(array_filter(explode(',', $this->tags)));
+    }
+
+    public function toggleTag($slug)
+    {
+        $selectedTags = $this->selectedTags;
+
+        if (in_array($slug, $selectedTags)) {
+            $selectedTags = array_values(array_diff($selectedTags, [$slug]));
+        } else {
+            $selectedTags[] = $slug;
+        }
+
+        $this->tags = implode(',', array_filter($selectedTags));
+        $this->resetPage();
     }
 
     public function toggleBrand($slug)
@@ -105,14 +156,12 @@ class ProductGrid extends Component
 
     public function render()
     {
-        // dd(request()->query('q'), $this->search);
-
         $seoTitle = "Best store to buy pet products";
         $query = Product::query()
             ->with(['brand', 'variants'])
             ->where('is_active', true);
 
-
+        // Search Querry
         if (!empty($this->search)) {
 
             $keywords = explode(' ', $this->search);
@@ -133,6 +182,24 @@ class ProductGrid extends Component
                                 $q->where('name', 'ILIKE', $word);
                             });
                     });
+                }
+            });
+        }
+
+        // Filter Tags
+        // Get tags directly from the property to ensure we have the latest data
+        $currentTagSlugs = array_values(array_filter(explode(',', $this->tags)));
+
+        if (!empty($currentTagSlugs)) {
+            // Find IDs and Types for the slugs provided
+            $tagsFromDb = \App\Models\ProductFilterTag::whereIn('slug', $currentTagSlugs)
+                ->active()
+                ->get(['id', 'type']);
+
+            $query->where(function ($q) use ($tagsFromDb) {
+                foreach ($tagsFromDb as $tag) {
+                    // IMPORTANT: Use (int) because your JSON stores numbers [3]
+                    $q->whereJsonContains("filters->{$tag->type}", (int)$tag->id);
                 }
             });
         }
@@ -168,9 +235,11 @@ class ProductGrid extends Component
             'products' => $query->paginate($this->perPage),
             'brands' => Brand::withCount('products')->get(),
             'categories' => Category::whereNull('parent_id')->withCount('products')->get(),
+            'filterGroups' => \App\Models\ProductFilterTag::grouped(),
             'seoTitle' => $seoTitle,
             'selectedBrands' => $this->selectedBrands,
             'selectedCategories' => $this->selectedCategories,
+            'selectedTags' => $this->selectedTags,
         ]);
     }
 
@@ -178,6 +247,7 @@ class ProductGrid extends Component
     {
         $this->brand = '';
         $this->cat = '';
+        $this->tags = '';
         $this->sort = 'best_seller';
         $this->perPage = 12;
 
@@ -186,28 +256,29 @@ class ProductGrid extends Component
         $this->dispatch('page-title-updated', title: 'Shop Pet Supplies');
     }
 
-// Add the namespace at the top of your file
-// use App\Services\Cart; (Or wherever your Cart class is located)
+    public function addToCart($productId, Cart $cart)
+    {
+        $product = Product::with('variants')->find($productId);
+        if (!$product) return;
 
-public function addToCart($productId, Cart $cart) 
-{
-    $product = \App\Models\Product::with('variants')->find($productId);
+        $variantId = $this->selectedVariants[$productId] ?? null;
 
-    if (!$product) return;
+        if ($product->variants->isNotEmpty()) {
+            $variantId = $variantId ?? $product->variants->first()->id;
 
-    $variantId = $this->selectedVariants[$productId] ?? null;
+            // Pass both IDs to match your Cart component's expected signature
+            $cart->add(['variant_id' => $variantId, 'product_id' => $productId]);
+        } else {
+            $cart->add(null, $productId);
+        }
 
-    if ($product->variants->isNotEmpty()) {
-        // Default to first variant if somehow not set
-        $variantId = $variantId ?? $product->variants->first()->id;
-        $cart->add($variantId, null);
-    } else {
-        $cart->add(null, $productId);
+        // Refresh local list of IDs
+        $this->loadCartVariantIds();
+
+        $this->dispatch('cart-updated'); 
+
+        $this->dispatch('notify', ['type' => 'success', 'message' => 'Added to your paw-basket!']);
     }
-
-    $this->dispatch('cart-updated');
-    $this->dispatch('notify', ['type' => 'success', 'message' => 'Added to your paw-basket!']);
-}
 
     public function updatedProducts()
     {
