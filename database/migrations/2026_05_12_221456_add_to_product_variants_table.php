@@ -16,13 +16,12 @@ return new class extends Migration
             $table->string('slug')->nullable()->after('name');
 
             $table->decimal('weight', 8, 2)->nullable();
-            
+
             $table->decimal('length', 8, 2)->nullable();
             $table->decimal('width', 8, 2)->nullable();
             $table->decimal('height', 8, 2)->nullable();
 
             $table->boolean('is_default')->default(false);
-
         });
     }
 
@@ -32,7 +31,14 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('product_variants', function (Blueprint $table) {
-            //
+            $table->dropColumn([
+                'slug',
+                'weight',
+                'length',
+                'width',
+                'height',
+                'is_default',
+            ]);
         });
     }
 };

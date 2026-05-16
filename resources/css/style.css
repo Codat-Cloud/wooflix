@@ -154,7 +154,7 @@ body {
 
 .mega-column h6 {
   font-weight: 700;
-  margin-bottom: 15px;
+  margin-bottom: 3px;
 }
 
 /* MENU ITEMS */
@@ -163,7 +163,7 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 0;
+  padding: 4px 0;
   color: #444;
   font-size: 14px;
 }
@@ -439,7 +439,7 @@ body {
   border-radius: 16px;
   padding: 14px;
   flex: 0 0 auto;
-  width: 17vw;
+  width: 100%;
 }
 
 .product-image {
@@ -567,9 +567,9 @@ body {
   background: #ff6a00;
   border: none;
   color: #fff;
-  padding: 6px 16px;
+  padding: 6px 36px;
   border-radius: 6px;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 /* categroy item */

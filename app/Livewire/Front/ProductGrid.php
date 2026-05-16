@@ -134,32 +134,32 @@ class ProductGrid extends Component
             : '';
     }
 
-public function toggleTag($slug)
-{
-    $this->tags = $this->toggleValue($this->tags, $slug);
+    public function toggleTag($slug)
+    {
+        $this->tags = $this->toggleValue($this->tags, $slug);
 
-    $this->selectedTags = $this->parseQueryString($this->tags);
+        $this->selectedTags = $this->parseQueryString($this->tags);
 
-    $this->resetPage();
-}
+        $this->resetPage();
+    }
 
-public function toggleBrand($slug)
-{
-    $this->brand = $this->toggleValue($this->brand, $slug);
+    public function toggleBrand($slug)
+    {
+        $this->brand = $this->toggleValue($this->brand, $slug);
 
-    $this->selectedBrands = $this->parseQueryString($this->brand);
+        $this->selectedBrands = $this->parseQueryString($this->brand);
 
-    $this->resetPage();
-}
+        $this->resetPage();
+    }
 
-public function toggleCategory($slug)
-{
-    $this->cat = $this->toggleValue($this->cat, $slug);
+    public function toggleCategory($slug)
+    {
+        $this->cat = $this->toggleValue($this->cat, $slug);
 
-    $this->selectedCategories = $this->parseQueryString($this->cat);
+        $this->selectedCategories = $this->parseQueryString($this->cat);
 
-    $this->resetPage();
-}
+        $this->resetPage();
+    }
 
     protected function parseQueryString(?string $value): array
     {
@@ -210,8 +210,6 @@ public function toggleCategory($slug)
         $currentTagSlugs = $this->selectedTags;
 
         if (!empty($currentTagSlugs)) {
-
-            // dd($currentTagSlugs);
             // Find IDs and Types for the slugs provided
             $tagsFromDb = ProductFilterTag::whereIn('slug', $currentTagSlugs)
                 ->active()
@@ -268,11 +266,22 @@ public function toggleCategory($slug)
         // Dispatch browser event for dynamic title
         $this->dispatch('page-title-updated', title: $seoTitle);
 
+        foreach ($query->get() as $product) {
+
+            if (
+                $product->variants->count() === 1 &&
+                !isset($this->selectedVariants[$product->id])
+            ) {
+                $this->selectedVariants[$product->id] =
+                    $product->variants->first()->id;
+            }
+        }
+
         return view('livewire.front.product-grid', [
             'products' => $query->paginate($this->perPage),
             'brands' => Brand::withCount('products')->get(),
             'categories' => Category::whereNull('parent_id')->withCount('products')->get(),
-            'filterGroups' => \App\Models\ProductFilterTag::grouped(),
+            'filterGroups' => ProductFilterTag::grouped(),
             'seoTitle' => $seoTitle,
             'selectedBrands' => $this->selectedBrands,
             'selectedCategories' => $this->selectedCategories,

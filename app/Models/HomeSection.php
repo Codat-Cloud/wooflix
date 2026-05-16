@@ -20,4 +20,6 @@ class HomeSection extends Model
         return $this->hasMany(HomeSectionItem::class)
             ->orderBy('sort_order');
     }
+
+    
 }

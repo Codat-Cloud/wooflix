@@ -70,17 +70,17 @@
   {{-- Page Sections --}}
   @foreach($sections as $section)
       {{-- 1. Determine Layout Mode --}}
-      @php
-          $isScroll = $section->layout === 'scroll';
-          $isTabbed = $section->type === 'tabbed_category_products';
-          
-          $gridMap = [
-              'grid_4' => 'col-6 col-md-4 col-lg-3',
-              'grid_6' => 'col-6 col-md-4 col-lg-2',
-              'grid_8' => 'col-6 col-md-3 col-lg-1-5', // Custom 8-col logic
-          ];
-          $gridClass = $gridMap[$section->layout] ?? 'col-6 col-md-4 col-lg-3';
-      @endphp
+    @php
+        $isScroll = $section->layout === 'scroll';
+        $isTabbed = $section->type === 'tabbed_category_products';
+        
+        $gridMap = [
+            'grid_4' => 'col-6 col-md-4 col-lg-3',
+            'grid_6' => 'col-6 col-md-4 col-lg-2',
+            'grid_8' => 'col-6 col-md-3 col-lg-1-5', // Custom 8-col logic
+        ];
+        $gridClass = $gridMap[$section->layout] ?? 'col-6 col-md-4 col-lg-3';
+    @endphp
 
       {{-- 2. TABBED DEALS LAYOUT (Special Product Slider) --}}
       @if($isTabbed)
@@ -165,11 +165,14 @@
                             $data = ($section->type === 'brand') ? ($brands[$id] ?? null) : ($categories[$id] ?? null);
                             $title = $item->title ?? ($data->name ?? 'Item');
                         @endphp
+                        
 
                         {{-- Use Grid Column wrapper only if not scrolling --}}
-                        @if(!$isScroll) <div class="{{ $gridClass }}"> @endif
+                        @if(!$isScroll) 
+                        <div class="{{ $gridClass }}"> 
+                        @endif
 
-                            <a href="{{ $item->link ?? '#' }}" class="{{ $section->type === 'category' ? 'category-item' : 'brand-card' }} text-decoration-none">
+                            <a href="{{ $item->link }}" class="{{ $section->type === 'category' ? 'category-item' : 'brand-card' }} text-decoration-none">
                                 <div class="{{ $section->type === 'category' ? 'category-card shadow' : '' }}">
                                     <img src="{{ asset('storage/' . $item->image) }}" 
                                         class="{{ $section->type === 'brand' ? 'w-100' : '' }}" 
@@ -180,7 +183,9 @@
                                 </div>
                             </a>
 
-                        @if(!$isScroll) </div> @endif
+                        @if(!$isScroll) 
+                        </div>
+                        @endif
                     @endforeach
                 </div>
             </div>

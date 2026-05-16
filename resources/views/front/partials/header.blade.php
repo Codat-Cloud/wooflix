@@ -129,100 +129,75 @@
     <nav class="main-nav d-none d-lg-block shadow">
       <div class="container-xxl">
         <ul class="nav-menu">
-          <li class="has-mega">
-            <a href="#">Dogs</a>
+@foreach($petTypes as $petType)
 
+<li class="has-mega">
+
+    {{-- Main Navigation Link --}}
+    <a href="{{ route('front.shop', ['tags' => $petType->slug]) }}">
+        {{ $petType->name }}
+    </a>
+
+    <div class="mega-menu shadow">
+
+        <div class="mega-inner container-xxl">
+
+            @foreach($petType->categories as $parentCategory)
+
+                <div class="mega-column">
+
+                    {{-- Parent Category --}}
+                    <h6>
+
+                        <a href="{{ route('front.shop', ['cat' => $parentCategory->slug]) }}">
+                            {{ $parentCategory->name }}
+                        </a>
+
+                    </h6>
+
+                    {{-- Child Categories --}}
+                    @foreach($parentCategory->children as $child)
+
+                        <a href="{{ route('front.shop', ['cat' => $child->slug]) }}">
+
+                            @if($child->image)
+
+                                <img
+                                    src="{{ asset('storage/' . $child->image) }}"
+                                    alt="{{ $child->name }}"
+                                >
+
+                            @endif
+
+                            {{ $child->name }}
+
+                        </a>
+
+                    @endforeach
+
+                </div>
+
+            @endforeach
+
+        </div>
+
+    </div>
+
+</li>
+
+@endforeach
+
+          <li class="has-mega">
+            <a href="#">Brands</a>
             <div class="mega-menu shadow">
               <div class="mega-inner container-xxl">
                 <div class="mega-column">
-                  <h6>Dog Food</h6>
-
-                  {{-- <a href="#"
-                    ><img src="assets/images/menu/dog-food.jpg" /> Dry Food</a
-                  >
-                  <a href="#"
-                    ><img src="assets/images/menu/dog-food.jpg" /> Wet Food</a
-                  >
-                  <a href="#"
-                    ><img src="assets/images/menu/dog-food.jpg" /> Puppy Food</a
-                  > --}}
-                </div>
-
-                <div class="mega-column">
-                  <h6>Dog Treats</h6>
-
-                  {{-- <a href="#"
-                    ><img src="assets/images/menu/treat.jpg" /> Soft Treats</a
-                  >
-                  <a href="#"
-                    ><img src="assets/images/menu/treat.jpg" /> Dental Treats</a
-                  >
-                  <a href="#"
-                    ><img src="assets/images/menu/treat.jpg" /> Training
-                    Treats</a --}}
-                  >
-                </div>
-
-                <div class="mega-column">
-                  <h6>Dog Toys</h6>
-
-                  {{-- <a href="#"
-                    ><img src="assets/images/menu/toy.jpg" /> Chew Toys</a
-                  >
-                  <a href="#"
-                    ><img src="assets/images/menu/toy.jpg" /> Plush Toys</a
-                  >
-                  <a href="#"
-                    ><img src="assets/images/menu/toy.jpg" /> Interactive
-                    Toys</a --}}
-                  >
-                </div>
-              </div>
-            </div>
-          </li>
-
-          <li class="has-mega">
-            <a href="#">Cats</a>
-
-            <div class="mega-menu shadow">
-              <div class="mega-inner container-xxl">
-                <div class="mega-column">
-                  <h6>Cat Food</h6>
-
-                  {{-- <a href="#"
-                    ><img src="assets/images/menu/cat.jpg" /> Dry Food</a
-                  >
-                  <a href="#"
-                    ><img src="assets/images/menu/cat.jpg" /> Wet Food</a
-                  > --}}
-                </div>
-
-                <div class="mega-column">
-                  <h6>Cat Toys</h6>
-
-                  {{-- <a href="#"
-                    ><img src="assets/images/menu/cat-toy.jpg" /> Interactive
-                    Toys</a
-                  >
-                  <a href="#"
-                    ><img src="assets/images/menu/cat-toy.jpg" /> Catnip Toys</a
-                  > --}}
-                </div>
-              </div>
-            </div>
-          </li>
-
-          <li class="has-mega">
-            <a href="{{route('front.shop')}}">Brands</a>
-            <div class="mega-menu shadow">
-              <div class="mega-inner container-xxl">
-                <div class="mega-column">
-                    <h6>Popular Brands</h6>
+                    <h6>Available Brands</h6>
 
                     <div class="row">
                       @foreach($brands as $brand)
-                      <div class="col">
-                            <a href="{{route('front.shop')}}">
+                      <div class="col-3">
+                            <a href="{{ route('front.shop', ['brand' => $brand->slug]) }}">
                                 <img 
                                     src="{{ asset('storage/' . $brand->logo) }}" 
                                     alt="{{ $brand->name }}"

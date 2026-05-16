@@ -50,11 +50,17 @@ class FrontController extends Controller
 
         // 4. Bulk Fetch Reference Data (Brands & Categories)
         $brands = Brand::whereIn('id', array_unique($brandIds))->get()->keyBy('id');
-        $categories = Category::whereIn('id', array_unique(array_merge($categoryIds, $dealCategoryIds)))->get()->keyBy('id');
+        $categories = Category::with('petType')
+            ->whereIn(
+                'id',
+                array_unique(array_merge($categoryIds, $dealCategoryIds))
+            )
+            ->get()
+            ->keyBy('id');
 
         // 5. THE BIG OPTIMIZATION: Fetch ALL featured products for ALL deal tabs in ONE query
         // Instead of querying inside the loop, we get them all now and group them by category_id
-        $allFeaturedProducts = Product::with(['brand', 'variants'])
+        $allFeaturedProducts = Product::with(['brand', 'variants', 'defaultVariant'])
             ->whereIn('category_id', array_unique($dealCategoryIds))
             ->where('is_active', true)
             ->where('is_featured', true)
@@ -94,16 +100,16 @@ class FrontController extends Controller
         $query = Product::query()->where('is_active', true)->with('defaultVariant');
 
         // 2. Apply Filters (We will implement the logic for these later)
-if ($request->filled('brand')) {
+        if ($request->filled('brand')) {
 
-    $brands = array_filter(
-        explode(',', $request->brand)
-    );
+            $brands = array_filter(
+                explode(',', $request->brand)
+            );
 
-    $query->whereHas('brand', function ($q) use ($brands) {
-        $q->whereIn('slug', $brands);
-    });
-}
+            $query->whereHas('brand', function ($q) use ($brands) {
+                $q->whereIn('slug', $brands);
+            });
+        }
 
         // 3. Fetch Data
         $products = $query->latest()->paginate(1);
@@ -123,7 +129,7 @@ if ($request->filled('brand')) {
             ->with(['brand', 'category', 'images', 'variants', 'variants.optionValues', 'reviews', 'defaultVariant'])
             ->firstOrFail();
 
-            // dd($product);
+        // dd($product);
 
         // 
         $selectedVariant = null;

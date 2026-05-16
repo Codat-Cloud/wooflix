@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Categories\Schemas;
 
+use App\Models\ProductFilterTag;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -16,59 +17,90 @@ class CategoryForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
-        ->components([
+            ->components([
 
-            Section::make('Category Details')
-                ->schema([
+                Section::make('Category Details')
+                    ->schema([
 
-                    Grid::make(2)
-                        ->schema([
+                        Grid::make(2)
+                            ->schema([
 
-                            Select::make('parent_id')
-                                ->label('Parent Category')
-                                ->relationship('parent', 'name', fn ($query, $record) => 
-                                    $query->when($record, fn ($q) => $q->where('id', '!=', $record->id)))
-                                ->searchable()
-                                ->preload()
-                                ->nullable(),
+                                Select::make('parent_id')
+                                    ->label('Parent Category')
+                                    ->relationship('parent', 'name', fn($query, $record) =>
+                                    $query->when($record, fn($q) => $q->where('id', '!=', $record->id)))
+                                    ->searchable()
+                                    ->preload()
+                                    ->nullable(),
 
-                            TextInput::make('name')
-                                ->required()
-                                ->live(onBlur: true)
-                                ->afterStateUpdated(fn ($state, $set) =>
-                                    $set('slug', Str::slug($state))
-                                ),
+                                Select::make('pet_type_tag_id')
+                                    ->label('Pet Type')
+                                    ->relationship(
+                                        name: 'petType',
+                                        modifyQueryUsing: fn($query) =>
+                                        $query->where('type', 'pet_type'),
+                                        titleAttribute: 'name'
+                                    )
+                                    ->options(
+                                        ProductFilterTag::where('type', 'pet_type')
+                                            ->pluck('name', 'id')
+                                    )
+                                    ->searchable()
+                                    ->preload(),
 
-                            TextInput::make('slug')
-                                ->nullable()
-                                ->unique(ignoreRecord: true),
+                                TextInput::make('name')
+                                    ->required()
+                                    ->live(onBlur: true)
+                                    ->afterStateUpdated(
+                                        fn($state, $set) =>
+                                        $set('slug', Str::slug($state))
+                                    ),
 
-                            FileUpload::make('image')
-                                ->image()
-                                ->directory('categories')
-                                ->imageEditor()
-                                ->nullable(),
-                        ]),
+                                TextInput::make('slug')
+                                    ->nullable()
+                                    ->unique(ignoreRecord: true),
 
-                    Textarea::make('description')
-                        ->columnSpanFull(),
+                                FileUpload::make('image')
+                                    ->label('Category Image')
+                                    ->image()
+                                    ->directory('categories')
+                                    ->imageEditor()
+                                    ->nullable(),
 
-                ]),
+                                FileUpload::make('desktop_banner')
+                                    ->label('Desktop Banner')
+                                    ->image()
+                                    ->directory('Categories/banner/desktop')
+                                    ->imageEditor()
+                                    ->nullable(),
 
-            Section::make('SEO')
-                ->schema([
+                                FileUpload::make('mobile_banner')
+                                    ->label('Mobile Banner')
+                                    ->image()
+                                    ->directory('categories/banner/mobile')
+                                    ->imageEditor()
+                                    ->nullable(),
+                            ]),
 
-                    Grid::make(2)
-                        ->schema([
+                        Textarea::make('description')
+                            ->columnSpanFull(),
 
-                            TextInput::make('meta_title'),
+                    ]),
 
-                            Textarea::make('meta_description'),
+                Section::make('SEO')
+                    ->schema([
 
-                        ])
+                        Grid::make(2)
+                            ->schema([
 
-                ]),
+                                TextInput::make('meta_title'),
 
-        ]);
+                                Textarea::make('meta_description'),
+
+                            ])
+
+                    ]),
+
+            ]);
     }
 }

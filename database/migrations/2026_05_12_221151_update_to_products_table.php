@@ -12,12 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->jsonb('filters')->nullable();
 
+            $table->jsonb('filters')->nullable();
             $table->dropColumn([
                 'base_price',
                 'sale_price'
             ]);
+
         });
     }
 
@@ -27,7 +28,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            //
+            $table->dropColumn([
+                'filters',
+            ]);
         });
     }
 };

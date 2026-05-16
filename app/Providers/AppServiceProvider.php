@@ -4,7 +4,9 @@ namespace App\Providers;
 
 use App\Models\Blog;
 use App\Models\Brand;
+use App\Models\Category;
 use App\Models\Page;
+use App\Models\ProductFilterTag;
 use App\Models\SiteSetting;
 use App\Observers\BlogObserver;
 use Illuminate\Support\Facades\Cache;
@@ -35,6 +37,15 @@ class AppServiceProvider extends ServiceProvider
                 return SiteSetting::pluck('value', 'key')->toArray();
             });
 
+            $petTypes = ProductFilterTag::with([
+                'categories.children'
+            ])
+                ->where('type', 'pet_type')
+                ->whereHas('categories', function ($q) {
+                    $q->whereNull('parent_id');
+                })
+                ->get();
+
             $view->with([
                 // Brands for footer/sidebar
                 'brands' => Brand::where('is_visible', '1')
@@ -60,6 +71,9 @@ class AppServiceProvider extends ServiceProvider
 
                 // All settings available as $settings['key']
                 'settings' => $allSettings,
+
+                'petTypes' => $petTypes,
+
             ]);
         });
     }

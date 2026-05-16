@@ -20,6 +20,14 @@ class ProductFilterTag extends Model
         'sort_order' => 'integer',
     ];
 
+    public function categories()
+    {
+        return $this->hasMany(
+            Category::class,
+            'pet_type_tag_id'
+        )->whereNull('parent_id');
+    }
+
     protected static function booted()
     {
         static::saving(function ($filterTag) {
@@ -28,7 +36,7 @@ class ProductFilterTag extends Model
             if (empty($filterTag->slug) && !empty($filterTag->name)) {
                 $base = Str::slug($filterTag->name);
                 $filterTag->slug = static::uniqueSlug($base, $filterTag->id);
-            // If user provided slug → normalize + ensure unique
+                // If user provided slug → normalize + ensure unique
             } elseif (!empty($filterTag->slug)) {
                 $base = Str::slug($filterTag->slug);
                 $filterTag->slug = static::uniqueSlug($base, $filterTag->id);
@@ -44,8 +52,8 @@ class ProductFilterTag extends Model
 
         while (
             static::where('slug', $slug)
-                ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
-                ->exists()
+            ->when($ignoreId, fn($q) => $q->where('id', '!=', $ignoreId))
+            ->exists()
         ) {
             $slug = "{$base}-{$i}";
             $i++;

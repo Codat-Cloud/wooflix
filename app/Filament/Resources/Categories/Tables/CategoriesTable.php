@@ -27,8 +27,11 @@ class CategoriesTable
                     ->placeholder('None (Top Level)'),
                 TextColumn::make('slug')
                     ->searchable(),
-                // TextColumn::make('meta_title')
-                //     ->searchable(),
+                TextColumn::make('petType.name')
+                    ->label('Pet Type')
+                    ->badge()
+                    ->sortable()
+                    ->searchable(),
                 // TextColumn::make('meta_description')
                 //     ->searchable(),
             ])

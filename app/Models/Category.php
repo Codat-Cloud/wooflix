@@ -27,19 +27,46 @@ class Category extends Model
         return $this->hasMany(Category::class, 'parent_id');
     }
 
-    protected static function booted()
+    public function petType()
     {
-        static::saving(function ($category) {
-
-            if (empty($category->slug) && !empty($category->name)) {
-
-                $slug = Str::slug($category->name);
-                $count = static::where('slug', 'LIKE', "{$slug}%")->count();
-
-                $category->slug = $count ? "{$slug}-{$count}" : $slug;
-            }
-        });
+        return $this->belongsTo(ProductFilterTag::class, 'pet_type_tag_id');
     }
+
+protected static function booted()
+{
+    static::saving(function ($category) {
+
+        if (empty($category->slug) && !empty($category->name)) {
+
+            $baseSlug = Str::slug($category->name);
+
+            // Append pet type slug if available
+            if ($category->petType) {
+
+                $petTypeSlug = Str::slug($category->petType->slug);
+
+                $baseSlug = "{$petTypeSlug}-{$baseSlug}";
+            }
+
+            $slug = $baseSlug;
+
+            $counter = 1;
+
+            while (
+                static::where('slug', $slug)
+                    ->when($category->exists, fn($q) =>
+                        $q->where('id', '!=', $category->id)
+                    )
+                    ->exists()
+            ) {
+                $slug = "{$baseSlug}-{$counter}";
+                $counter++;
+            }
+
+            $category->slug = $slug;
+        }
+    });
+}
 
     public function products()
     {
