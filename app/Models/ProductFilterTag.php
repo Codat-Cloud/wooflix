@@ -28,10 +28,8 @@ class ProductFilterTag extends Model
             if (empty($filterTag->slug) && !empty($filterTag->name)) {
                 $base = Str::slug($filterTag->name);
                 $filterTag->slug = static::uniqueSlug($base, $filterTag->id);
-            }
-
             // If user provided slug → normalize + ensure unique
-            if (!empty($filterTag->slug)) {
+            } elseif (!empty($filterTag->slug)) {
                 $base = Str::slug($filterTag->slug);
                 $filterTag->slug = static::uniqueSlug($base, $filterTag->id);
             }

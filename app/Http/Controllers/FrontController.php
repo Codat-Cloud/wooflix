@@ -94,9 +94,16 @@ class FrontController extends Controller
         $query = Product::query()->where('is_active', true)->with('defaultVariant');
 
         // 2. Apply Filters (We will implement the logic for these later)
-        if ($request->has('brand')) {
-            $query->whereIn('brand_id', $request->brand);
-        }
+if ($request->filled('brand')) {
+
+    $brands = array_filter(
+        explode(',', $request->brand)
+    );
+
+    $query->whereHas('brand', function ($q) use ($brands) {
+        $q->whereIn('slug', $brands);
+    });
+}
 
         // 3. Fetch Data
         $products = $query->latest()->paginate(1);

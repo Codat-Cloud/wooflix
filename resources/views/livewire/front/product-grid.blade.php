@@ -96,7 +96,7 @@
                                 <input 
                                     type="checkbox"
                                     wire:click="toggleTag('{{ $tag->slug }}')"
-                                    @if(in_array($tag->slug, $this->selectedTags)) checked @endif
+                                    @checked(in_array($tag->slug, $selectedTags))
                                     {{-- @checked(in_array($tag->slug, $selectedTags)) --}}
                                 />
                                 <span class="checkmark"></span>
@@ -267,7 +267,7 @@
         <input 
             type="checkbox"
             wire:click="toggleTag('{{ $tag->slug }}')"
-            @checked(in_array($tag->slug, $this->selectedTags))
+            @checked(in_array($tag->slug, $selectedTags))
         />
         {{ $tag->name }}
     </label>

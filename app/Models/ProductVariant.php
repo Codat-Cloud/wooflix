@@ -82,19 +82,13 @@ class ProductVariant extends Model
                 $variant->is_default = true;
             }
 
-            // If current variant is marked default
-            // remove default from others
-            if ($variant->is_default) {
+        });
 
+        static::saved(function ($variant) {
+            if ($variant->is_default) {
                 static::where('product_id', $variant->product_id)
-                    ->when(
-                        $variant->id,
-                        fn($q) =>
-                        $q->where('id', '!=', $variant->id)
-                    )
-                    ->update([
-                        'is_default' => false
-                    ]);
+                    ->where('id', '!=', $variant->id)
+                    ->update(['is_default' => false]);
             }
         });
     }
