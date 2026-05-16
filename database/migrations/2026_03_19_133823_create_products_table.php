@@ -25,7 +25,6 @@ return new class extends Migration
             $table->text('main_image');
             
             $table->text('asin')->nullable();
-            $table->json('filters')->nullable();
 
             $table->longText('short_description')->nullable();
             $table->longText('description')->nullable();
