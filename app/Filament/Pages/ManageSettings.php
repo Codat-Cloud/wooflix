@@ -70,11 +70,11 @@ class ManageSettings extends Page
                             ->schema([
                                 Grid::make(2)->schema([
                                     FileUpload::make('logo_desktop')->image()->disk('public')->directory('settings')
-                                    ->helperText('Transparent PNG recommended. Ideal size: 250x60px. Appears in the main website header.'),
+                                        ->helperText('Transparent PNG recommended. Ideal size: 250x60px. Appears in the main website header.'),
                                     FileUpload::make('logo_mobile')->image()->disk('public')->directory('settings')
-                                    ->helperText('Transparent PNG recommended. Ideal size: 150x40px. Optimized for smaller screens and sticky headers.'),
+                                        ->helperText('Transparent PNG recommended. Ideal size: 150x40px. Optimized for smaller screens and sticky headers.'),
                                     FileUpload::make('favicon')->image()->disk('public')->directory('settings')
-                                    ->helperText('Must be a square (1:1 ratio). Upload a high-res PNG (512x512px). This appears in browser tabs and Google search results.'),
+                                        ->helperText('Must be a square (1:1 ratio). Upload a high-res PNG (512x512px). This appears in browser tabs and Google search results.'),
                                 ]),
                             ]),
 
@@ -84,12 +84,12 @@ class ManageSettings extends Page
                             ->schema([
                                 Grid::make(2)->schema([
                                     TextInput::make('contact_email')->email()
-                                    ->helperText('Primary email for customer inquiries. Used in the footer and contact page.'),
+                                        ->helperText('Primary email for customer inquiries. Used in the footer and contact page.'),
                                     TextInput::make('contact_phone')
-                                    ->helperText('Official support number. Use international format (e.g., +91 85879 06587) for better mobile click-to-call.'),
+                                        ->helperText('Official support number. Use international format (e.g., +91 85879 06587) for better mobile click-to-call.'),
                                 ]),
                                 Textarea::make('office_address')->rows(3)
-                                ->helperText('Physical location or Registered Office address.'),
+                                    ->helperText('Physical location or Registered Office address.'),
                                 Grid::make(2)->schema([
                                     TextInput::make('facebook_url')->url()->placeholder('https://facebook.com/...'),
                                     TextInput::make('instagram_url')->url()->placeholder('https://instagram.com/...'),
@@ -122,18 +122,18 @@ class ManageSettings extends Page
                                             ->helperText('Use this for live chat widgets or non-critical tracking scripts that should load after the page content.'),
                                     ]),
                             ]),
-                            
+
                         // TAB 4: FOOTER CONTENT
                         Tab::make('Footer')
                             ->icon('heroicon-m-queue-list')
                             ->schema([
                                 RichEditor::make('footer_about')->columnSpanFull()
-                                ->helperText('A short 2-3 sentence description of Wooflix to build brand trust at the bottom of every page.'),
+                                    ->helperText('A short 2-3 sentence description of Wooflix to build brand trust at the bottom of every page.'),
                                 TextInput::make('popular_searches')
                                     ->helperText('Separate keywords with commas.'),
                             ]),
 
-                            // Inside the tabs array in ManageSettings.php
+                        // Tab 5: Inside the tabs array in ManageSettings.php
                         Tab::make('Global SEO')
                             ->icon('heroicon-m-globe-alt')
                             ->schema([
@@ -162,6 +162,60 @@ class ManageSettings extends Page
                                             ->helperText('Image shown when sharing the website on WhatsApp/Facebook and X. Best: Image with .jpg and size 1200x630px'),
                                     ]),
                             ]),
+
+                        // Tab 5: SMTP Settings for email
+                        Tab::make('SMTP')
+                            ->icon('heroicon-m-envelope')
+                            ->schema([
+
+                                Section::make('SMTP Configuration')
+                                    ->description('Configure outgoing email settings for order emails, OTPs, notifications, and contact forms.')
+                                    ->schema([
+
+                                        Grid::make(2)->schema([
+
+                                            TextInput::make('smtp_host')
+                                                ->label('SMTP Host')
+                                                ->placeholder('smtp.gmail.com')
+                                                ->helperText('Mail server hostname provided by your email provider.'),
+
+                                                                                            TextInput::make('smtp_from_address')
+                                                ->label('From Email Address')
+                                                ->email()
+                                                ->placeholder('noreply@yourdomain.com'),
+
+
+                                            TextInput::make('smtp_username')
+                                                ->label('SMTP Username')
+                                                ->placeholder('support@yourdomain.com')
+                                                ->helperText('Usually your full email address.'),
+
+                                            TextInput::make('smtp_password')
+                                                ->label('SMTP Password')
+                                                ->password()
+                                                ->revealable()
+                                                ->helperText('Stored securely in database.'),
+
+                                            TextInput::make('smtp_encryption')
+                                                ->label('Encryption')
+                                                ->placeholder('tls')
+                                                ->helperText('Use tls or ssl.'),
+
+
+                                            TextInput::make('smtp_port')
+                                                ->label('SMTP Port')
+                                                ->numeric()
+                                                ->placeholder('587')
+                                                ->helperText('Usually 587 for TLS or 465 for SSL.'),
+
+                                            TextInput::make('smtp_from_name')
+                                                ->label('From Name')
+                                                ->placeholder('Wooflix'),
+
+                                        ]),
+
+                                    ]),
+                            ]),
                     ]),
             ]);
     }
@@ -186,7 +240,7 @@ class ManageSettings extends Page
                 ['key' => $key],
                 ['value' => $finalValue]
             );
-            
+
             // Clear cache for this specific key
             Cache::forget("setting.$key");
         }

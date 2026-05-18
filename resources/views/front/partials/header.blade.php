@@ -38,44 +38,12 @@
             </div>
 
             <div class="col-lg-5 d-flex justify-content-end align-items-center gap-3 header-icons">
-              <div class="dropdown location-dropdown d-inline-block">
-                <button
-                  class="btn location-btn dropdown-toggle"
-                  data-bs-toggle="dropdown"
-                >
-                  📍 <span id="userPincode">560034</span>
-                </button>
 
-                <div class="dropdown-menu dropdown-menu-end location-menu" style="width: 300px;">
-                  <h6 class="text-center">
-                    Enter your pincode to Choose a delivery location to check
-                    product availability
-                  </h6>
-
-                  <form id="pincodeForm" class="pincode-form">
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="pincodeInput"
-                      placeholder="Enter pincode"
-                      maxlength="6"
-                    />
-
-                    <button type="submit" class="btn btn-orange">Save</button>
-                  </form>
-                </div>
-              </div>
+              {{-- Header Pincode --}}
+              @livewire('front.header-pincode')
 
               <a class="text-decoration-none text-dark me-1" href="{{route('dashboard')}}" class="me-2">♡ Wishlist</a>
               <livewire:front.cart />
-              {{-- <span
-                class="cart-btn position-relative me-2"
-                data-bs-toggle="offcanvas"
-                data-bs-target="#cartDrawer"
-              >
-                🛒 Cart
-                <span class="cart-count">12</span>
-              </span> --}}
 
               @auth
                   <div class="dropdown d-inline-block ms-2">
@@ -129,63 +97,63 @@
     <nav class="main-nav d-none d-lg-block shadow">
       <div class="container-xxl">
         <ul class="nav-menu">
-@foreach($petTypes as $petType)
+        @foreach($petTypes as $petType)
 
-<li class="has-mega">
+        <li class="has-mega">
 
-    {{-- Main Navigation Link --}}
-    <a href="{{ route('front.shop', ['tags' => $petType->slug]) }}">
-        {{ $petType->name }}
-    </a>
+            {{-- Main Navigation Link --}}
+            <a href="{{ route('front.shop', ['tags' => $petType->slug]) }}">
+                {{ $petType->name }}
+            </a>
 
-    <div class="mega-menu shadow">
+            <div class="mega-menu shadow">
 
-        <div class="mega-inner container-xxl">
+                <div class="mega-inner container-xxl">
 
-            @foreach($petType->categories as $parentCategory)
+                    @foreach($petType->categories as $parentCategory)
 
-                <div class="mega-column">
+                        <div class="mega-column">
 
-                    {{-- Parent Category --}}
-                    <h6>
+                            {{-- Parent Category --}}
+                            <h6>
 
-                        <a href="{{ route('front.shop', ['cat' => $parentCategory->slug]) }}">
-                            {{ $parentCategory->name }}
-                        </a>
+                                <a href="{{ route('front.shop', ['cat' => $parentCategory->slug]) }}">
+                                    {{ $parentCategory->name }}
+                                </a>
 
-                    </h6>
+                            </h6>
 
-                    {{-- Child Categories --}}
-                    @foreach($parentCategory->children as $child)
+                            {{-- Child Categories --}}
+                            @foreach($parentCategory->children as $child)
 
-                        <a href="{{ route('front.shop', ['cat' => $child->slug]) }}">
+                                <a href="{{ route('front.shop', ['cat' => $child->slug]) }}">
 
-                            @if($child->image)
+                                    @if($child->image)
 
-                                <img
-                                    src="{{ asset('storage/' . $child->image) }}"
-                                    alt="{{ $child->name }}"
-                                >
+                                        <img
+                                            src="{{ asset('storage/' . $child->image) }}"
+                                            alt="{{ $child->name }}"
+                                        >
 
-                            @endif
+                                    @endif
 
-                            {{ $child->name }}
+                                    {{ $child->name }}
 
-                        </a>
+                                </a>
+
+                            @endforeach
+
+                        </div>
 
                     @endforeach
 
                 </div>
 
-            @endforeach
+            </div>
 
-        </div>
+        </li>
 
-    </div>
-
-</li>
-
-@endforeach
+        @endforeach
 
           <li class="has-mega">
             <a href="#">Brands</a>
@@ -232,8 +200,9 @@
         </button>
 
         <div class="delivery">
-          📍 Delivering to <strong>560034</strong>
-          <span class="change">Change</span>
+          @livewire('front.header-pincode')
+          {{-- 📍 Delivering to <strong> {{ session('delivery_check.pincode') ?: 'Location' }}</strong>
+          <span class="change">Change</span> --}}
         </div>
 
         <div class="wishlist">
@@ -251,9 +220,29 @@
             </span>
           </a>
 
-          <input type="text" placeholder="Search for Dog" />
+          <form
+              action="{{ route('front.shop') }}"
+              method="GET"
+              class="w-100 d-flex align-items-center"
+          >
 
-          <span class="search-icon">🔍</span>
+              <input
+                  type="text"
+                  name="q"
+                  class="border-0 bg-transparent w-100"
+                  placeholder="Search products..."
+                  value="{{ request('q') }}"
+                  autocomplete="off"
+              />
+
+              <button
+                  type="submit"
+                  class="border-0 bg-transparent p-0"
+              >
+                  <span class="search-icon">🔍</span>
+              </button>
+
+          </form>
         </div>
       </div>
     </div>
@@ -271,21 +260,140 @@
       </div>
 
       <div class="offcanvas-body">
-        <ul class="mobile-nav">
-          <li>Shop for Dogs</li>
-          <li>Shop for Cats</li>
-          <li>Shop by Brands</li>
-          <li>Winter'25 <span class="badge bg-warning text-dark">NEW</span></li>
-          <li>Fresh Food for Dogs</li>
-          <li>Complete Meals for Cats</li>
-          <li>HUFT Outlet <span class="badge bg-danger">60% Off</span></li>
-          <li>HUFT Spa</li>
-          <li>HUFT Hub</li>
-          <li>Store & Spa Locator</li>
-          <li>Become a Franchisee</li>
-          <li>Join our Birthday Club</li>
-          <li>Adopt Joy</li>
-        </ul>
+        <div class="mobile-nav">
+
+            {{-- PET TYPES --}}
+            @foreach($petTypes as $petType)
+
+                <div class="mobile-nav-group mb-3">
+
+                    {{-- PET TYPE --}}
+                    <button
+                        class="btn w-100 text-start fw-bold"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#petType{{ $petType->id }}"
+                    >
+
+                        {{ $petType->name }}
+
+                    </button>
+
+                    {{-- CATEGORY DROPDOWN --}}
+                    <div
+                        class="collapse"
+                        id="petType{{ $petType->id }}"
+                    >
+
+                        <ul class="list-unstyled ps-3">
+
+                            @foreach($petType->categories as $parentCategory)
+
+                                <li class="mb-2">
+
+                                    {{-- Parent Category --}}
+                                    <a
+                                        href="{{ route('front.shop', ['cat' => $parentCategory->slug]) }}"
+                                        class="fw-semibold text-dark text-decoration-none"
+                                    >
+
+                                        {{ $parentCategory->name }}
+
+                                    </a>
+
+                                    {{-- Child Categories --}}
+                                    @if($parentCategory->children->count())
+
+                                        <ul class="list-unstyled ps-3 mt-1">
+
+                                            @foreach($parentCategory->children as $child)
+
+                                                <li class="mb-1">
+
+                                                    <a
+                                                        href="{{ route('front.shop', ['cat' => $child->slug]) }}"
+                                                        class="text-muted text-decoration-none"
+                                                    >
+
+                                                        {{ $child->name }}
+
+                                                    </a>
+
+                                                </li>
+
+                                            @endforeach
+
+                                        </ul>
+
+                                    @endif
+
+                                </li>
+
+                            @endforeach
+
+                        </ul>
+
+                    </div>
+
+                </div>
+
+            @endforeach
+
+            {{-- BRANDS --}}
+            <div class="mobile-nav-group">
+
+                <button
+                    class="btn w-100 text-start fw-bold"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#mobileBrands"
+                >
+
+                    Brands
+
+                </button>
+
+                <div
+                    class="collapse"
+                    id="mobileBrands"
+                >
+
+                    <ul class="list-unstyled ps-3">
+
+                        @foreach($brands as $brand)
+
+                            <li class="mb-2">
+
+                                <a
+                                    href="{{ route('front.shop', ['brand' => $brand->slug]) }}"
+                                    class="text-dark text-decoration-none"
+                                >
+
+                                    {{ $brand->name }}
+
+                                </a>
+
+                            </li>
+
+                        @endforeach
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+            {{-- STATIC LINKS --}}
+            <div class="mt-4">
+
+                <a
+                    href="{{ route('front.wholesale') }}"
+                    class="d-block mb-2 text-dark text-decoration-none"
+                >
+                    Wholesale
+                </a>
+
+            </div>
+
+        </div>
       </div>
     </div>
 
@@ -299,7 +407,7 @@
 
       <a href="{{route('front.shop')}}">
         <div>⬜</div>
-        <span>Category</span>
+        <span>Collections</span>
       </a>
 
       <a href="#">

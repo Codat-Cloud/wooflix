@@ -94,6 +94,9 @@ class FrontController extends Controller
         ));
     }
 
+
+    
+
     public function shop(Request $request)
     {
         // 1. Start Query

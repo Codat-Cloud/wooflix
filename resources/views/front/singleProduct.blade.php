@@ -331,35 +331,8 @@ $variants = $product->variants->map(function ($v) {
                 </div>
             </div>
 
-              <!-- DELIVERY CHECK -->
-              <div class="delivery-info">
-                <h5 class="delivery-title">Delivery & Service Information</h5>
-
+            
                 @livewire('front.pincode-checker')
-
-                {{-- <div class="delivery-items">
-                  <div class="delivery-item">
-                    <span class="delivery-icon">⚡</span>
-                    <span>Get it <strong>Today</strong></span>
-                  </div>
-
-                  <div class="delivery-item">
-                    <span class="delivery-icon">🚚</span>
-                    <span>Expected delivery date – <strong>Today</strong></span>
-                  </div> --}}
-
-                  <div class="delivery-item">
-                    <span class="delivery-icon">📦</span>
-                    <span>No Exchange & Returns</span>
-                  </div>
-                  <br>
-
-                  <div class="delivery-item">
-                    <span class="delivery-icon free">FREE</span>
-                    <span>Enjoy Free Delivery above <strong>₹699</strong></span>
-                  </div>
-                </div>
-              </div>
 
               <!-- ACCORDION -->
 

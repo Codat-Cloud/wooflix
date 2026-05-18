@@ -15,9 +15,44 @@ class PincodeChecker extends Component
     public $deliveryDate = null;
     public $isExpress = false;
 
+    public function mount()
+    {
+        $saved = session('delivery_check');
+
+        if ($saved) {
+
+            $this->pincode = $saved['pincode'];
+
+            $this->deliveryAvailable =
+                $saved['deliveryAvailable'] ?? null;
+
+            $this->deliveryText =
+                $saved['deliveryText'] ?? null;
+
+            $this->deliveryDate =
+                $saved['deliveryDate'] ?? null;
+
+            $this->isExpress =
+                $saved['isExpress'] ?? false;
+        }
+    }
+
     // 🔄 Reset when user types
     public function updatedPincode()
     {
+        $saved = session('delivery_check');
+
+        // No saved state
+        if (!$saved) {
+            return;
+        }
+
+        // Same pincode → keep results
+        if ($saved['pincode'] == $this->pincode) {
+            return;
+        }
+
+        // Different pincode → reset old result
         $this->deliveryAvailable = null;
         $this->deliveryText = null;
         $this->deliveryDate = null;
@@ -58,6 +93,18 @@ class PincodeChecker extends Component
         }
 
         $this->deliveryDate = $this->deliveryText;
+
+        session([
+            'delivery_check' => [
+                'pincode' => $this->pincode,
+                'deliveryAvailable' => $this->deliveryAvailable,
+                'deliveryText' => $this->deliveryText,
+                'deliveryDate' => $this->deliveryDate,
+                'isExpress' => $this->isExpress,
+            ]
+        ]);
+
+        $this->dispatch('pincodeUpdated');
     }
 
     public function render()
