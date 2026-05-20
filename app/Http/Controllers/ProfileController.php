@@ -33,17 +33,18 @@ class ProfileController extends Controller
             ->latest()
             ->take(6)
             ->get();
-            
+
         return view('dashboard', compact('orders', 'latestReview', 'wishlist'));
     }
 
     public function orders()
     {
-        $orders = Order::with(['items.product:id,slug,name,main_image'])
+        $orders = Order::with([
+            'items.product:id,slug,name,main_image',
+        ])
             ->where('user_id', auth()->id())
             ->latest()
-            ->take(6)
-            ->get();
+            ->paginate(10);
 
         return view('profile.orders', compact('orders'));
     }

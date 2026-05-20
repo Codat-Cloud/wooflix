@@ -79,7 +79,7 @@
             <ul>
               <li><a href="#">About Us</a></li>
               <li><a href="#">Contact Us</a></li>
-              <li><a href="#">Track Your Order</a></li>
+              <li><a href="https://www.shiprocket.in/shipment-tracking">Track Your Order</a></li>
             <ul>
                 @foreach($footerPages as $p)
                     <li>
@@ -92,7 +92,7 @@
             </ul>
           </div>
 
-          <div class="col-6 col-md-3">
+          {{-- <div class="col-6 col-md-3">
             <h6>EXPLORE IT</h6>
 
             <ul>
@@ -101,7 +101,7 @@
               <li><a href="#">Learn With Wooflix</a></li>
               <li><a href="#">Customers Love</a></li>
             </ul>
-          </div>
+          </div> --}}
 
           <div class="col-md-3">
             {{-- <h6>DOWNLOAD WOOFLIX APP</h6>

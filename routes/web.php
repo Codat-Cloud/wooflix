@@ -69,6 +69,8 @@ Route::middleware('auth')->group(function () {
 
     })->name('profile.drawer');
 
+    Route::get('/invoice', [ProfileController::class, 'invoice'])->name('front.orderInvoice');
+
 });
 
 require __DIR__.'/auth.php';

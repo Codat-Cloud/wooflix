@@ -149,7 +149,7 @@
             <div class="row g-3">
             @forelse($wishlist as $item)
                     <div class="col-md-3 col-6">
-                        <a href="{{ route('front.singleProduct', ['product_slug => $item->product->slug, ) }}" class="text-decoration-none text-dark">
+                        <a href="{{ route('front.singleProduct', ['product_slug' => $item->product->slug]) }}" class="text-decoration-none text-dark">
                             <div class="product-card text-center border p-0 rounded h-100">
                                 <img 
                                     src="{{ asset('storage/' . $item->product->main_image) }}" 
