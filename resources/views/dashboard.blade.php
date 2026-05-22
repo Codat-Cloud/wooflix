@@ -71,7 +71,7 @@
               <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="profile-action logout w-100 text-start">
-                    Logout
+                  Logout
                 </button>
             </form>
             </div>
@@ -116,12 +116,20 @@
                                 </p>
                             </div>
 
-                            <a 
-                                href="{{ route('front.singleProduct', $product->slug) }}"
-                                class="btn btn-sm btn-orange"
-                            >
-                                Buy Again
-                            </a>
+                            {{-- TRACK --}}
+                            {{-- @if($order->tracking_url) --}}
+
+                                <a
+                                    href="{{ $order->tracking_url }}"
+                                    target="_blank"
+                                    class="btn btn-outline-dark"
+                                >
+
+                                    Track Order {{$order->tracking_number}}
+
+                                </a>
+
+                            {{-- @endif --}}
 
                         </div>
 

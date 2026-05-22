@@ -2,10 +2,14 @@
 
 namespace App\Filament\Resources\Orders\Tables;
 
+use App\Models\Order;
+use App\Services\ShiprocketOrderService;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -22,9 +26,9 @@ class OrdersTable
                     ->sortable(),
 
                 // CUSTOMER
-                TextColumn::make('user.name')
-                    ->label('Customer')
-                    ->searchable(),
+                // TextColumn::make('user.name')
+                //     ->label('Customer')
+                //     ->searchable(),
 
                 // TOTAL
                 TextColumn::make('total_amount')
@@ -76,12 +80,116 @@ class OrdersTable
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                // ViewAction::make(),
+                // EditAction::make(),
+
+                Action::make('print_shipping_label')
+                    ->label('Shipping Label')
+                    ->icon('heroicon-o-printer')
+                    ->color('warning')
+
+                    // Explicit array mapping guarantees segments are parsed correctly
+                    ->url(fn(Order $record): string => route('front.shippingLabel', ['order' => $record->id]))
+
+                    ->openUrlInNewTab(),
+
+                Action::make('generateShipment')
+
+                    ->label('Generate Shipment')
+
+                    ->icon('heroicon-o-truck')
+
+                    ->color('success')
+
+                    ->form([
+
+                        TextInput::make('weight')
+                            ->numeric()
+                            ->required(),
+
+                        TextInput::make('length')
+                            ->numeric()
+                            ->required(),
+
+                        TextInput::make('width')
+                            ->numeric()
+                            ->required(),
+
+                        TextInput::make('height')
+                            ->numeric()
+                            ->required(),
+
+                    ])
+
+                    ->fillForm(function ($record) {
+
+                        $variant = $record->items
+                            ->first()?->variant;
+
+                        return [
+
+                            'weight' =>
+                            $variant?->weight ?? 0.5,
+
+                            'length' =>
+                            $variant?->length ?? 10,
+
+                            'width' =>
+                            $variant?->width ?? 10,
+
+                            'height' =>
+                            $variant?->height ?? 10,
+
+                        ];
+                    })
+
+                    ->action(function ($record, $data) {
+
+                        $service = app(
+                            ShiprocketOrderService::class
+                        );
+
+                        $response = $service->createShipment(
+                            $record,
+                            $data
+                        );
+
+                        if (
+                            !isset($response['shipment_id'])
+                        ) {
+
+                            throw new \Exception(
+                                $response['message']
+                                    ?? 'Shiprocket API failed'
+                            );
+                        }
+
+                        $record->update([
+
+                            'shiprocket_order_id' =>
+                            $response['order_id'] ?? null,
+
+                            'shipment_id' =>
+                            $response['shipment_id'] ?? null,
+
+                            'awb_code' =>
+                            $response['awb_code'] ?? null,
+
+                            'courier_name' =>
+                            $response['courier_name'] ?? null,
+
+                            'label_url' =>
+                            $response['label_url'] ?? null,
+
+                            'manifest_url' =>
+                            $response['manifest_url'] ?? null,
+
+                        ]);
+                    }),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    // DeleteBulkAction::make(),
                 ]),
             ]);
     }

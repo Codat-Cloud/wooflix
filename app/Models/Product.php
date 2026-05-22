@@ -13,6 +13,7 @@ class Product extends Model
         'name',
         'slug',
         'asin',
+        'hsn',
         'filters',
         'main_image',
         'short_description',

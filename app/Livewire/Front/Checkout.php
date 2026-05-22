@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Front;
 
+use App\Mail\OrderStatusMail;
 use Livewire\Component;
 use App\Models\CartItem;
 use App\Models\Address;
@@ -9,7 +10,9 @@ use App\Models\Coupon;
 use App\Models\CouponRedemption;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Services\MailConfigService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class Checkout extends Component
 {
@@ -221,6 +224,16 @@ class Checkout extends Component
                     'quantity' => $item->quantity,
                 ]);
             }
+
+            MailConfigService::set();
+
+            Mail::to(Auth::user()->email)
+                ->send(
+                    new OrderStatusMail(
+                        $order,
+                        'Your order has been placed successfully.'
+                    )
+                );
 
             // 3. Return data to JavaScript
             return [

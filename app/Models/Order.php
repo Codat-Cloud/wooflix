@@ -25,6 +25,13 @@ class Order extends Model
         'shipping_state',
         'shipping_postal_code',
         'shipping_country',
+
+        'shiprocket_order_id',
+        'shipment_id',
+        'awb_code',
+        'courier_name',
+        'label_url',
+        'manifest_url',
     ];
 
     public function items()
@@ -40,7 +47,7 @@ class Order extends Model
     protected static function booted()
     {
         static::creating(function ($order) {
-            $order->order_number = 'ORD-' . strtoupper(uniqid());
+            $order->order_number = 'VKY-' . strtoupper(uniqid());
         });
     }
 }

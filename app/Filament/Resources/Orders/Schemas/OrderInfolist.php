@@ -61,7 +61,7 @@ class OrderInfolist
                                     ->formatStateUsing(fn ($state) => 'Rs. ' . number_format($state, 2)),
 
                             ])
-                            ->columns(4)
+                            ->columns(2)
 
                     ]),
 

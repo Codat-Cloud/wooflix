@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Order;
 use App\Models\Review;
+use App\Models\SiteSetting;
 use App\Models\Wishlist;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProfileController extends Controller
 {
@@ -93,5 +95,53 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    public function invoice(Order $order)
+    {
+        abort_if($order->user_id !== auth()->id(), 403);
+        $order->load(['items.product']);
+
+        $settings = SiteSetting::pluck('value', 'key')->toArray();
+
+        // Web view gets the buttons
+        $isPdf = false;
+
+        return view('invoices.order-invoice', compact('order', 'settings', 'isPdf'));
+    }
+
+    public function invoicePdf(Order $order)
+    {
+        abort_if($order->user_id !== auth()->id(), 403);
+        $order->load(['items.product']);
+
+        $settings = SiteSetting::pluck('value', 'key')->toArray();
+
+        // PDF view hides the buttons explicitly
+        $isPdf = true;
+
+        $pdf = Pdf::loadView('invoices.order-invoice', compact('order', 'settings', 'isPdf'));
+
+        // Optional Dompdf optimization for local assets
+        $pdf->setOption([
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => true
+        ]);
+
+        return $pdf->download($order->order_number . '.pdf');
+    }
+
+    public function shippingLabel(Order $order)
+    {
+        // Security gate: block unauthorized visual access
+        abort_unless(auth()->user() && auth()->user()->hasRole('admin'), 403);
+
+        // Eager load nested items, products, and variant variations
+        $order->load(['items.product']);
+
+        // Pull key-value array configuration maps for header/footer assets
+        $settings = SiteSetting::pluck('value', 'key')->toArray();
+
+        return view('invoices.shipping-label', compact('order', 'settings'));
     }
 }

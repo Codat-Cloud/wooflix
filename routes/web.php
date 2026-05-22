@@ -48,7 +48,7 @@ Route::prefix('cart')->group(function () {
 
 
 Route::middleware('auth')->group(function () {
-    
+
     Route::get('/checkout', [FrontController::class, 'checkout'])->name('front.checkout');
     // 
     Route::get('/dashboard', [ProfileController::class, 'dashboard'])->name('dashboard');
@@ -66,11 +66,18 @@ Route::middleware('auth')->group(function () {
             'coupons' => view('profile.partials.coupons'),
             default => abort(404),
         };
-
     })->name('profile.drawer');
 
-    Route::get('/invoice', [ProfileController::class, 'invoice'])->name('front.orderInvoice');
+    Route::get('/invoice/{order}', [ProfileController::class, 'invoice'])
+        ->name('front.orderInvoice');
 
+    Route::get('/order/{order}/shipping-label', [ProfileController::class, 'shippingLabel'])
+        ->name('front.shippingLabel');
+
+    Route::get(
+        '/invoice/{order}/pdf',
+        [ProfileController::class, 'invoicePdf']
+    )->name('front.orderInvoicePdf');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

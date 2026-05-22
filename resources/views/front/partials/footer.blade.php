@@ -4,17 +4,51 @@
         <div class="row text-center g-3">
           <div class="col-12 col-lg">
             <div class="usp-item">
-              {{-- <img src="assets/icons/shipping.svg" alt="Free Shipping" /> --}}
+              <!-- FREE SHIPPING -->
+              <svg xmlns="http://www.w3.org/2000/svg"
+                  width="32"
+                  height="32"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round">
+
+                  <rect x="1" y="3" width="15" height="13"></rect>
+
+                  <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+
+                  <circle cx="5.5" cy="18.5" r="2.5"></circle>
+
+                  <circle cx="18.5" cy="18.5" r="2.5"></circle>
+
+              </svg>
 
               <h6>FREE SHIPPING</h6>
 
-              <p>On Orders Above ₹499</p>
+              <p>On Orders Above ₹699</p>
             </div>
           </div>
 
           <div class="col-12 col-lg">
             <div class="usp-item">
-              {{-- <img src="assets/icons/returns.svg" alt="Free Returns" /> --}}
+              <!-- FREE RETURNS -->
+              <svg xmlns="http://www.w3.org/2000/svg"
+                  width="32"
+                  height="32"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round">
+
+                  <polyline points="1 4 1 10 7 10"></polyline>
+
+                  <path d="M3.51 15a9 9 0 1 0 .49-9"></path>
+
+              </svg>
 
               <h6>FREE RETURNS</h6>
 
@@ -24,7 +58,35 @@
 
           <div class="col-12 col-lg">
             <div class="usp-item">
-              {{-- <img src="assets/icons/payment.svg" alt="Secure Payment" /> --}}
+            <!-- SECURE PAYMENT -->
+            <svg xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+
+                <rect
+                    x="2"
+                    y="5"
+                    width="20"
+                    height="14"
+                    rx="2"
+                    ry="2"
+                ></rect>
+
+                <path d="M2 10h20"></path>
+
+                <path d="M7 15h2"></path>
+
+                <path d="M11 15h2"></path>
+
+                <path d="M18 7l2 2-2 2"></path>
+
+            </svg>
 
               <h6>SECURE PAYMENT</h6>
 
@@ -34,7 +96,24 @@
 
           <div class="col-12 col-lg">
             <div class="usp-item">
-              {{-- <img src="assets/icons/support.svg" alt="Best Support" /> --}}
+            <!-- BEST SUPPORT -->
+            <svg xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+
+                <path d="M18 8a6 6 0 0 0-12 0v5a2 2 0 0 0 2 2h1v-5H6"></path>
+
+                <path d="M18 15h1a2 2 0 0 0 2-2V8a10 10 0 0 0-20 0v5a2 2 0 0 0 2 2h1"></path>
+
+                <path d="M9 19a3 3 0 0 0 6 0"></path>
+
+            </svg>
 
               <h6>BEST SUPPORT</h6>
 
@@ -44,7 +123,26 @@
 
           <div class="col-12 col-lg">
             <div class="usp-item">
-              {{-- <img src="assets/icons/delivery.svg" alt="Fast Delivery" /> --}}
+            <!-- FAST DELIVERY -->
+            <svg xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+
+                <path d="M5 17h14"></path>
+
+                <path d="M5 12h10"></path>
+
+                <path d="M5 7h6"></path>
+
+                <path d="M19 7l-4 5h3l-1 5 4-6h-3z"></path>
+
+            </svg>
 
               <h6>FAST DELIVERY</h6>
 
@@ -92,7 +190,7 @@
             </ul>
           </div>
 
-          {{-- <div class="col-6 col-md-3">
+          <div class="col-6 col-md-3">
             <h6>EXPLORE IT</h6>
 
             <ul>
@@ -101,7 +199,7 @@
               <li><a href="#">Learn With Wooflix</a></li>
               <li><a href="#">Customers Love</a></li>
             </ul>
-          </div> --}}
+          </div>
 
           <div class="col-md-3">
             {{-- <h6>DOWNLOAD WOOFLIX APP</h6>

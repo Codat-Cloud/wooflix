@@ -48,6 +48,11 @@ class User extends Authenticatable
         ];
     }
 
+    public function getIsAdminAttribute(): bool
+    {
+        return $this->hasRole('admin');
+    }
+
     public function canAccessPanel(\Filament\Panel $panel): bool
     {
         return $this->hasRole('admin');
