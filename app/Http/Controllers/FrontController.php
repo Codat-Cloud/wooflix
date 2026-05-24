@@ -14,7 +14,6 @@ use App\Models\Product;
 use App\Models\Wholesale;
 use Illuminate\Http\Request;
 
-
 class FrontController extends Controller
 {
 
@@ -57,6 +56,7 @@ class FrontController extends Controller
             )
             ->get()
             ->keyBy('id');
+
 
         // 5. THE BIG OPTIMIZATION: Fetch ALL featured products for ALL deal tabs in ONE query
         // Instead of querying inside the loop, we get them all now and group them by category_id
