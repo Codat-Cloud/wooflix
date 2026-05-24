@@ -12,6 +12,7 @@ $variants = $product->variants->map(function ($v) {
         'slug' => $v->slug,
         'price' => $v->price,
         'sale_price' => $v->sale_price,
+        'stock' => (int)$v->stock,
     ];
 });
 @endphp
@@ -150,6 +151,7 @@ $variants = $product->variants->map(function ($v) {
     mrp: null,
     adding: false,
     added: false,
+    isOutOfStock: false,
 
     init() {
         if (this.variants.length > 0) {
@@ -161,6 +163,7 @@ $variants = $product->variants->map(function ($v) {
         } else {
             this.price = window.productBase.sale_price ?? window.productBase.price;
             this.mrp = window.productBase.sale_price ? window.productBase.price : null;
+            this.isOutOfStock = false;
         }
     },
 
@@ -168,6 +171,9 @@ $variants = $product->variants->map(function ($v) {
         this.selected = v;
         this.price = v.sale_price ?? v.price;
         this.mrp = v.sale_price ? v.price : null;
+
+        // UPDATE: Check if the currently clicked selection has zero stock items left
+        this.isOutOfStock = Number(v.stock) <= 0;
 
         window.history.replaceState(
             {},
@@ -247,45 +253,44 @@ $variants = $product->variants->map(function ($v) {
               </div>
 
 
-              {{-- <div class="alert alert-info small mt-2">
-    <strong>Debug Info:</strong><br>
-    Selected Variant ID: <span x-text="selected ? selected.id : 'None'"></span><br>
-    IDs in Cart: <span x-text="JSON.stringify(inCartVariants)"></span><br>
-    Is Added Check: <span x-text="isAdded() ? 'TRUE' : 'FALSE'"></span>
-</div> --}}
+<button 
+    class="btn add-cart-btn w-100"
+    :class="{
+        'btn-orange': !adding && !isAdded() && !isOutOfStock,
+        'btn-secondary text-decoration-line-through': isOutOfStock || adding,
+        'btn-success': isAdded() && !isOutOfStock
+    }"
+    :disabled="adding || isAdded() || isOutOfStock"
+    @click="
+        if (adding || isAdded() || isOutOfStock) return;
 
+        if (!selected || !selected.id) {
+            alert('Please select a variant first');
+            return;
+        }
 
-                <button 
-                    class="btn add-cart-btn w-100"
-                    :class="{
-                        'btn-orange': !adding && !isAdded(),
-                        'btn-secondary': adding,
-                        'btn-success': isAdded()
-                    }"
-                    @click="
-                        if (adding || isAdded()) return;
+        adding = true;
 
-                        // Since all products must have a variant, 'selected' should never be null
-                        if (!selected || !selected.id) {
-                            alert('Please select a variant first');
-                            return;
-                        }
-
-                        adding = true;
-
-                        // Send a named object to the Livewire listener
-                        window.dispatchEvent(new CustomEvent('add-to-cart', {
-                            detail: {
-                                variant_id: selected.id,
-                                product_id: {{ $product->id }}
-                            }
-                        }));
-                    "
-                >
-                    <span x-show="!adding && !isAdded()">Add To Cart</span>
-                    <span x-show="adding">Adding...</span>
-                    <span x-show="isAdded()">Already in Cart ✓</span>
-                </button>
+        window.dispatchEvent(new CustomEvent('add-to-cart', {
+            detail: {
+                variant_id: selected.id,
+                product_id: {{ $product->id }}
+            }
+        }));
+    "
+>
+    <template x-if="isOutOfStock">
+        <span>Out of Stock</span>
+    </template>
+    
+    <template x-if="!isOutOfStock">
+        <span>
+            <span x-show="!adding && !isAdded()">Add To Cart</span>
+            <span x-show="adding">Adding...</span>
+            <span x-show="isAdded()">Already in Cart ✓</span>
+        </span>
+    </template>
+</button>
               </div>
 
 

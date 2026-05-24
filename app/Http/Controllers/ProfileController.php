@@ -45,11 +45,42 @@ class ProfileController extends Controller
             'items.product:id,slug,name,main_image',
         ])
             ->where('user_id', auth()->id())
+            ->where('status', 'confirmed')
             ->latest()
             ->paginate(10);
 
         return view('profile.orders', compact('orders'));
     }
+
+    public function wishlist()
+    {
+        // Fetch user wishlist with exact product and variant relation datasets
+        $wishlistItems = Wishlist::with([
+            'product:id,slug,name,main_image',
+            'variant:id,slug,name,price,sale_price,stock'
+        ])
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->paginate(12);
+
+        return view('profile.wishlist', [
+            'wishlist' => $wishlistItems
+        ]);
+    }
+
+    public function wishlistRemove($id)
+    {
+        // Find the item ensuring it belongs strictly to the currently authenticated user
+        $item = Wishlist::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        $item->delete();
+
+        return back()->with('success', 'Item removed from your wishlist pack!');
+    }
+
+
     /**
      * Display the user's profile form.
      */

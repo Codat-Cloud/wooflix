@@ -26,11 +26,16 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        // 1. Capture the guest session ID while it still exists!
+        $guestSessionId = session()->getId();
+
         $request->authenticate();
 
+        // 2. Laravel regenerates the session here (changing the ID)
         $request->session()->regenerate();
 
-        $this->mergeCart();
+        // 3. Pass the old captured guest ID into the merge routine
+        $this->mergeCart($guestSessionId);
 
         return redirect()->intended(route('dashboard', absolute: false));
     }
@@ -49,15 +54,13 @@ class AuthenticatedSessionController extends Controller
         return redirect('/');
     }
 
-    protected function mergeCart()
+    protected function mergeCart(string $oldSessionId)
     {
         $userId = auth()->id();
-        // It is safer to grab the session ID before any potential session regeneration
-        $sessionId = session()->getId(); 
 
-        DB::transaction(function () use ($userId, $sessionId) {
-            // 1. Fetch guest items using the session ID
-            $guestItems = CartItem::where('session_id', $sessionId)
+        DB::transaction(function () use ($userId, $oldSessionId) {
+            // FIX: Query using the captured guest session ID passed from store()
+            $guestItems = CartItem::where('session_id', $oldSessionId)
                 ->whereNull('user_id')
                 ->get();
 
@@ -65,37 +68,29 @@ class AuthenticatedSessionController extends Controller
                 return;
             }
 
-            // 2. Fetch existing user items to compare
             $userItems = CartItem::where('user_id', $userId)->get();
 
             foreach ($guestItems as $guest) {
-                // 3. Look for a match in the user's existing cart
-                // We use == for variant_id to handle NULL (simple product) vs integer (variant)
                 $existing = $userItems->first(function ($item) use ($guest) {
                     return $item->product_id === $guest->product_id &&
                         $item->variant_id == $guest->variant_id;
                 });
 
                 if ($existing) {
-                    // ✅ Item exists: Update quantity and delete the guest record
                     $existing->increment('quantity', $guest->quantity);
                     $guest->delete();
                 } else {
-                    // ✅ Item is new to the user: Re-assign the guest record
-                    // Optional: We refresh the price here to ensure the user isn't 
-                    // getting an outdated price from a days-old guest session.
-                    $currentPrice = $guest->variant 
-                        ? ($guest->variant->sale_price ?: $guest->variant->price) 
-                        : ($guest->product->sale_price ?: $guest->product->base_price);
+                    // Lazy load relationships safely if your conditional price logic needs them
+                    $currentPrice = $guest->variant
+                        ? ($guest->variant->sale_price ?: $guest->variant->price)
+                        : ($guest->product->sale_price ?? $guest->product->base_price ?? $guest->price);
 
                     $guest->update([
                         'user_id'    => $userId,
-                        'session_id' => null, // Clear the session binding
-                        'price'      => $currentPrice, 
+                        'session_id' => null,
+                        'price'      => $currentPrice,
                     ]);
 
-                    // Update the local collection so the next loop iteration 
-                    // sees this item if there were duplicate guest rows (rare)
                     $userItems->push($guest);
                 }
             }

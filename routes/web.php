@@ -53,6 +53,10 @@ Route::middleware('auth')->group(function () {
     // 
     Route::get('/dashboard', [ProfileController::class, 'dashboard'])->name('dashboard');
     Route::get('/dashboard/orders', [ProfileController::class, 'orders'])->name('user.orders');
+    Route::get('/dashboard/wishlist', [ProfileController::class, 'wishlist'])->name('user.wishlist');
+
+    Route::delete('/wishlist/{id}/remove', [ProfileController::class, 'wishlistRemove'])
+    ->name('front.wishlistRemove');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

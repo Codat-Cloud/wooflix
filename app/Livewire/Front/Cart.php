@@ -11,10 +11,13 @@ class Cart extends Component
 {
     public $items = [];
     public $count = 0;
-
-    protected $listeners = ['add-to-cart' => 'add'];
-
     public $subtotal = 0;
+
+    protected $listeners = [
+        'add-to-cart'  => 'add',
+        'cart-updated' => 'loadCart', // Tells the drawer to refresh its content automatically
+    ];
+
 
     public function updateTotals()
     {
@@ -64,7 +67,7 @@ class Cart extends Component
 
         if (!$variant || $variant->stock <= 0) {
             $this->dispatch('notify', [
-                'type' => 'error', 
+                'type' => 'error',
                 'message' => 'Sorry, this item just went out of stock!'
             ]);
             return;
@@ -75,7 +78,7 @@ class Cart extends Component
         CartItem::updateOrCreate(
             [
                 'variant_id' => $variant_id,
-                'user_id'    => $userId,
+                'user_id'    => $userId ?? null,
                 'session_id' => $userId ? null : $sessionId,
             ],
             [
@@ -110,7 +113,7 @@ class Cart extends Component
         CartItem::find($id)?->delete();
         $this->loadCart();
 
-        $this->dispatch('cartUpdated');
+        $this->dispatch('cart-updated');
     }
 
     public function render()
@@ -155,7 +158,7 @@ class Cart extends Component
 
         $this->updateTotals();
 
-        $this->dispatch('cartUpdated');
+        $this->dispatch('cart-updated');
     }
 
     public function decrease($id)
@@ -176,7 +179,7 @@ class Cart extends Component
 
         $this->updateTotals();
 
-        $this->dispatch('cartUpdated');
+        $this->dispatch('cart-updated');
     }
 
     public function isInCart($variantId)

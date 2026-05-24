@@ -151,7 +151,7 @@
           <div class="profile-section">
             <div class="section-header">
               <h6>Wishlist</h6>
-              <a href="#">View All</a>
+              <a href="{{route('user.wishlist')}}">View All</a>
             </div>
 
             <div class="row g-3">
@@ -165,7 +165,7 @@
                                     class="img-fluid rounded mb-2"
                                     style="object-fit: cover; height: 150px; width: 100%;"
                                 />
-                                <p class="mb-1 fw-bold text-truncate">{{ $item->product->name }}</p>
+                                <p class="mb-1 px-1 fw-bold text-truncate">{{ $item->product->name }}</p>
                                 
                                 {{-- Optional: Show Price if you want to be extra helpful --}}
                                 @if($item->product->sale_price)

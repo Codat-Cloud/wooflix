@@ -112,20 +112,22 @@
               <span>₹{{ number_format($total, 2) }}</span>
             </div>
 
-<button class="btn btn-orange w-100 mt-3"
-    x-data="{ loading: false }"
-    x-on:click="
-        loading = true;
-        handleCheckout().finally(() => loading = false);
-    "
-    :disabled="loading"
+<button class="btn w-100 mt-3"
+    wire:click="placeOrder"
+    wire:loading.attr="disabled"
+    :class="{
+        'btn-orange': {{ $defaultAddress ? 'true' : 'false' }},
+        'btn-secondary text-white opacity-75': {{ !$defaultAddress ? 'true' : 'false' }}
+    }"
+    {{ !$defaultAddress ? 'disabled' : '' }}
 >
-    <template x-if="!loading">
-        <span>Place Order</span>
-    </template>
-    <template x-if="loading">
-        <span><span class="spinner-border spinner-border-sm"></span> Processing...</span>
-    </template>
+    <span wire:loading.remove wire:target="placeOrder">
+        {{ $defaultAddress ? 'Place Order' : '⚠️ Please Add An Address First' }}
+    </span>
+    
+    <span wire:loading wire:target="placeOrder">
+        <span class="spinner-border spinner-border-sm"></span> Processing...
+    </span>
 </button>
 
               <div class="coupon-inline mt-3">
@@ -187,54 +189,47 @@
       </div>
     </section>
 
-    <div class="mobile-paybar d-lg-none">
-      <div class="total">₹{{ number_format($total, 2) }}</div>
+<div class="mobile-paybar d-lg-none">
+    <div class="total">₹{{ number_format($total, 2) }}</div>
 
-<button class="btn btn-orange"
-    wire:click="placeOrder"
-    wire:loading.attr="disabled">
-    
-    <span wire:loading.remove wire:target="placeOrder">
-        Place Order
-    </span>
+    <button class="btn btn-orange"
+        wire:click="placeOrder"
+        wire:loading.attr="disabled"
+        {{ !$defaultAddress ? 'disabled' : '' }}>
+        
+        <span wire:loading.remove wire:target="placeOrder">
+            {{ $defaultAddress ? 'Place Order' : 'Add Address' }}
+        </span>
 
-    <span wire:loading wire:target="placeOrder">
-        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-        Processing...
-    </span>
-</button>
-    </div>
+        <span wire:loading wire:target="placeOrder">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Processing...
+        </span>
+    </button>
+</div>
     
 
 @push('scripts')
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-    async function handleCheckout() {
+    // Listen for the custom event dispatched from the Livewire component backend
+    window.addEventListener('initiate-razorpay-payment', event => {
+        const result = event.detail[0] || event.detail;
+
         try {
-            // 1. Call the PHP method and wait for the Order data
-            // $wire.placeOrder() returns the result of the PHP function
-            const result = await @this.placeOrder();
-
-            if (!result || !result.success) {
-                alert(result?.message || "Order creation failed.");
-                return;
-            }
-
-            // 2. Setup Razorpay Options using data returned from PHP
             const options = {
                 "key": "{{ config('services.razorpay.key') }}",
-                "amount": result.amount, // in paisa
+                "amount": result.amount, 
                 "currency": "INR",
                 "name": "Wooflix",
                 "description": "Order #" + result.order_number,
                 "order_id": result.razorpay_order_id,
                 "handler": function (response) {
-                    // Construct the URL with all necessary verification tokens
                     const queryParams = new URLSearchParams({
-                        order_id: result.order_id, // Your internal DB ID
-                        razorpay_order_id: response.razorpay_order_id, // Razorpay's internal ID
+                        order_id: result.order_id,
+                        razorpay_order_id: response.razorpay_order_id,
                         razorpay_payment_id: response.razorpay_payment_id,
-                        razorpay_signature: response.razorpay_signature // The secret handshake
+                        razorpay_signature: response.razorpay_signature
                     });
 
                     window.location.href = `/payment/verify?${queryParams.toString()}`;
@@ -251,9 +246,9 @@
             rzp.open();
 
         } catch (error) {
-            console.error("Checkout Error:", error);
-            alert("Something went wrong. Please try again.");
+            console.error("Razorpay Initialization Error:", error);
+            alert("Could not load payment gateway. Please try again.");
         }
-    }
+    });
 </script>
 @endpush

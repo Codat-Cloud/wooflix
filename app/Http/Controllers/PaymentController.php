@@ -52,7 +52,7 @@ class PaymentController extends Controller
             });
 
             // 5. Redirect to your success page
-            return redirect()->route('front.success', ['order' => $order->id]);
+            return redirect()->route('front.payments.success', ['order' => $order->id]);
         } catch (\Exception $e) {
             // Log the specific error (e.g., Signature mismatch or Order not found)
             Log::error("Razorpay Error: " . $e->getMessage());
@@ -69,6 +69,6 @@ class PaymentController extends Controller
             abort(403);
         }
 
-        return view('front.success', compact('order'));
+        return view('front.payments.success', compact('order'));
     }
 }

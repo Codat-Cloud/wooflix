@@ -48,6 +48,9 @@
                                 // Identify current data based on selection
                                 $selectedId = $selectedVariants[$product->id] ?? null;
                                 $variant = $selectedId ? $product->variants->firstWhere('id', $selectedId) : null;
+
+                                // Check for out of stock variation
+                                $isOutOfStock = $variant ? ($variant->stock <= 0) : true;
                                 
                                 // Display logic: Variant price first, then product price
                                 $displayPrice = $variant ? ($variant->sale_price ?? $variant->price) : $product->display_price;
@@ -124,14 +127,18 @@
                                             $isInCart = in_array((int)$selectedId, $cartVariantIds);
                                         @endphp
 
-                                        <button class="add-btn {{ $isInCart ? 'btn-success' : '' }}" 
+                                        <button class="add-btn {{ $isOutOfStock ? 'btn-secondary text-decoration-line-through' : ($isInCart ? 'btn-success' : '') }}" 
                                                 wire:click="addToCart({{ $product->id }})"
                                                 wire:loading.attr="disabled"
                                                 wire:target="addToCart({{ $product->id }})"
-                                                {{ $isInCart ? 'disabled' : '' }}>
+                                                {{ ($isInCart || $isOutOfStock) ? 'disabled' : '' }}>
                                             
                                             <span wire:loading.remove wire:target="addToCart({{ $product->id }})">
-                                                {{ $isInCart ? 'In Cart' : 'Add' }}
+                                                @if($isOutOfStock)
+                                                    Out of Stock
+                                                @else
+                                                    {{ $isInCart ? 'In Cart' : 'Add' }}
+                                                @endif
                                             </span>
                                             
                                             <span wire:loading wire:target="addToCart({{ $product->id }})">

@@ -32,6 +32,11 @@ class Order extends Model
         'courier_name',
         'label_url',
         'manifest_url',
+
+        // NEW PAYMENT STRINGS
+        'razorpay_order_id',
+        'razorpay_payment_id',
+        'razorpay_signature',
     ];
 
     public function items()

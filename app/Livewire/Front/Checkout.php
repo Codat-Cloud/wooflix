@@ -13,6 +13,8 @@ use App\Models\OrderItem;
 use App\Services\MailConfigService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use Razorpay\Api\Api;
 
 class Checkout extends Component
 {
@@ -187,67 +189,89 @@ class Checkout extends Component
 
     public function placeOrder()
     {
+        // 1. Structural Access Checks
         if (!Auth::check()) {
             $this->dispatch('open-login-modal');
             return;
         }
 
-        if (!$this->selectedAddress || $this->items->isEmpty()) {
-            session()->flash('error', 'Please check address and cart');
+        if (!$this->defaultAddress || $this->items->isEmpty()) {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Please verify your delivery address and cart items.'
+            ]);
             return;
         }
 
         try {
-            // 1. Create the Order in PostgreSQL
-            $order = Order::create([
-                'user_id' => Auth::id(),
-                'total_amount' => $this->total,
-                'shipping_amount' => $this->shippingCost,
-                'status' => 'pending',
-                'payment_status' => 'pending',
-                'payment_method' => 'online',
-                'shipping_name' => $this->defaultAddress->name,
-                'shipping_phone' => $this->defaultAddress->phone,
-                'shipping_address_line1' => $this->defaultAddress->address_line1,
-                'shipping_city' => $this->defaultAddress->city,
-                'shipping_state' => $this->defaultAddress->state,
-                'shipping_postal_code' => $this->defaultAddress->postal_code,
+            $amountInPaisa = (int) round($this->total * 100);
+
+            // 2. Initialize Razorpay Server Connection and Create Order Token
+            $api = new Api(
+                config('services.razorpay.key'),
+                config('services.razorpay.secret')
+            );
+
+            $razorpayOrder = $api->order->create([
+                'receipt'         => 'rcpt_' . time(),
+                'amount'          => $amountInPaisa, // Amount passed in Paisa currency standard
+                'currency'        => 'INR',
+                'payment_capture' => 1 // Automatically capture the payment instantly on authorization
             ]);
 
-            // 2. Save Items
+            if (empty($razorpayOrder['id'])) {
+                throw new \Exception('Failed to generate secure transaction order token from Razorpay API.');
+            }
+
+            // 3. Commit Order Shell into PostgreSQL Database
+            $order = Order::create([
+                'user_id'                => Auth::id(),
+                'total_amount'           => $this->total,
+                'shipping_amount'        => $this->shippingCost,
+                'status'                 => 'pending',
+                'payment_status'         => 'pending',
+                'payment_method'         => 'online',
+                'razorpay_order_id'      => $razorpayOrder['id'], // Airtight transaction mapping link
+                'shipping_name'          => $this->defaultAddress->name,
+                'shipping_phone'         => $this->defaultAddress->phone,
+                'shipping_address_line1' => $this->defaultAddress->address_line1,
+                'shipping_city'          => $this->defaultAddress->city,
+                'shipping_state'         => $this->defaultAddress->state,
+                'shipping_postal_code'   => $this->defaultAddress->postal_code,
+                'shipping_country'       => $this->defaultAddress->country ?? 'India',
+            ]);
+
+            // 4. Map and Save Cart Line Items
             foreach ($this->items as $item) {
                 $order->items()->create([
                     'product_id' => $item->product_id,
                     'variant_id' => $item->variant_id,
-                    'name' => $item->product->name,
-                    'price' => $item->price,
-                    'quantity' => $item->quantity,
+                    'name'       => $item->product->name,
+                    'price'      => $item->price,
+                    'quantity'   => $item->quantity,
                 ]);
             }
 
-            MailConfigService::set();
-
-            Mail::to(Auth::user()->email)
-                ->send(
-                    new OrderStatusMail(
-                        $order,
-                        'Your order has been placed successfully.'
-                    )
-                );
-
-            // 3. Return data to JavaScript
-            return [
-                'success' => true,
-                'order_id' => $order->id,
-                'order_number' => $order->order_number,
-                'amount' => (int)($this->total * 100),
-                'customer_name' => Auth::user()->name,
-                'customer_email' => Auth::user()->email,
-                'customer_phone' => Auth::user()->phone ?? $this->defaultAddress->phone
+            // 5. Package Payload Matrix for Frontend Event Handler Interceptor
+            $paymentPayload = [
+                'order_id'          => $order->id,
+                'order_number'      => $order->order_number,
+                'razorpay_order_id' => $order->razorpay_order_id,
+                'amount'            => $amountInPaisa,
+                'customer_name'     => Auth::user()->name,
+                'customer_email'    => Auth::user()->email,
+                'customer_phone'    => Auth::user()->phone ?? $this->defaultAddress->phone ?? '0000000000'
             ];
+
+            // 6. Broadcast event straight down to your window script listener
+            $this->dispatch('initiate-razorpay-payment', $paymentPayload);
         } catch (\Exception $e) {
-            \Log::error($e->getMessage());
-            return ['success' => false, 'message' => 'Database Error: ' . $e->getMessage()];
+            Log::error('Wooflix Order Initialization Aborted: ' . $e->getMessage());
+
+            $this->dispatch('notify', [
+                'type'    => 'error',
+                'message' => 'Payment gateway connection error. Please try again.'
+            ]);
         }
     }
 }

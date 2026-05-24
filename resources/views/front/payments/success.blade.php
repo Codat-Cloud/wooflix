@@ -37,8 +37,8 @@
                 </div>
 
                 <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
-                    <a href="{{ route('front.home') }}" class="btn btn-orange px-4 py-2">Continue Shopping</a>
-                    <a href="{{ route('dashboard') }}" class="btn btn-outline-dark px-4 py-2">View Order History</a>
+                    <a href="{{ route('front.shop') }}" class="btn btn-orange px-4 py-2">Continue Shopping</a>
+                    <a href="{{ route('user.orders') }}" class="btn btn-outline-dark px-4 py-2">View Order History</a>
                 </div>
 
                 <p class="mt-5 text-muted small">
