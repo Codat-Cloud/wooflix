@@ -41,6 +41,10 @@ class ProductForm
                             ->label('ASIN')
                             ->helperText('Applicable to non-variation product.'),
 
+                        TextInput::make('hsn')
+                            ->label('HSN Code')
+                            ->helperText('Only applicable in invoice'),
+
                         Select::make('category_id')
                             ->relationship('category', 'name', fn($query) => $query->with('parent')) // Eager load parent
                             ->getOptionLabelFromRecordUsing(function ($record) {

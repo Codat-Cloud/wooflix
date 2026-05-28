@@ -177,7 +177,7 @@ class ProductGrid extends Component
     public function render()
     {
         $seoTitle = "Best store to buy pet products";
-        $query = Product::query()->with(['brand', 'variants', 'defaultVariant']);
+        $query = Product::query()->where('is_active', true)->with(['brand', 'variants', 'defaultVariant']);
 
         // Search Querry
         if (!empty($this->search)) {

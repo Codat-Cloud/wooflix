@@ -67,7 +67,7 @@
                                     <span class="product-badge">{{ $product->discount_percentage }}% OFF</span>
                                 @endif
 
-                                <a href="{{ route('front.singleProduct', ['product_slug' => $product->slug, 'variant_slug' => $product->defaultVariant->slug]) }}">
+                                <a href="{{ route('front.singleProduct', ['product_slug' => $product->slug, 'variant_slug' => $product->defaultVariant?->slug ?? 'default']) }}">
                                     <img src="{{ asset('storage/' . $product->main_image) }}" alt="{{ $product->name }}" />
                                 </a>
 
@@ -104,7 +104,7 @@
                             </div>
 
                             <div class="product-info border-bottom">
-                                <a href="{{ route('front.singleProduct', ['product_slug' => $product->slug, 'variant_slug' => $product->defaultVariant->slug]) }}" class="text-decoration-none text-dark">
+                                <a href="{{ route('front.singleProduct', ['product_slug' => $product->slug, 'variant_slug' => $product->defaultVariant?->slug ?? 'default']) }}" class="text-decoration-none text-dark">
                                     {{-- {{ dd($product->defaultVariant) }} --}}
                                     <h6 class="product-brand">{{ $product->brand->name ?? 'Wooflix' }}</h6>
                                     <h5 class="product-title p" title="{{$product->name}}">

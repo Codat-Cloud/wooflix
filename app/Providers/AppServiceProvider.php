@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\Models\Blog;
 use App\Models\Brand;
-use App\Models\Category;
 use App\Models\Page;
 use App\Models\ProductFilterTag;
 use App\Models\SiteSetting;
@@ -28,7 +27,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::useBootstrapFive();
         // 1. Observers
-        Blog::observe(\App\Observers\BlogObserver::class);
+        Blog::observe(BlogObserver::class);
 
         // 2. Single Global View Composer
         View::composer('*', function ($view) {

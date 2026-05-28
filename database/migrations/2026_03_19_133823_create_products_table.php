@@ -23,8 +23,6 @@ return new class extends Migration
             $table->text('name');
             $table->text('slug')->unique();
             $table->text('main_image');
-            
-            $table->text('asin')->nullable();
 
             $table->longText('short_description')->nullable();
             $table->longText('description')->nullable();

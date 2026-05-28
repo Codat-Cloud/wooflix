@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::table('products', function (Blueprint $table) {
 
             $table->jsonb('filters')->nullable();
+            $table->text('asin')->nullable();
             $table->text('hsn')->nullable();
             $table->dropColumn([
                 'base_price',
@@ -32,6 +33,7 @@ return new class extends Migration
             $table->dropColumn([
                 'filters',
                 'hsn',
+                'asin'
             ]);
         });
     }
