@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OrderPlaced;
 use App\Models\CartItem;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Razorpay\Api\Api;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class PaymentController extends Controller
 {
@@ -49,7 +51,14 @@ class PaymentController extends Controller
 
                 // Clear the cart for the logged-in user
                 CartItem::where('user_id', auth()->id())->delete();
+
+                // TRIGGER THE MAIL HERE: Pull user relation dynamically to acquire their destination account address
+                if ($order->user?->email) {
+                    Mail::to($order->user->email)->send(new OrderPlaced($order));
+                }
+                
             });
+
 
             // 5. Redirect to your success page
             return redirect()->route('front.payments.success', ['order' => $order->id]);

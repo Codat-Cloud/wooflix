@@ -4,11 +4,22 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\FrontController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
+use App\Mail\WelcomeEmail;
 use App\Models\Page;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [FrontController::class, 'index'])->name('front.index');
 
+Route::get('/send-test-email', function () {
+    $recipientEmail = 'customer@example.com';
+    $customerName = 'Alex';
+
+    // Using the Mail facade to dispatch the mailable instantly
+    Mail::to($recipientEmail)->send(new WelcomeEmail($customerName));
+
+    return 'Test email has been dispatched successfully!';
+});
 
 Route::get('/policy/{slug}', function ($slug) {
     $page = Page::where('slug', $slug)->where('is_active', true)->firstOrFail();
