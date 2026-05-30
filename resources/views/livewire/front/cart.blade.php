@@ -120,26 +120,38 @@
 
                 <div class="cart-summary mt-auto">
 
+                    @if($subtotal < 699)
+                        <div class="alert alert-warning py-2 px-3 mb-3 border-0 rounded" style="font-size: 0.85rem; color: #856404; background-color: #fff3cd;">
+                            🐾 Add <strong>₹{{ 699 - $subtotal }}</strong> more for <strong>Free Shipping!</strong>
+                        </div>
+                    @else
+                        <div class="alert alert-success py-2 px-3 mb-3 border-0 rounded" style="font-size: 0.85rem; color: #155724; background-color: #d4edda;">
+                            🎉 Your pack qualifies for <strong>Free Shipping!</strong>
+                        </div>
+                    @endif
+
                     <div class="summary-row">
                         <span>Subtotal</span>
-                        <span>₹₹{{ number_format($subtotal, 2) }}</span>
+                        <span>₹{{ number_format($subtotal, 2) }}</span>
                     </div>
 
                     <div class="summary-row">
                         <span>Shipping</span>
-                        <span>Free</span>
+                        <span class="{{ $shipping == 0 ? 'text-success fw-bold' : '' }}">
+                            {{ $shipping == 0 ? 'Free' : '₹' . number_format($shipping, 2) }}
+                        </span>
                     </div>
 
                     <div class="summary-row total">
                         <span>Total</span>
-                        <span>
-                        ₹{{ number_format($this->items->sum(fn($i) => $i->price * $i->quantity), 2) }}
+                        <span class="text-orange fw-bold">
+                            ₹{{ number_format($subtotal + $shipping, 2) }}
                         </span>
                     </div>
-
                     
                 </div>
-                <a href="{{route('front.checkout')}}" class="checkout-btn w-100 text-decoration-none text-center">
+                
+                <a href="{{ route('front.checkout') }}" class="checkout-btn w-100 text-decoration-none text-center">
                     Proceed to Checkout
                 </a>
 

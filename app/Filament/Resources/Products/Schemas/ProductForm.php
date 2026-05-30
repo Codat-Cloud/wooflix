@@ -36,7 +36,7 @@ class ProductForm
                         // Toggle::make('is_featured')
                         //         ->label('Added In Deals Tab')
                         //         ->default(0),
-                        
+
                         TextInput::make('asin')
                             ->label('ASIN')
                             ->helperText('Applicable to non-variation product.'),
@@ -45,22 +45,36 @@ class ProductForm
                             ->label('HSN Code')
                             ->helperText('Only applicable in invoice'),
 
-                        Select::make('category_id')
-                            ->relationship('category', 'name', fn($query) => $query->with('parent')) // Eager load parent
-                            ->getOptionLabelFromRecordUsing(function ($record) {
-                                // If there is a parent, show "Parent - Child", otherwise just "Child"
-                                return $record->parent
-                                    ? "{$record->parent->name} — {$record->name}"
-                                    : $record->name;
-                            })
-                            ->searchable()
-                            ->preload()
-                            ->required(),
-
                         Select::make('brand_id')
                             ->relationship('brand', 'name')
                             ->preload()
                             ->searchable(),
+
+                        Select::make('category_id')
+                            // Eager load both the parent category and the new relational petType tag
+                            ->relationship('category', 'name', fn($query) => $query->with(['parent', 'petType']))
+                            ->getOptionLabelFromRecordUsing(function ($record) {
+
+                                // 1. Fetch the pet type name from the ProductFilterTag relationship safely
+                                $petTypeName = $record->petType?->name;
+                                $petTypeBadge = $petTypeName
+                                    ? '[' . Str::headline($petTypeName) . '] '
+                                    : '';
+
+                                // 2. Build the structural tree path ("Parent — Child" or just "Child")
+                                $categoryPath = $record->parent
+                                    ? "{$record->parent->name} — {$record->name}"
+                                    : $record->name;
+
+                                // 3. Output standard layout template: "[Dog] Food — Dry Food"
+                                return "{$petTypeBadge}{$categoryPath}";
+                            })
+                            // Explicitly add 'petType.name' to the search index matrix mapping
+                            ->searchable(['name', 'petType.name'])
+                            ->preload()
+                            ->columnSpanFull()
+                            ->required(),
+
 
                         TextInput::make('name')
                             ->required()

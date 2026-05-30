@@ -12,6 +12,7 @@ class Cart extends Component
     public $items = [];
     public $count = 0;
     public $subtotal = 0;
+    public $shipping = 0;
 
     protected $listeners = [
         'add-to-cart'  => 'add',
@@ -25,6 +26,12 @@ class Cart extends Component
 
         $this->subtotal = collect($this->items)
             ->sum(fn($i) => $i->price * $i->quantity);
+
+        if ($this->subtotal > 0 && $this->subtotal < 699) {
+            $this->shipping = 89;
+        } else {
+            $this->shipping = 0;
+        }
     }
 
     public function mount()

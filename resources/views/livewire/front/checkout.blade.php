@@ -112,23 +112,23 @@
               <span>₹{{ number_format($total, 2) }}</span>
             </div>
 
-<button class="btn w-100 mt-3"
-    wire:click="placeOrder"
-    wire:loading.attr="disabled"
-    :class="{
-        'btn-orange': {{ $defaultAddress ? 'true' : 'false' }},
-        'btn-secondary text-white opacity-75': {{ !$defaultAddress ? 'true' : 'false' }}
-    }"
-    {{ !$defaultAddress ? 'disabled' : '' }}
->
-    <span wire:loading.remove wire:target="placeOrder">
-        {{ $defaultAddress ? 'Place Order' : '⚠️ Please Add An Address First' }}
-    </span>
-    
-    <span wire:loading wire:target="placeOrder">
-        <span class="spinner-border spinner-border-sm"></span> Processing...
-    </span>
-</button>
+            <button class="btn w-100 mt-3"
+                wire:click="placeOrder"
+                wire:loading.attr="disabled"
+                :class="{
+                    'btn-orange': {{ $defaultAddress ? 'true' : 'false' }},
+                    'btn-secondary text-white opacity-75': {{ !$defaultAddress ? 'true' : 'false' }}
+                }"
+                {{ !$defaultAddress ? 'disabled' : '' }}
+            >
+                <span wire:loading.remove wire:target="placeOrder">
+                    {{ $defaultAddress ? 'Place Order' : '⚠️ Please Add An Address First' }}
+                </span>
+                
+                <span wire:loading wire:target="placeOrder">
+                    <span class="spinner-border spinner-border-sm"></span> Processing...
+                </span>
+            </button>
 
               <div class="coupon-inline mt-3">
 
@@ -189,24 +189,24 @@
       </div>
     </section>
 
-<div class="mobile-paybar d-lg-none">
-    <div class="total">₹{{ number_format($total, 2) }}</div>
+    <div class="mobile-paybar d-lg-none">
+        <div class="total">₹{{ number_format($total, 2) }}</div>
 
-    <button class="btn btn-orange"
-        wire:click="placeOrder"
-        wire:loading.attr="disabled"
-        {{ !$defaultAddress ? 'disabled' : '' }}>
-        
-        <span wire:loading.remove wire:target="placeOrder">
-            {{ $defaultAddress ? 'Place Order' : 'Add Address' }}
-        </span>
+        <button class="btn btn-orange"
+            wire:click="placeOrder"
+            wire:loading.attr="disabled"
+            {{ !$defaultAddress ? 'disabled' : '' }}>
+            
+            <span wire:loading.remove wire:target="placeOrder">
+                {{ $defaultAddress ? 'Place Order' : 'Add Address' }}
+            </span>
 
-        <span wire:loading wire:target="placeOrder">
-            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            Processing...
-        </span>
-    </button>
-</div>
+            <span wire:loading wire:target="placeOrder">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Processing...
+            </span>
+        </button>
+    </div>
     
 
 @push('scripts')
