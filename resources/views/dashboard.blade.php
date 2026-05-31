@@ -119,15 +119,15 @@
                             {{-- TRACK --}}
                             {{-- @if($order->tracking_url) --}}
 
-                                <a
-                                    href="{{ $order->tracking_url }}"
-                                    target="_blank"
-                                    class="btn btn-outline-dark"
-                                >
-
-                                    Track Order {{$order->tracking_number}}
-
+                            @if($order->awb_code)
+                                <a href="{{ route('order.track', ['awb' => $order->awb_code]) }}" class="btn btn-sm btn-orange text-white fw-bold">
+                                    📦 Track Package
                                 </a>
+                            @else
+                                <button class="btn btn-sm btn-light" disabled title="Awaiting shipment packaging validation">
+                                    Awaiting Pickup
+                                </button>
+                            @endif
 
                             {{-- @endif --}}
 

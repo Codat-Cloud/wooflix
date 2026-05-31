@@ -177,7 +177,7 @@
             <ul>
               <li><a href="#">About Us</a></li>
               <li><a href="#">Contact Us</a></li>
-              <li><a href="https://www.shiprocket.in/shipment-tracking">Track Your Order</a></li>
+              <li><a href="{{route('order.track')}}">Track Your Order</a></li>
             <ul>
                 @foreach($footerPages as $p)
                     <li>

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\FrontController;
+use App\Http\Controllers\OrderTrackingController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Mail\WelcomeEmail;
@@ -50,6 +51,7 @@ Route::post('/wholesale/save', [FrontController::class, 'wholesaleSave'])->name(
 Route::get('/payment/verify', [PaymentController::class, 'verify'])->name('payment.verify');
 Route::get('/order-success/{order}', [PaymentController::class, 'success'])->name('front.success');
 
+Route::get('/track-order', [OrderTrackingController::class, 'index'])->name('order.track');
 
 
 // Grouping cart routes
@@ -89,10 +91,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/order/{order}/shipping-label', [ProfileController::class, 'shippingLabel'])
         ->name('front.shippingLabel');
 
-    Route::get(
-        '/invoice/{order}/pdf',
-        [ProfileController::class, 'invoicePdf']
-    )->name('front.orderInvoicePdf');
+    Route::get('/invoice/{order}/pdf', [ProfileController::class, 'invoicePdf'])->name('front.orderInvoicePdf');
+
 });
 
 require __DIR__ . '/auth.php';

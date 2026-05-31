@@ -56,4 +56,37 @@ class ShiprocketService
             'min_days' => $minDays,
         ];
     }
+
+    /**
+     * Fetch Tracking details by AWB Code
+     * * @param string $awbCode
+     * @return array
+     */
+    public function trackByAwb(string $awbCode): array
+    {
+        $token = $this->token();
+
+        if (!$token) {
+            return ['success' => false, 'message' => 'Unable to authenticate with logistics server.'];
+        }
+
+        try {
+            $response = Http::withToken($token)
+                ->get('https://apiv2.shiprocket.in/v1/external/courier/track/awb/' . trim($awbCode));
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                // Shiprocket structures payload arrays inside a single 'tracking_data' nesting node
+                return [
+                    'success' => true,
+                    'data' => $data['tracking_data'] ?? null
+                ];
+            }
+        } catch (\Exception $e) {
+            Log::error('Shiprocket Tracking Lookup Request Aborted: ' . $e->getMessage());
+        }
+
+        return ['success' => false, 'message' => 'No tracking updates available at this time.'];
+    }
 }

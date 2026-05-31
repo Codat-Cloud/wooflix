@@ -6,7 +6,7 @@
       <div class="top-strip">
         <div class="container-xxl d-flex justify-content-between">
           <div class="top-links d-none d-lg-block">
-            <a href="https://www.shiprocket.in/shipment-tracking">Track Order</a>
+            <a href="{{route('order.track')}}">Track Order</a>
           </div>
 
           <div>Sara’s Wholesome - Balanced Nutrition for Dogs</div>
