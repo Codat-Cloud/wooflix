@@ -76,7 +76,7 @@ $variants = $product->variants->map(function ($v) {
                     {{-- Merge main_image with the collection of secondary images --}}
                     images: [
                         '{{ asset('storage/' . $product->main_image) }}',
-                        @foreach($product->images as $img)
+                        @foreach($product->galleryImages as $img)
                             '{{ asset('storage/' . $img->image) }}',
                         @endforeach
                     ],
@@ -142,58 +142,58 @@ $variants = $product->variants->map(function ($v) {
                   {{ $product->brand->name ?? 'Wooflix' }}
               </h2>
 
-              <!-- Price -->
-<div x-data="{
-    variants: window.productVariants || [],
-    selected: null,
-    inCartVariants: window.cartVariantIds || [],
-    price: 0,
-    mrp: null,
-    adding: false,
-    added: false,
-    isOutOfStock: false,
+            <!-- Price -->
+            <div x-data="{
+                variants: window.productVariants || [],
+                selected: null,
+                inCartVariants: window.cartVariantIds || [],
+                price: 0,
+                mrp: null,
+                adding: false,
+                added: false,
+                isOutOfStock: false,
 
-    init() {
-        if (this.variants.length > 0) {
-            // Added null coalescing for safety
-            const currentVariant = this.variants.find(
-                v => Number(v.id) === Number({{ $selectedVariant->id ?? 0 }})
-            );
-            this.select(currentVariant || this.variants[0]);
-        } else {
-            this.price = window.productBase.sale_price ?? window.productBase.price;
-            this.mrp = window.productBase.sale_price ? window.productBase.price : null;
-            this.isOutOfStock = false;
-        }
-    },
+                init() {
+                    if (this.variants.length > 0) {
+                        // Added null coalescing for safety
+                        const currentVariant = this.variants.find(
+                            v => Number(v.id) === Number({{ $selectedVariant->id ?? 0 }})
+                        );
+                        this.select(currentVariant || this.variants[0]);
+                    } else {
+                        this.price = window.productBase.sale_price ?? window.productBase.price;
+                        this.mrp = window.productBase.sale_price ? window.productBase.price : null;
+                        this.isOutOfStock = false;
+                    }
+                },
 
-    select(v) {
-        this.selected = v;
-        this.price = v.sale_price ?? v.price;
-        this.mrp = v.sale_price ? v.price : null;
+                select(v) {
+                    this.selected = v;
+                    this.price = v.sale_price ?? v.price;
+                    this.mrp = v.sale_price ? v.price : null;
 
-        // UPDATE: Check if the currently clicked selection has zero stock items left
-        this.isOutOfStock = Number(v.stock) <= 0;
+                    // UPDATE: Check if the currently clicked selection has zero stock items left
+                    this.isOutOfStock = Number(v.stock) <= 0;
 
-        window.history.replaceState(
-            {},
-            '',
-            '/collection/{{ $product->slug }}/' + v.slug
-        );
-    },
+                    window.history.replaceState(
+                        {},
+                        '',
+                        '/collection/{{ $product->slug }}/' + v.slug
+                    );
+                },
 
-    isAdded() {
-        if (!this.selected || !this.selected.id) return false;
-        const cartIds = Array.isArray(this.inCartVariants) ? this.inCartVariants : [];
-        return cartIds.some(id => Number(id) === Number(this.selected.id));
-    },
+                isAdded() {
+                    if (!this.selected || !this.selected.id) return false;
+                    const cartIds = Array.isArray(this.inCartVariants) ? this.inCartVariants : [];
+                    return cartIds.some(id => Number(id) === Number(this.selected.id));
+                },
 
-    discount() {
-        if (!this.mrp) return null;
-        return Math.round(((this.mrp - this.price) / this.mrp) * 100);
-    }
-}" 
-@cart-updated.window="inCartVariants = [...($event.detail.variant_ids || [])]; adding = false; added = true; setTimeout(() => added = false, 2000);">
+                discount() {
+                    if (!this.mrp) return null;
+                    return Math.round(((this.mrp - this.price) / this.mrp) * 100);
+                }
+            }" 
+            @cart-updated.window="inCartVariants = [...($event.detail.variant_ids || [])]; adding = false; added = true; setTimeout(() => added = false, 2000);">
 
               <!-- PRICE -->
               <div class="product-price border-bottom">
@@ -219,78 +219,91 @@ $variants = $product->variants->map(function ($v) {
                       </div>
                   </div>
 
-                  <!-- VARIANTS -->
-              <div class="product-variants py-2" x-show="variants.length > 1">
-                  <h6 class="fw-bold">Select</h6>
+                <!-- VARIANTS -->
+                <div class="product-variants py-2" x-show="variants.length > 1">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="fw-bold">Select</h6>
+                        <button class="btn border-0 text-decoration-underline" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSizeChart" aria-expanded="false" aria-controls="collapseSizeChart">
+                            Size Chart
+                        </button>
+                    </div>
 
-                  <div class="variant-options">
+                    <div class="variant-options">
 
-                    <template x-for="v in variants" :key="v.id">
+                        <template x-for="v in variants" :key="v.id">
 
-                        <div class="variant-item">
+                            <div class="variant-item">
 
-                            <button 
-                                class="variant-btn"
-                                :class="selected?.id === v.id ? 'active' : ''"
-                                @click="select(v)"
-                            >
+                                <button 
+                                    class="variant-btn"
+                                    :class="selected?.id === v.id ? 'active' : ''"
+                                    @click="select(v)"
+                                >
 
-                                <span x-text="v.name"></span>
+                                    <span x-text="v.name"></span>
 
-                                <template x-if="v.sale_price">
-                                    <span class="variant-badge" 
-                                          x-text="Math.round(((v.price - v.sale_price)/v.price)*100) + '% OFF'">
-                                    </span>
-                                </template>
+                                    <template x-if="v.sale_price">
+                                        <span class="variant-badge" 
+                                            x-text="Math.round(((v.price - v.sale_price)/v.price)*100) + '% OFF'">
+                                        </span>
+                                    </template>
 
-                            </button>
+                                </button>
 
-                        </div>
+                            </div>
 
-                    </template>
+                        </template>
 
-                  </div>
-              </div>
+                    </div>
+                </div>
 
 
-<button 
-    class="btn add-cart-btn w-100"
-    :class="{
-        'btn-orange': !adding && !isAdded() && !isOutOfStock,
-        'btn-secondary text-decoration-line-through': isOutOfStock || adding,
-        'btn-success': isAdded() && !isOutOfStock
-    }"
-    :disabled="adding || isAdded() || isOutOfStock"
-    @click="
-        if (adding || isAdded() || isOutOfStock) return;
 
-        if (!selected || !selected.id) {
-            alert('Please select a variant first');
-            return;
-        }
+                <div class="collapse" id="collapseSizeChart">
+                <div class="card card-body border-0 p-0">
+                    <img src="{{ asset('storage/' . $product->size_chart_image) }}" class="img-fluid" alt="{{ "Size Chart For - " . $product->name}}">
+                </div>
+                </div>
 
-        adding = true;
 
-        window.dispatchEvent(new CustomEvent('add-to-cart', {
-            detail: {
-                variant_id: selected.id,
-                product_id: {{ $product->id }}
-            }
-        }));
-    "
->
-    <template x-if="isOutOfStock">
-        <span>Out of Stock</span>
-    </template>
-    
-    <template x-if="!isOutOfStock">
-        <span>
-            <span x-show="!adding && !isAdded()">Add To Cart</span>
-            <span x-show="adding">Adding...</span>
-            <span x-show="isAdded()">Already in Cart ✓</span>
-        </span>
-    </template>
-</button>
+                    <button 
+                        class="btn add-cart-btn w-100"
+                        :class="{
+                            'btn-orange': !adding && !isAdded() && !isOutOfStock,
+                            'btn-secondary text-decoration-line-through': isOutOfStock || adding,
+                            'btn-success': isAdded() && !isOutOfStock
+                        }"
+                        :disabled="adding || isAdded() || isOutOfStock"
+                        @click="
+                            if (adding || isAdded() || isOutOfStock) return;
+
+                            if (!selected || !selected.id) {
+                                alert('Please select a variant first');
+                                return;
+                            }
+
+                            adding = true;
+
+                            window.dispatchEvent(new CustomEvent('add-to-cart', {
+                                detail: {
+                                    variant_id: selected.id,
+                                    product_id: {{ $product->id }}
+                                }
+                            }));
+                        "
+                    >
+                        <template x-if="isOutOfStock">
+                            <span>Out of Stock</span>
+                        </template>
+                        
+                        <template x-if="!isOutOfStock">
+                            <span>
+                                <span x-show="!adding && !isAdded()">Add To Cart</span>
+                                <span x-show="adding">Adding...</span>
+                                <span x-show="isAdded()">Already in Cart ✓</span>
+                            </span>
+                        </template>
+                    </button>
               </div>
 
 
@@ -374,6 +387,21 @@ $variants = $product->variants->map(function ($v) {
                   <div id="additional" class="accordion-collapse collapse">
                     <div class="accordion-body">
                       {!!$product->description!!}
+
+                      <br>
+
+                      @if($product->infographicImages->isNotEmpty())
+                            <div class="product-infographics-grid row g-3 mt-4">
+                                @foreach($product->infographicImages as $infographic)
+                                    <div class="col-12 mb-3">
+                                        <img src="{{ asset('storage/' . $infographic->image) }}" 
+                                            class="img-fluid rounded" 
+                                            alt="Product Feature Breakdown Infographic" 
+                                            loading="lazy">
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
                   </div>
                 </div>

@@ -11,6 +11,7 @@ class ProductImage extends Model
         'product_variant_id',
         'image',
         'position',
+        'type',
     ];
 
     public function product()

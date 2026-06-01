@@ -129,7 +129,7 @@ class FrontController extends Controller
         // dd($variant_slug);
         $product = Product::where('slug', $product_slug)
             ->where('is_active', true)
-            ->with(['brand', 'category', 'images', 'variants', 'variants.optionValues', 'reviews', 'defaultVariant'])
+            ->with(['brand', 'category', 'galleryImages', 'infographicImages', 'variants', 'variants.optionValues', 'reviews', 'defaultVariant', 'frequentlyBought'])
             ->firstOrFail();
 
         // dd($product);

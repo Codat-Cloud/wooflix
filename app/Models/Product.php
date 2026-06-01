@@ -16,6 +16,7 @@ class Product extends Model
         'hsn',
         'filters',
         'main_image',
+        'size_chart_image',
         'short_description',
         'description',
         'is_active',
@@ -84,9 +85,25 @@ class Product extends Model
             ?? '-';
     }
 
-    public function images()
+    // public function images()
+    // {
+    //     return $this->hasMany(ProductImage::class);
+    // }
+
+    /**
+     * Main Product Media Slider (Standard additional images)
+     */
+    public function galleryImages()
     {
-        return $this->hasMany(ProductImage::class);
+        return $this->hasMany(ProductImage::class)->where('type', 'gallery');
+    }
+
+    /**
+     * Optional Infographics / Explainer Graphics (Shown below description text)
+     */
+    public function infographicImages()
+    {
+        return $this->hasMany(ProductImage::class)->where('type', 'infographic');
     }
 
     public function wishlistedBy()
@@ -172,5 +189,15 @@ class Product extends Model
                 / $variant->price
             ) * 100
         );
+    }
+
+    public function frequentlyBought()
+    {
+        return $this->belongsToMany(
+            Product::class,
+            'product_frequently_bought',
+            'product_id',
+            'related_product_id'
+        )->withTimestamps()->with(['variants', 'defaultVariant']); // Pre-fetch variant price blocks instantly
     }
 }
