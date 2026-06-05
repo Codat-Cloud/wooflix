@@ -15,6 +15,8 @@ class CartItem extends Model
         'price',
     ];
 
+    protected $primaryKey = 'id';
+
     // ================= RELATIONS =================
 
     public function user()
