@@ -1,4 +1,5 @@
 <div>
+    @if($mode === 'all')
     <nav aria-label="breadcrumb" class="breadcrumb-wrapper">
         <div class="container-xxl">
             <ol class="breadcrumb">
@@ -28,17 +29,16 @@
         </div>
     </div>
 
-    <div class="container-xxl">
-        <div class="row">
-            {{-- <div class="col-lg-3 d-none d-lg-block">
+    @endif
 
-            </div> --}}
+    <div class="container-xxl">
+        <div class="row g-3 g-md-4" wire:loading.class="opacity-50">
 
             <div class="col-lg-12">
                 <div class="row g-4" wire:loading.class="opacity-50">
                 @forelse($products as $product)
                     <div class="col-6 col-md-4 col-lg-3">
-                        <div class="product-card h-100">
+                        <div class="product-card h-100 d-flex flex-column justify-content-between rounded bg-white overflow-hidden">
                             @php
                                 // Pre-select the first variant ID if not already selected by the user
                                 if (!isset($selectedVariants[$product->id]) && $product->variants->isNotEmpty()) {
@@ -112,8 +112,8 @@
                                     </h5>
                                 </a>
 
-                                <div class="product-price">
-                                    <div>
+                                <div class="product-price row d-flex align-items-center justify-content-between gap-1">
+                                    <div class="col">
                                         <span class="price">₹{{ number_format($displayPrice, 2) }}</span>
                                         @if($discount > 0)
                                             <div class="old-price text-muted text-decoration-line-through small ms-1">
@@ -122,12 +122,12 @@
                                         @endif
                                     </div>
                                     
-                                    <div class="product-action">
+                                    <div class="product-action col">
                                         @php
                                             $isInCart = in_array((int)$selectedId, $cartVariantIds);
                                         @endphp
 
-                                        <button class="add-btn {{ $isOutOfStock ? 'btn-secondary text-decoration-line-through' : ($isInCart ? 'btn-success' : '') }}" 
+                                        <button class="add-btn w-100 {{ $isOutOfStock ? 'btn-light text-decoration-line-through' : ($isInCart ? 'btn-success' : '') }}" 
                                                 wire:click="addToCart({{ $product->id }})"
                                                 wire:loading.attr="disabled"
                                                 wire:target="addToCart({{ $product->id }})"
@@ -135,7 +135,7 @@
                                             
                                             <span wire:loading.remove wire:target="addToCart({{ $product->id }})">
                                                 @if($isOutOfStock)
-                                                    Out of Stock
+                                                    Sold Out
                                                 @else
                                                     {{ $isInCart ? 'In Cart' : 'Add' }}
                                                 @endif

@@ -6,14 +6,20 @@
         <div class="row justify-content-center">
             <div class="col-12 col-md-6 col-lg-4">
                 
+                <!-- Main Authentication Card -->
                 <div class="card border-0 shadow p-4" style="border-radius: 12px; background: #ffffff;">
                     
+                    <!-- Store Branding Title Header -->
                     <div class="text-center mb-4">
+                        <h2 style="margin: 0; padding: 0; font-size: 32px; font-family: 'Arial Black', Gadget, sans-serif; letter-spacing: -1px; line-height: 1;">
+                            <span style="color: #1a1a1a; font-weight: 900;">WOOF</span><span style="color: #f26522; font-weight: 900;">LIX</span>🐾
+                        </h2>
                         <p class="text-muted small mt-2">Enter your email to login or register instantly.</p>
                     </div>
 
                     <div class="auth-form-body">
                         
+                        <!-- ================= STEP 1: EMAIL ENTRY INPUT FORM ================= -->
                         <form id="emailEntryForm">
                             <div class="mb-3">
                                 <label class="form-label small fw-bold text-secondary">Email Address</label>
@@ -25,6 +31,7 @@
                             </button>
                         </form>
 
+                        <!-- ================= STEP 2: OTP VERIFICATION FIELD FORM ================= -->
                         <form id="otpVerifyForm" class="d-none">
                             <div class="alert alert-success border-0 small text-success bg-success bg-opacity-10 mb-3 rounded py-2">
                                 📩 OTP code sent! Please check your email inbox.

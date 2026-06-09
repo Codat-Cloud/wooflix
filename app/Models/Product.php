@@ -200,4 +200,6 @@ class Product extends Model
             'related_product_id'
         )->withTimestamps()->with(['variants', 'defaultVariant']); // Pre-fetch variant price blocks instantly
     }
+
+
 }

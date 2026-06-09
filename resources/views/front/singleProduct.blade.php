@@ -412,6 +412,24 @@ $variants = $product->variants->map(function ($v) {
       </div>
     </section>
 
+<section class="frequently-bought-together container-xxl my-5">
+    <h4 class="fw-bold text-dark mb-4">🐾Frequently Bought Together</h4>
+    @livewire('front.product-grid', [
+        'mode' => 'fbt', 
+        'parentProductId' => $product->id
+    ], key('fbt-grid-'.$product->id))
+</section>
+
+<section class="related-products container-xxl my-5">
+    <h4 class="fw-bold text-dark mb-4">🐾 More Items You Might Like</h4>
+    @livewire('front.product-grid', [
+        'mode' => 'related', 
+        'parentProductId' => $product->id, 
+        'categoryId' => $product->category_id
+    ], key('related-grid-'.$product->id))
+</section>
+
+
     <section class="reviews-section container-xxl my-5">
       <h4 class="mb-3">Customer Reviews</h4>
 
@@ -614,36 +632,11 @@ $variants = $product->variants->map(function ($v) {
 
 
           <livewire:front.ask-question :productId="$product->id" />
-          {{-- <form class="review-form">
-            <div class="row g-3">
-              <div class="col-md-6">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Your Name"
-                />
-              </div>
 
-              <div class="col-md-6">
-                <input type="email" class="form-control" placeholder="Email" />
-              </div>
-
-              <div class="col-md-12">
-                <textarea
-                  class="form-control"
-                  rows="4"
-                  placeholder="Ask your question"
-                ></textarea>
-              </div>
-
-              <div class="col-md-12">
-                <button class="btn btn-orange">Submit Question</button>
-              </div>
-            </div>
-          </form> --}}
         </div>
       </div>
     </section>
+
 
     <div class="modal fade" id="reviewGalleryModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -710,10 +703,10 @@ $variants = $product->variants->map(function ($v) {
         <script>
 
             // Open login Modal
-            window.addEventListener('open-login-modal', () => {
-                const modal = new bootstrap.Modal(document.getElementById('loginModal'));
-                modal.show();
-            });
+            // window.addEventListener('open-login-modal', () => {
+            //    const modal = new bootstrap.Modal(document.getElementById('loginModal'));
+            //    modal.show();
+            //});
 
 
             document.addEventListener('DOMContentLoaded', () => {
@@ -753,20 +746,20 @@ $variants = $product->variants->map(function ($v) {
                 document.getElementById("reviewGalleryImage").src = reviewImages[reviewImageIndex];
             }
 
-            window.addEventListener('notify', event => {
-                const data = event.detail[0] || event.detail;
+            // window.addEventListener('notify', event => {
+            //     const data = event.detail[0] || event.detail;
                 
-                Swal.fire({
-                    title: data.type === 'error' ? 'Oops!' : 'Success!',
-                    text: data.message,
-                    icon: data.type, // 'error', 'success', 'info', or 'warning'
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                });
-            });
+            //     Swal.fire({
+            //         title: data.type === 'error' ? 'Oops!' : 'Success!',
+            //         text: data.message,
+            //         icon: data.type, // 'error', 'success', 'info', or 'warning'
+            //         toast: true,
+            //         position: 'top-end',
+            //         showConfirmButton: false,
+            //         timer: 3000,
+            //         timerProgressBar: true,
+            //     });
+            // });
 
         </script>
     @endpush

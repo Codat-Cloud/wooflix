@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\EmailAuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\FrontController;
 use App\Http\Controllers\OrderTrackingController;
@@ -9,6 +10,8 @@ use App\Mail\WelcomeEmail;
 use App\Models\Page;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+
+
 
 Route::get('/', [FrontController::class, 'index'])->name('front.index');
 
@@ -94,5 +97,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/invoice/{order}/pdf', [ProfileController::class, 'invoicePdf'])->name('front.orderInvoicePdf');
 
 });
+
+// Unified Email OTP Login/Register Route Matrix
+Route::get('/login', [EmailAuthController::class, 'showLoginPage'])->name('login');
+Route::post('/auth/send-otp', [EmailAuthController::class, 'sendOtp'])->name('auth.send-otp');
+Route::post('/auth/verify-otp', [EmailAuthController::class, 'verifyOtp'])->name('auth.verify-otp');
 
 require __DIR__ . '/auth.php';

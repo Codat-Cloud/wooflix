@@ -21,6 +21,11 @@ class ProductGrid extends Component
         'cart-updated' => 'loadCartVariantIds'
     ];
 
+    // Scoped layout multi-mode parameters
+    public string $mode = 'all'; // Options: 'all', 'fbt', 'related'
+    public ?int $parentProductId = null;
+    public ?int $categoryId = null;
+
     #[Url(as: 'tags', except: '')]
     public $tags = '';
 
@@ -51,7 +56,13 @@ class ProductGrid extends Component
     public function mount()
     {
         $this->loadCartVariantIds();
-        $this->hydrateFilters();
+
+        // Dynamic configuration boundaries based on display mode
+        if ($this->mode === 'all') {
+            $this->hydrateFilters();
+        } else {
+            $this->perPage = 4; // Caps slider rows to a compact list of cross-sells
+        }
     }
 
     public function boot(Cart $cart)
@@ -179,29 +190,48 @@ class ProductGrid extends Component
         $seoTitle = "Best store to buy pet products";
         $query = Product::query()->where('is_active', true)->with(['brand', 'variants', 'defaultVariant']);
 
-        // Search Querry
-        if (!empty($this->search)) {
-
-            $keywords = explode(' ', $this->search);
-
-            $query->where(function ($q) use ($keywords) {
-
-                foreach ($keywords as $word) {
-
-                    $word = '%' . $word . '%';
-
-                    $q->where(function ($sub) use ($word) {
-
-                        $sub->where('products.name', 'ILIKE', $word)
-                            ->orWhereHas('brand', function ($q) use ($word) {
-                                $q->where('name', 'ILIKE', $word);
-                            })
-                            ->orWhereHas('variants', function ($q) use ($word) {
-                                $q->where('name', 'ILIKE', $word);
-                            });
-                    });
-                }
+        /*
+        |--------------------------------------------------------------------------
+        | MULTI-MODE CONSTRAINTS INTERCEPTOR
+        |--------------------------------------------------------------------------
+        */
+        if ($this->mode === 'fbt' && $this->parentProductId) {
+            // 🔍 FIXED: Run a direct database subquery check against your many-to-many cross-sell table
+            $query->whereIn('products.id', function ($subQuery) {
+                $subQuery->select('related_product_id')
+                    ->from('product_frequently_bought')
+                    ->where('product_id', $this->parentProductId);
             });
+        } elseif ($this->mode === 'related' && $this->categoryId) {
+            // Pull items from the same category, excluding the current product view ID
+            $query->where('category_id', $this->categoryId)
+                ->where('id', '!=', $this->parentProductId);
+        } else {
+
+            // Search Query
+            if (!empty($this->search)) {
+
+                $keywords = explode(' ', $this->search);
+
+                $query->where(function ($q) use ($keywords) {
+
+                    foreach ($keywords as $word) {
+
+                        $word = '%' . $word . '%';
+
+                        $q->where(function ($sub) use ($word) {
+
+                            $sub->where('products.name', 'ILIKE', $word)
+                                ->orWhereHas('brand', function ($q) use ($word) {
+                                    $q->where('name', 'ILIKE', $word);
+                                })
+                                ->orWhereHas('variants', function ($q) use ($word) {
+                                    $q->where('name', 'ILIKE', $word);
+                                });
+                        });
+                    }
+                });
+            }
         }
 
         // Filter Tags
@@ -279,9 +309,9 @@ class ProductGrid extends Component
 
         return view('livewire.front.product-grid', [
             'products' => $query->paginate($this->perPage),
-            'brands' => Brand::withCount('products')->get(),
-            'categories' => Category::whereNull('parent_id')->withCount('products')->get(),
-            'filterGroups' => ProductFilterTag::grouped(),
+            'brands' => $this->mode === 'all' ? Brand::withCount('products')->get() : collect(),
+            'categories' => $this->mode === 'all' ? Category::whereNull('parent_id')->withCount('products')->get() : collect(),
+            'filterGroups' => $this->mode === 'all' ? ProductFilterTag::grouped() : [],
             'seoTitle' => $seoTitle,
             'selectedBrands' => $this->selectedBrands,
             'selectedCategories' => $this->selectedCategories,
@@ -311,7 +341,6 @@ class ProductGrid extends Component
 
         if ($product->variants->isNotEmpty()) {
             $variantId = $variantId ?? $product->variants->first()->id;
-
             // Pass both IDs to match your Cart component's expected signature
             $cart->add(['variant_id' => $variantId, 'product_id' => $productId]);
         } else {
