@@ -2,17 +2,14 @@
 
 namespace App\Livewire\Front;
 
-use App\Mail\OrderStatusMail;
 use Livewire\Component;
 use App\Models\CartItem;
 use App\Models\Address;
 use App\Models\Coupon;
-use App\Models\CouponRedemption;
 use App\Models\Order;
-use App\Models\OrderItem;
-use App\Services\MailConfigService;
+use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Razorpay\Api\Api;
 
@@ -34,6 +31,15 @@ class Checkout extends Component
     public $couponError = '';
 
     public $defaultAddress;
+
+    // GUEST CHECKOUT BOUND PROPERTIES
+    public $guest_name;
+    public $guest_email;
+    public $guest_phone;
+    public $guest_address;
+    public $guest_city;
+    public $guest_state;
+    public $guest_postal_code;
 
     // Define the listener
     protected $listeners = ['cartUpdated' => 'refreshCheckout'];
@@ -189,6 +195,65 @@ class Checkout extends Component
 
     public function placeOrder()
     {
+        if ($this->items->isEmpty()) {
+            $this->dispatch('notify', ['type' => 'error', 'message' => 'Your cart is completely empty.']);
+            return;
+        }
+
+        // 🟢 STEP 1: GUEST USER REGISTRATION PROFILE INTERCEPTOR
+        if (!Auth::check()) {
+            $this->validate([
+                'guest_name'        => 'required|string|max:255',
+                'guest_email'       => 'required|email',
+                'guest_phone'       => 'required|regex:/^[0-9]{10}$/',
+                'guest_address'     => 'required|string|max:500',
+                'guest_city'        => 'required|string|max:100',
+                'guest_state'       => 'required|string|max:100',
+                'guest_postal_code' => 'required|string|max:10',
+            ], [
+                'guest_name.required' => 'Please enter your name.',
+                'guest_email.required' => 'An email is critical for sending tracking invoices.',
+                'guest_phone.required' => 'Please provide a valid mobile connection contact.',
+            ]);
+
+            // Prevent duplicate validation crashes if a returning user checks out without logging in
+            $user = User::where('email', trim($this->guest_email))->first();
+
+            if (!$user) {
+                $user = User::create([
+                    'name'              => $this->guest_name,
+                    'email'             => trim($this->guest_email),
+                    'password'          => bcrypt(Str::random(24)),
+                    'email_verified_at' => null, // Left unverified until successful gateway transaction returns paid
+                ]);
+            }
+
+            // Save the address record for this newly provisioned user session
+            $shippingAddress = Address::create([
+                'user_id'       => $user->id,
+                'name'          => $this->guest_name,
+                'phone'         => $this->guest_phone,
+                'address_line1' => $this->guest_address,
+                'city'          => $this->guest_city,
+                'state'         => $this->guest_state,
+                'postal_code'   => $this->guest_postal_code,
+                'is_default'    => true
+            ]);
+
+            // Sync anonymous cart items to the new user ID to prevent losing checkout history
+            CartItem::where('session_id', session()->getId())->update([
+                'user_id'    => $user->id,
+                'session_id' => null
+            ]);
+
+            // Authenticate the session immediately
+            Auth::login($user, true);
+            
+            // Re-bootstrap components into internal memory
+            $this->loadCart();
+            $this->loadAddresses();
+        }
+
         // 1. Structural Access Checks
         if (!Auth::check()) {
             $this->dispatch('open-login-modal');

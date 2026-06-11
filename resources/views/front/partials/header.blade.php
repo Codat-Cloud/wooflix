@@ -58,7 +58,7 @@
                               <path d="M5.5 21c1.5-4 11.5-4 13 0"></path>
                           </svg>
 
-                          {{ Str::limit(auth()->user()->name, 10) }}
+                          {{ Str::limit(auth()->user()->name, 5) }}
                       </a>
 
                       <ul class="dropdown-menu dropdown-menu-end">

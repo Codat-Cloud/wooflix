@@ -43,6 +43,7 @@ Route::get('/collection/{product_slug}/{variant_slug?}', [FrontController::class
 
 
 Route::get('/cart', [FrontController::class, 'cart'])->name('front.cart');
+Route::get('/checkout', [FrontController::class, 'checkout'])->name('front.checkout');
 
 
 
@@ -65,7 +66,6 @@ Route::prefix('cart')->group(function () {
 
 Route::middleware('auth')->group(function () {
 
-    Route::get('/checkout', [FrontController::class, 'checkout'])->name('front.checkout');
     // 
     Route::get('/dashboard', [ProfileController::class, 'dashboard'])->name('dashboard');
     Route::get('/dashboard/orders', [ProfileController::class, 'orders'])->name('user.orders');

@@ -95,7 +95,7 @@ class FrontController extends Controller
     }
 
 
-    
+
 
     public function shop(Request $request)
     {
@@ -194,10 +194,7 @@ class FrontController extends Controller
 
     public function checkout()
     {
-
-        if (!auth()->check()) {
-            return redirect('/login');
-        }
+        $sessionId = session()->getId();
 
         $hasItems = CartItem::when(
             auth()->check(),

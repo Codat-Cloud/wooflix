@@ -52,11 +52,17 @@ class PaymentController extends Controller
                 // Clear the cart for the logged-in user
                 CartItem::where('user_id', auth()->id())->delete();
 
+                $user = $order->user;
+                if ($user && is_null($user->email_verified_at)) {
+                    $user->update([
+                        'email_verified_at' => now() // Set verified timestamp without triggering OTPs
+                    ]);
+                }
+
                 // TRIGGER THE MAIL HERE: Pull user relation dynamically to acquire their destination account address
                 if ($order->user?->email) {
                     Mail::to($order->user->email)->send(new OrderPlaced($order));
                 }
-                
             });
 
 
