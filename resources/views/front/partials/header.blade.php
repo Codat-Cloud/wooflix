@@ -94,98 +94,73 @@
 
     <!-- DESKTOP NAV -->
 
-    <nav class="main-nav d-none d-lg-block shadow">
-      <div class="container-xxl">
-        <ul class="nav-menu">
-        @foreach($petTypes as $petType)
+<nav class="main-nav d-none d-lg-block shadow">
+  <div class="container-xxl">
+    <ul class="nav-menu">
+    @foreach($petTypes as $petType)
 
-        <li class="has-mega">
+    <li class="has-mega">
 
-            {{-- Main Navigation Link --}}
-            <a href="{{ route('front.shop', ['tags' => $petType->slug]) }}">
-                {{ $petType->name }}
-            </a>
+        {{-- Main Navigation Link (e.g., Dogs) --}}
+        <a href="{{ route('front.shop', ['tags' => $petType->slug]) }}">
+            {{ $petType->name }}
+        </a>
 
-            <div class="mega-menu shadow">
+        <div class="mega-menu shadow">
+            <div class="mega-inner container-xxl">
+                @foreach($petType->categories as $parentCategory)
 
-                <div class="mega-inner container-xxl">
-
-                    @foreach($petType->categories as $parentCategory)
-
-                        <div class="mega-column">
-
-                            {{-- Parent Category --}}
-                            <h6>
-
-                                <a href="{{ route('front.shop', ['cat' => $parentCategory->slug]) }}">
-                                    {{ $parentCategory->name }}
-                                </a>
-
-                            </h6>
-
-                            {{-- Child Categories --}}
-                            @foreach($parentCategory->children as $child)
-
-                                <a href="{{ route('front.shop', ['cat' => $child->slug]) }}">
-
-                                    @if($child->image)
-
-                                        <img
-                                            src="{{ asset('storage/' . $child->image) }}"
-                                            alt="{{ $child->name }}"
-                                        >
-
-                                    @endif
-
-                                    {{ $child->name }}
-
-                                </a>
-
-                            @endforeach
-
-                        </div>
-
-                    @endforeach
-
-                </div>
-
-            </div>
-
-        </li>
-
-        @endforeach
-
-          <li class="has-mega">
-            <a href="#">Brands</a>
-            <div class="mega-menu shadow">
-              <div class="mega-inner container-xxl">
-                <div class="mega-column">
-                    <h6>Available Brands</h6>
-
-                    <div class="row">
-                      @foreach($brands as $brand)
-                      <div class="col-3">
-                            <a href="{{ route('front.shop', ['brand' => $brand->slug]) }}">
-                                <img 
-                                    src="{{ asset('storage/' . $brand->logo) }}" 
-                                    alt="{{ $brand->name }}"
-                                >
-                                {{ $brand->name }}
+                    <div class="mega-column">
+                        {{-- 🟢 Parent Category Link: Now locked to the specific Pet Type tag --}}
+                        <h6>
+                            <a href="{{ route('front.shop', ['cat' => $parentCategory->slug, 'tags' => $petType->slug]) }}">
+                                {{ $parentCategory->name }}
                             </a>
-                            
-                          </div>
-                          @endforeach
+                        </h6>
+
+                        {{-- Child Categories --}}
+                        @foreach($parentCategory->children as $child)
+                            {{-- 🟢 Child Category Link: Passed with both category slug and pet type slug --}}
+                            <a href="{{ route('front.shop', ['cat' => $child->slug, 'tags' => $petType->slug]) }}">
+                                @if($child->image)
+                                    <img src="{{ asset('storage/' . $child->image) }}" alt="{{ $child->name }}">
+                                @endif
+                                {{ $child->name }}
+                            </a>
+                        @endforeach
                     </div>
 
-                </div>
-              </div>
+                @endforeach
             </div>
-          </li>
+        </div>
+    </li>
+    @endforeach
 
-          <li><a href="{{route('front.wholesale')}}">Wholesale</a></li>
-        </ul>
-      </div>
-    </nav>
+      <li class="has-mega">
+        <a href="#">Brands</a>
+        <div class="mega-menu shadow">
+          <div class="mega-inner container-xxl">
+            <div class="mega-column">
+                <h6>Available Brands</h6>
+                <div class="row">
+                  @foreach($brands as $brand)
+                  <div class="col-3">
+                        <a href="{{ route('front.shop', ['brand' => $brand->slug]) }}">
+                            <img src="{{ asset('storage/' . $brand->logo) }}" alt="{{ $brand->name }}">
+                            {{ $brand->name }}
+                        </a>
+                      </div>
+                  @endforeach
+                </div>
+            </div>
+          </div>
+        </div>
+      </li>
+
+      <li><a href="{{ route('front.wholesale') }}">Wholesale</a></li>
+    </ul>
+  </div>
+</nav>
 
     <!-- MOBILE HEADER -->
 
