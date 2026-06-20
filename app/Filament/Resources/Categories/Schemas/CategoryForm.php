@@ -33,20 +33,20 @@ class CategoryForm
                                     ->preload()
                                     ->nullable(),
 
-                                Select::make('pet_type_tag_id')
-                                    ->label('Pet Type')
-                                    ->relationship(
-                                        name: 'petType',
-                                        modifyQueryUsing: fn($query) =>
-                                        $query->where('type', 'pet_type'),
-                                        titleAttribute: 'name'
-                                    )
-                                    ->options(
-                                        ProductFilterTag::where('type', 'pet_type')
-                                            ->pluck('name', 'id')
-                                    )
-                                    ->searchable()
-                                    ->preload(),
+                                // Select::make('pet_type_tag_id')
+                                //     ->label('Pet Type')
+                                //     ->relationship(
+                                //         name: 'petType',
+                                //         modifyQueryUsing: fn($query) =>
+                                //         $query->where('type', 'pet_type'),
+                                //         titleAttribute: 'name'
+                                //     )
+                                //     ->options(
+                                //         ProductFilterTag::where('type', 'pet_type')
+                                //             ->pluck('name', 'id')
+                                //     )
+                                //     ->searchable()
+                                //     ->preload(),
 
                                 TextInput::make('name')
                                     ->required()

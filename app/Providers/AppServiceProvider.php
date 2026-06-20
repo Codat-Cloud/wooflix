@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Blog;
 use App\Models\Brand;
+use App\Models\Category;
 use App\Models\Page;
 use App\Models\ProductFilterTag;
 use App\Models\SiteSetting;
@@ -37,13 +38,11 @@ class AppServiceProvider extends ServiceProvider
                 return SiteSetting::pluck('value', 'key')->toArray();
             });
 
-            $petTypes = ProductFilterTag::with([
-                'categories.children'
-            ])
-                ->where('type', 'pet_type')
-                ->whereHas('categories', function ($q) {
-                    $q->whereNull('parent_id');
-                })
+            $megaMenuCategories = Category::with(['children' => function ($query) {
+                $query->select('id', 'parent_id', 'name', 'slug');
+            }])
+                ->whereNull('parent_id') // <-- THIS IS THE CRITICAL LINE
+                ->select('id', 'name', 'slug')
                 ->get();
 
             $view->with([
@@ -72,7 +71,7 @@ class AppServiceProvider extends ServiceProvider
                 // All settings available as $settings['key']
                 'settings' => $allSettings,
 
-                'petTypes' => $petTypes,
+                'megaMenuCategories' => $megaMenuCategories,
 
             ]);
         });
