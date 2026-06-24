@@ -267,8 +267,14 @@ class ProductGrid extends Component
         $selectedCategories = (array) $this->selectedCategories;
 
         if (count($selectedCategories)) {
-            $query->whereHas('category', function ($q) use ($selectedCategories) {
-                $q->whereIn('slug', $selectedCategories);
+            // 🟢 Updated to look through the many-to-many relationship mapping
+            $query->whereHas('categories', function ($q) use ($selectedCategories) {
+                $q->whereIn('slug', $selectedCategories)
+                    ->orWhereIn('parent_id', function ($subQuery) use ($selectedCategories) {
+                        $subQuery->select('id')
+                            ->from('categories')
+                            ->whereIn('slug', $selectedCategories);
+                    });
             });
         }
 

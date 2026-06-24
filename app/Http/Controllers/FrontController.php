@@ -60,13 +60,35 @@ class FrontController extends Controller
 
         // 5. THE BIG OPTIMIZATION: Fetch ALL featured products for ALL deal tabs in ONE query
         // Instead of querying inside the loop, we get them all now and group them by category_id
-        $allFeaturedProducts = Product::with(['brand', 'variants', 'defaultVariant'])
-            ->whereIn('category_id', array_unique($dealCategoryIds))
+        $uniqueDealCategoryIds = array_unique($dealCategoryIds);
+
+        $allFeaturedProducts = Product::with(['brand', 'variants', 'defaultVariant', 'categories']) // 🟢 Eager load categories
+            ->whereHas('categories', function ($q) use ($uniqueDealCategoryIds) {
+                // 🟢 Filter products that belong to any of the target deal categories
+                $q->whereIn('categories.id', $uniqueDealCategoryIds);
+            })
             ->where('is_active', true)
             ->where('is_featured', true)
             ->latest()
             ->get()
-            ->groupBy('category_id');
+            /*
+    |--------------------------------------------------------------------------
+    | MULTI-CATEGORY GROUPING MATRIX
+    |--------------------------------------------------------------------------
+    | Since a product can have multiple categories, we cycle through its 
+    | categories. If it matches a deal ID, we map it out so it accurately 
+    | groups by that category ID key in your final Blade output loop.
+    */
+            ->flatMap(function ($product) use ($uniqueDealCategoryIds) {
+                return $product->categories
+                    ->whereIn('id', $uniqueDealCategoryIds)
+                    ->map(fn($category) => [
+                        'category_id' => $category->id,
+                        'product' => $product
+                    ]);
+            })
+            ->groupBy('category_id')
+            ->map(fn($group) => $group->pluck('product'));
 
         // 6. Map the pre-fetched products back to the section items
         foreach ($sections as $section) {
@@ -93,8 +115,6 @@ class FrontController extends Controller
             'latestBlogs'
         ));
     }
-
-
 
 
     public function shop(Request $request)
@@ -129,7 +149,7 @@ class FrontController extends Controller
         // dd($variant_slug);
         $product = Product::where('slug', $product_slug)
             ->where('is_active', true)
-            ->with(['brand', 'category', 'galleryImages', 'infographicImages', 'variants', 'variants.optionValues', 'reviews', 'defaultVariant', 'frequentlyBought'])
+            ->with(['brand', 'categories', 'galleryImages', 'infographicImages', 'variants', 'variants.optionValues', 'reviews', 'defaultVariant', 'frequentlyBought'])
             ->firstOrFail();
 
         // dd($product);
@@ -157,9 +177,12 @@ class FrontController extends Controller
 
         abort_if(!$selectedVariant, 404);
 
-        // Fetch related products from the same category
-        $relatedProducts = Product::where('category_id', $product->category_id)
-            ->where('id', '!=', $product->id)
+        $categoryIds = $product->categories->pluck('id')->toArray();
+
+        $relatedProducts = Product::whereHas('categories', function ($q) use ($categoryIds) {
+            $q->whereIn('categories.id', $categoryIds);
+        })
+            ->where('id', '!=', $product->id) // Exclude the current product
             ->where('is_active', true)
             ->with('defaultVariant')
             ->take(10)

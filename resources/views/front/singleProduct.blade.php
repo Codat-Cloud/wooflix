@@ -52,11 +52,12 @@ $variants = $product->variants->map(function ($v) {
         <div class="container-xxl">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">Home</a></li>
-                @if($product->category)
-                    <li class="breadcrumb-item">
-                        <a href="{{ route('front.shop', ['cat' => $product->category->slug]) }}">{{ $product->category->name }}</a>
-                    </li>
-                @endif
+@if($product->categories && $product->categories->isNotEmpty())
+    @php $primaryCategory = $product->categories->first(); @endphp
+    <li class="breadcrumb-item">
+        <a href="{{ route('front.shop', ['cat' => $primaryCategory->slug]) }}">{{ $primaryCategory->name }}</a>
+    </li>
+@endif
                 <li class="breadcrumb-item active" aria-current="page">{{ $product->name }}</li>
             </ol>
         </div>
@@ -412,22 +413,25 @@ $variants = $product->variants->map(function ($v) {
       </div>
     </section>
 
-<section class="frequently-bought-together container-xxl my-5">
-    <h4 class="fw-bold text-dark mb-4">🐾Frequently Bought Together</h4>
-    @livewire('front.product-grid', [
-        'mode' => 'fbt', 
-        'parentProductId' => $product->id
-    ], key('fbt-grid-'.$product->id))
-</section>
+    @if($product->frequentlyBought()->exists())
+    <section class="frequently-bought-together container-xxl my-5">
+        <h4 class="fw-bold text-dark mb-4">🐾Frequently Bought Together</h4>
+        @livewire('front.product-grid', [
+            'mode' => 'fbt', 
+            'parentProductId' => $product->id
+        ], key('fbt-grid-'.$product->id))
+    </section>
+    @endif
 
-<section class="related-products container-xxl my-5">
-    <h4 class="fw-bold text-dark mb-4">🐾 More Items You Might Like</h4>
-    @livewire('front.product-grid', [
-        'mode' => 'related', 
-        'parentProductId' => $product->id, 
-        'categoryId' => $product->category_id
-    ], key('related-grid-'.$product->id))
-</section>
+    <section class="related-products container-xxl my-5">
+        <h4 class="fw-bold text-dark mb-4">🐾 More Items You Might Like</h4>
+            @livewire('front.product-grid', [
+                'mode' => 'related', 
+                'parentProductId' => $product->id, 
+                'categoryId' => $product->categories->first()?->id // 🟢 Grabs the ID of the primary assigned category
+            ], key('related-grid-'.$product->id))
+    </section>
+
 
 
     <section class="reviews-section container-xxl my-5">

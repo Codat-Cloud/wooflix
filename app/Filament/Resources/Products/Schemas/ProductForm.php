@@ -55,8 +55,9 @@ class ProductForm
                                         ->preload()
                                         ->searchable(),
 
-                                    Select::make('category_id')
-                                        ->relationship('category', 'name', fn($query) => $query->with(['parent', 'petType']))
+                                    Select::make('categories')
+                                        ->relationship('categories', 'name', fn($query) => $query->with(['parent', 'petType']))
+                                        ->multiple()
                                         ->getOptionLabelFromRecordUsing(function ($record) {
                                             $petTypeName = $record->petType?->name;
                                             $petTypeBadge = $petTypeName ? '[' . Str::headline($petTypeName) . '] ' : '';

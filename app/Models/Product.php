@@ -8,7 +8,6 @@ class Product extends Model
 {
     protected $fillable = [
         'user_id',
-        'category_id',
         'brand_id',
         'name',
         'slug',
@@ -51,9 +50,14 @@ class Product extends Model
         });
     }
 
-    public function category()
+    // public function category()
+    // {
+    //     return $this->belongsTo(Category::class);
+    // }
+
+    public function categories()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsToMany(Category::class, 'category_product');
     }
 
     public function brand()
