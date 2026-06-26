@@ -38,11 +38,48 @@ class AppServiceProvider extends ServiceProvider
                 return SiteSetting::pluck('value', 'key')->toArray();
             });
 
-            $megaMenuCategories = Category::with(['children' => function ($query) {
-                $query->select('id', 'parent_id', 'name', 'slug');
+            // 🟢 1. FETCH DOG CATEGORIES (Only if they or their children have active products)
+            $dogCategories = Category::with(['children' => function ($query) {
+                // Only load child categories that have at least one active product
+                $query->whereHas('products', function ($q) {
+                    $q->where('is_active', true);
+                })->select('id', 'parent_id', 'name', 'slug');
             }])
-                ->whereNull('parent_id') // <-- THIS IS THE CRITICAL LINE
-                ->select('id', 'name', 'slug')
+                ->whereNull('parent_id')
+                ->whereHas('petType', function ($query) {
+                    $query->whereIn('slug', ['dog', 'dogs']);
+                })
+                ->where(function ($query) {
+                    // Enforce: Parent must have active products OR its children must have active products
+                    $query->whereHas('products', function ($q) {
+                        $q->where('is_active', true);
+                    })->orWhereHas('children.products', function ($q) {
+                        $q->where('is_active', true);
+                    });
+                })
+                ->select('id', 'name', 'slug', 'pet_type_tag_id')
+                ->get();
+
+            // 🟢 2. FETCH CAT CATEGORIES (Only if they or their children have active products)
+            $catCategories = Category::with(['children' => function ($query) {
+                // Only load child categories that have at least one active product
+                $query->whereHas('products', function ($q) {
+                    $q->where('is_active', true);
+                })->select('id', 'parent_id', 'name', 'slug');
+            }])
+                ->whereNull('parent_id')
+                ->whereHas('petType', function ($query) {
+                    $query->whereIn('slug', ['cat', 'cats']);
+                })
+                ->where(function ($query) {
+                    // Enforce: Parent must have active products OR its children must have active products
+                    $query->whereHas('products', function ($q) {
+                        $q->where('is_active', true);
+                    })->orWhereHas('children.products', function ($q) {
+                        $q->where('is_active', true);
+                    });
+                })
+                ->select('id', 'name', 'slug', 'pet_type_tag_id')
                 ->get();
 
             $view->with([
@@ -71,7 +108,8 @@ class AppServiceProvider extends ServiceProvider
                 // All settings available as $settings['key']
                 'settings' => $allSettings,
 
-                'megaMenuCategories' => $megaMenuCategories,
+                'dogCategories' => $dogCategories,
+                'catCategories' => $catCategories,
 
             ]);
         });

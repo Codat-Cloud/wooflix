@@ -52,12 +52,9 @@ $variants = $product->variants->map(function ($v) {
         <div class="container-xxl">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">Home</a></li>
-@if($product->categories && $product->categories->isNotEmpty())
-    @php $primaryCategory = $product->categories->first(); @endphp
-    <li class="breadcrumb-item">
-        <a href="{{ route('front.shop', ['cat' => $primaryCategory->slug]) }}">{{ $primaryCategory->name }}</a>
-    </li>
-@endif
+                <li class="breadcrumb-item">
+                    <a href="{{ route('front.shop')}}">Collections</a>
+                </li>
                 <li class="breadcrumb-item active" aria-current="page">{{ $product->name }}</li>
             </ol>
         </div>

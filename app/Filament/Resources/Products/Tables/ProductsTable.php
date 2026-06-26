@@ -20,10 +20,11 @@ class ProductsTable
     {
         return $table
             ->columns([
-                TextColumn::make('category.name')
-                    ->label('Category')
-                    ->searchable()
-                    ->sortable(),
+                TextColumn::make('categories.name')
+                    ->label('Categories')
+                    ->badge()
+                    ->color('primary')
+                    ->searchable(),
                 TextColumn::make('brand.name')
                     ->label('Brand')
                     ->searchable()

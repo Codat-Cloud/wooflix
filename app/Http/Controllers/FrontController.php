@@ -72,13 +72,13 @@ class FrontController extends Controller
             ->latest()
             ->get()
             /*
-    |--------------------------------------------------------------------------
-    | MULTI-CATEGORY GROUPING MATRIX
-    |--------------------------------------------------------------------------
-    | Since a product can have multiple categories, we cycle through its 
-    | categories. If it matches a deal ID, we map it out so it accurately 
-    | groups by that category ID key in your final Blade output loop.
-    */
+            |--------------------------------------------------------------------------
+            | MULTI-CATEGORY GROUPING MATRIX
+            |--------------------------------------------------------------------------
+            | Since a product can have multiple categories, we cycle through its 
+            | categories. If it matches a deal ID, we map it out so it accurately 
+            | groups by that category ID key in your final Blade output loop.
+            */
             ->flatMap(function ($product) use ($uniqueDealCategoryIds) {
                 return $product->categories
                     ->whereIn('id', $uniqueDealCategoryIds)

@@ -204,8 +204,9 @@ class ProductGrid extends Component
             });
         } elseif ($this->mode === 'related' && $this->categoryId) {
             // Pull items from the same category, excluding the current product view ID
-            $query->where('category_id', $this->categoryId)
-                ->where('id', '!=', $this->parentProductId);
+            $query->whereHas('categories', function ($q) {
+                $q->where('categories.id', $this->categoryId);
+            })->where('products.id', '!=', $this->parentProductId);
         } else {
 
             // Search Query
@@ -267,14 +268,15 @@ class ProductGrid extends Component
         $selectedCategories = (array) $this->selectedCategories;
 
         if (count($selectedCategories)) {
-            // 🟢 Updated to look through the many-to-many relationship mapping
             $query->whereHas('categories', function ($q) use ($selectedCategories) {
-                $q->whereIn('slug', $selectedCategories)
-                    ->orWhereIn('parent_id', function ($subQuery) use ($selectedCategories) {
-                        $subQuery->select('id')
-                            ->from('categories')
-                            ->whereIn('slug', $selectedCategories);
-                    });
+                $q->where(function ($innerQuery) use ($selectedCategories) {
+                    $innerQuery->whereIn('categories.slug', $selectedCategories)
+                        ->orWhereIn('categories.parent_id', function ($subQuery) use ($selectedCategories) {
+                            $subQuery->select('id')
+                                ->from('categories')
+                                ->whereIn('slug', $selectedCategories);
+                        });
+                });
             });
         }
 

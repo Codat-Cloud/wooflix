@@ -7,6 +7,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class CategoriesTable
@@ -32,11 +33,18 @@ class CategoriesTable
                     ->badge()
                     ->sortable()
                     ->searchable(),
-                // TextColumn::make('meta_description')
-                //     ->searchable(),
+                TextColumn::make('products_count')
+                    ->counts('products')
+                    ->label('Total Products')
+                    ->badge()
+                    ->color('success')
+                    ->sortable()
             ])
             ->filters([
-                //
+                SelectFilter::make('petType')
+                    ->relationship('petType', 'name', fn ($query) => $query->where('type', 'pet_type'))
+                    ->label('Filter by Pet Type')
+                    ->preload(),
             ])
             ->recordActions([
                 EditAction::make(),

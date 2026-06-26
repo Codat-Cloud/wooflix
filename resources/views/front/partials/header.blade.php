@@ -70,67 +70,67 @@
   <div class="container-xxl">
     <ul class="nav-menu">
         
-        <li class="has-mega">
-          <a href="{{ route('front.shop', ['tags' => 'dog']) }}">Dogs</a>
+<li class="has-mega">
+  <a href="{{ route('front.shop', ['tags' => 'dog']) }}">Dogs</a>
 
-          <div class="mega-menu shadow">
-            <div class="mega-inner container-xxl">
-              <div class="row">
-                @foreach($megaMenuCategories as $parentCategory)
-                <div class="col-3 mb-3">
-                    <div class="mega-column">
-                      <p class="h6 mb-1 fw-bold">
-                        <a href="{{ route('front.shop', ['tags' => 'dog', 'cat' => $parentCategory->slug]) }}">
-                          {{ $parentCategory->name }}
-                        </a>
-                      </p>
+  <div class="mega-menu shadow">
+    <div class="mega-inner container-xxl">
+      <div class="row">
+        {{-- 🟢 Updated loop to look at Dog specific rows only --}}
+        @foreach($dogCategories as $parentCategory)
+        <div class="col-3 mb-3">
+            <div class="mega-column">
+              <p class="h6 mb-1 fw-bold">
+                <a href="{{ route('front.shop', ['tags' => 'dog', 'cat' => $parentCategory->slug]) }}">
+                  {{ $parentCategory->name }}
+                </a>
+              </p>
 
-                      @if($parentCategory->children->isNotEmpty())
-                        @foreach($parentCategory->children as $subCategory)
-                          <a href="{{ route('front.shop', ['tags' => 'dog', 'cat' => $subCategory->slug]) }}">
-                            {{-- <img src="{{ asset('assets/images/menu/dog-food.jpg') }}" alt="{{ $subCategory->name }}" />  --}}
-                            {{ $subCategory->name }}
-                          </a>
-                        @endforeach
-                      @endif
-                    </div>
-                  </div>
-                  @endforeach
-              </div>
+              @if($parentCategory->children->isNotEmpty())
+                @foreach($parentCategory->children as $subCategory)
+                  <a href="{{ route('front.shop', ['tags' => 'dog', 'cat' => $subCategory->slug]) }}">
+                    {{ $subCategory->name }}
+                  </a>
+                @endforeach
+              @endif
             </div>
           </div>
-        </li>
+        @endforeach
+      </div>
+    </div>
+  </div>
+</li>
 
-        <li class="has-mega">
-          <a href="{{ route('front.shop', ['tags' => 'cat']) }}">Cats</a>
+<li class="has-mega">
+  <a href="{{ route('front.shop', ['tags' => 'cat']) }}">Cats</a>
 
-          <div class="mega-menu shadow">
-            <div class="mega-inner container-xxl">
-                <div class="row">
-                @foreach($megaMenuCategories as $parentCategory)
-                <div class="col-3 mb-3">
-                    <div class="mega-column">
-                      <p class="h6 mb-1 fw-bold">
-                        <a href="{{ route('front.shop', ['tags' => 'cat', 'cat' => $parentCategory->slug]) }}">
-                          {{ $parentCategory->name }}
-                        </a>
-                      </p>
+  <div class="mega-menu shadow">
+    <div class="mega-inner container-xxl">
+        <div class="row">
+        {{-- 🟢 Updated loop to look at Cat specific rows only --}}
+        @foreach($catCategories as $parentCategory)
+        <div class="col-3 mb-3">
+            <div class="mega-column">
+              <p class="h6 mb-1 fw-bold">
+                <a href="{{ route('front.shop', ['tags' => 'cat', 'cat' => $parentCategory->slug]) }}">
+                  {{ $parentCategory->name }}
+                </a>
+              </p>
 
-                      @if($parentCategory->children->isNotEmpty())
-                        @foreach($parentCategory->children as $subCategory)
-                          <a href="{{ route('front.shop', ['tags' => 'cat', 'cat' => $subCategory->slug]) }}">
-                            {{-- <img src="{{ asset('assets/images/menu/dog-food.jpg') }}" alt="{{ $subCategory->name }}" />  --}}
-                            {{ $subCategory->name }}
-                          </a>
-                        @endforeach
-                      @endif
-                    </div>
-                  </div>
-                  @endforeach
-              </div>
+              @if($parentCategory->children->isNotEmpty())
+                @foreach($parentCategory->children as $subCategory)
+                  <a href="{{ route('front.shop', ['tags' => 'cat', 'cat' => $subCategory->slug]) }}">
+                    {{ $subCategory->name }}
+                  </a>
+                @endforeach
+              @endif
             </div>
           </div>
-        </li>
+        @endforeach
+      </div>
+    </div>
+  </div>
+</li>
 
         <li class="has-mega">
           <a href="{{ url('/brands') }}">Brands</a>
@@ -200,7 +200,8 @@
           
           <div class="collapse" id="mobileDogsGroup">
               <div class="ps-3 mt-2">
-                  @foreach($megaMenuCategories as $parentCategory)
+                  {{-- 🟢 Updated loop to iterate through Dog specific rows only --}}
+                  @foreach($dogCategories as $parentCategory)
                       <div class="mb-3">
                           <button class="btn w-100 text-start fw-semibold p-0 text-dark d-flex justify-content-between align-items-center mb-1" data-bs-toggle="collapse" data-bs-target="#dogParent{{ $parentCategory->id }}">
                               {{ $parentCategory->name }}
@@ -236,7 +237,8 @@
           
           <div class="collapse" id="mobileCatsGroup">
               <div class="ps-3 mt-2">
-                  @foreach($megaMenuCategories as $parentCategory)
+                  {{-- 🟢 Updated loop to iterate through Cat specific rows only --}}
+                  @foreach($catCategories as $parentCategory)
                       <div class="mb-3">
                           <button class="btn w-100 text-start fw-semibold p-0 text-dark d-flex justify-content-between align-items-center mb-1" data-bs-toggle="collapse" data-bs-target="#catParent{{ $parentCategory->id }}">
                               {{ $parentCategory->name }}
