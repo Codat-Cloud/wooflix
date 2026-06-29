@@ -1,3 +1,27 @@
+<style>
+  /* Fluid Masonry Columns for Mega Menu Dropdowns */
+.mega-menu-masonry {
+    column-count: 4;       /* Maintains your balanced 4-column desktop layout */
+    column-gap: 2rem;      /* Creates clean space between column groups */
+    width: 100%;
+    padding: 15px 0;
+}
+
+.mega-masonry-item {
+    display: inline-block; /* Fixes Firefox rendering split alignment glitches */
+    width: 100%;
+    break-inside: avoid;   /* CRUCIAL: Keeps parent and subcategories locked together */
+    margin-bottom: 1.5rem; /* Even spacing between vertically stacked items */
+}
+
+/* Optional styling tweak to make subcategories stack vertically like clean list links */
+.mega-column a {
+    display: block;
+    padding: 3px 0;
+    text-decoration: none;
+}
+</style>
+
 <header class="main-header d-none d-lg-block fixed-top">
   <div class="top-strip">
     <div class="container-xxl d-flex justify-content-between">
@@ -66,103 +90,103 @@
 </header>
 
 <nav class="main-nav d-none d-lg-block shadow">
-  
   <div class="container-xxl">
     <ul class="nav-menu">
         
-<li class="has-mega">
-  <a href="{{ route('front.shop', ['tags' => 'dog']) }}">Dogs</a>
+      <li class="has-mega">
+        <a href="{{ route('front.shop', ['tags' => 'dog']) }}">Dogs</a>
 
-  <div class="mega-menu shadow">
-    <div class="mega-inner container-xxl">
-      <div class="row">
-        {{-- 🟢 Updated loop to look at Dog specific rows only --}}
-        @foreach($dogCategories as $parentCategory)
-        <div class="col-3 mb-3">
-            <div class="mega-column">
-              <p class="h6 mb-1 fw-bold">
-                <a href="{{ route('front.shop', ['tags' => 'dog', 'cat' => $parentCategory->slug]) }}">
-                  {{ $parentCategory->name }}
-                </a>
-              </p>
-
-              @if($parentCategory->children->isNotEmpty())
-                @foreach($parentCategory->children as $subCategory)
-                  <a href="{{ route('front.shop', ['tags' => 'dog', 'cat' => $subCategory->slug]) }}">
-                    {{ $subCategory->name }}
-                  </a>
-                @endforeach
-              @endif
-            </div>
-          </div>
-        @endforeach
-      </div>
-    </div>
-  </div>
-</li>
-
-<li class="has-mega">
-  <a href="{{ route('front.shop', ['tags' => 'cat']) }}">Cats</a>
-
-  <div class="mega-menu shadow">
-    <div class="mega-inner container-xxl">
-        <div class="row">
-        {{-- 🟢 Updated loop to look at Cat specific rows only --}}
-        @foreach($catCategories as $parentCategory)
-        <div class="col-3 mb-3">
-            <div class="mega-column">
-              <p class="h6 mb-1 fw-bold">
-                <a href="{{ route('front.shop', ['tags' => 'cat', 'cat' => $parentCategory->slug]) }}">
-                  {{ $parentCategory->name }}
-                </a>
-              </p>
-
-              @if($parentCategory->children->isNotEmpty())
-                @foreach($parentCategory->children as $subCategory)
-                  <a href="{{ route('front.shop', ['tags' => 'cat', 'cat' => $subCategory->slug]) }}">
-                    {{ $subCategory->name }}
-                  </a>
-                @endforeach
-              @endif
-            </div>
-          </div>
-        @endforeach
-      </div>
-    </div>
-  </div>
-</li>
-
-        <li class="has-mega">
-          <a href="{{ url('/brands') }}">Brands</a>
-
-          <div class="mega-menu shadow">
-            <div class="mega-inner container-xxl">
-              <div class="mega-column">
-                <div class="row">
-                  <h6>Popular Brands</h6>
-                  @foreach($brands as $brand)
-                  <div class="col-2 mb-3">
-                      <a href="{{ route('front.shop', ['brand' => $brand->slug]) }}">
-                        <img src="{{ asset('storage/' . $brand->logo) }}" alt="{{ $brand->name }}" /> 
-                        {{ $brand->name }}
+        <div class="mega-menu shadow">
+          <div class="mega-inner container-xxl">
+            {{-- 🟢 CHANGED: Replaced 'row' with our masonry fluid layout class --}}
+            <div class="mega-menu-masonry">
+              
+              @foreach($dogCategories as $parentCategory)
+                {{-- 🟢 CHANGED: Replaced 'col-3' with the block keeper class --}}
+                <div class="mega-masonry-item">
+                  <div class="mega-column">
+                    <p class="h6 mb-1 fw-bold">
+                      <a href="{{ route('front.shop', ['tags' => 'dog', 'cat' => $parentCategory->slug]) }}">
+                        {{ $parentCategory->name }}
                       </a>
+                    </p>
+
+                    @if($parentCategory->children->isNotEmpty())
+                      @foreach($parentCategory->children as $subCategory)
+                        <a href="{{ route('front.shop', ['tags' => 'dog', 'cat' => $subCategory->slug]) }}">
+                          {{ $subCategory->name }}
+                        </a>
+                      @endforeach
+                    @endif
                   </div>
-                    @endforeach
                 </div>
-                
+              @endforeach
+
+            </div>
+          </div>
+        </div>
+      </li>
+
+      <li class="has-mega">
+        <a href="{{ route('front.shop', ['tags' => 'cat']) }}">Cats</a>
+
+        <div class="mega-menu shadow">
+          <div class="mega-inner container-xxl">
+            <div class="mega-menu-masonry">
+              
+              @foreach($catCategories as $parentCategory)
+                <div class="mega-masonry-item">
+                  <div class="mega-column">
+                    <p class="h6 mb-1 fw-bold">
+                      <a href="{{ route('front.shop', ['tags' => 'cat', 'cat' => $parentCategory->slug]) }}">
+                        {{ $parentCategory->name }}
+                      </a>
+                    </p>
+
+                    @if($parentCategory->children->isNotEmpty())
+                      @foreach($parentCategory->children as $subCategory)
+                        <a href="{{ route('front.shop', ['tags' => 'cat', 'cat' => $subCategory->slug]) }}">
+                          {{ $subCategory->name }}
+                        </a>
+                      @endforeach
+                    @endif
+                  </div>
+                </div>
+              @endforeach
+
+            </div>
+          </div>
+        </div>
+      </li>
+
+      <li class="has-mega">
+        <a href="{{ url('/brands') }}">Brands</a>
+
+        <div class="mega-menu shadow">
+          <div class="mega-inner container-xxl">
+            <div class="mega-column">
+              <div class="row">
+                <h6 class="mb-3">Popular Brands</h6>
+                @foreach($brands as $brand)
+                  <div class="col-2 mb-3">
+                    <a href="{{ route('front.shop', ['brand' => $brand->slug]) }}">
+                      <img src="{{ asset('storage/' . $brand->logo) }}" alt="{{ $brand->name }}" /> 
+                      {{ $brand->name }}
+                    </a>
+                  </div>
+                @endforeach
               </div>
             </div>
           </div>
-        </li>
+        </div>
+      </li>
 
-        <li>
-          <a href="{{ url('/wholesale') }}">Wholesale</a>
-        </li>
+      <li>
+        <a href="{{ url('/wholesale') }}">Wholesale</a>
+      </li>
 
     </ul>
-
   </div>
-
 </nav>
 
 
