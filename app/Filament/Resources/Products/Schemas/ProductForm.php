@@ -17,6 +17,7 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProductForm
 {
@@ -55,19 +56,27 @@ class ProductForm
                                         ->preload()
                                         ->searchable(),
 
-                                    Select::make('categories')
-                                        ->relationship('categories', 'name', fn($query) => $query->with(['parent', 'petType']))
-                                        ->multiple()
-                                        ->getOptionLabelFromRecordUsing(function ($record) {
-                                            $petTypeName = $record->petType?->name;
-                                            $petTypeBadge = $petTypeName ? '[' . Str::headline($petTypeName) . '] ' : '';
-                                            return $record->parent
-                                                ? "{$petTypeBadge}{$record->parent->name} — {$record->name}"
-                                                : "{$petTypeBadge}{$record->name}";
-                                        })
-                                        ->searchable(['name', 'petType.name'])
-                                        ->preload()
-                                        ->required(),
+                                Select::make('categories')
+                                    ->relationship(
+                                        'categories', 
+                                        'name', 
+                                        fn (Builder $query) => $query
+                                            ->select('categories.*') // 🟢 Keep category data clean from join column overwrites
+                                            ->leftJoin('product_filter_tags', 'categories.pet_type_tag_id', '=', 'product_filter_tags.id') // 🟢 Explicitly join the tag table
+                                            ->with(['parent', 'petType'])
+                                    )
+                                    ->multiple()
+                                    ->getOptionLabelFromRecordUsing(function ($record) {
+                                        $petTypeName = $record->petType?->name;
+                                        $petTypeBadge = $petTypeName ? '[' . Str::headline($petTypeName) . '] ' : '';
+                                        return $record->parent
+                                            ? "{$petTypeBadge}{$record->parent->name} — {$record->name}"
+                                            : "{$petTypeBadge}{$record->name}";
+                                    })
+                                    // 🟢 FIXED FOR POSTGRESQL: Swap dot-notation for real database table and column names
+                                    ->searchable(['categories.name', 'product_filter_tags.name'])
+                                    ->preload()
+                                    ->required(),
                                 ]),
 
                                 RichEditor::make('short_description')

@@ -11,6 +11,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Builder;
 
 class CategoryForm
 {
@@ -27,9 +28,23 @@ class CategoryForm
 
                                 Select::make('parent_id')
                                     ->label('Parent Category')
-                                    ->relationship('parent', 'name', fn($query, $record) =>
-                                    $query->when($record, fn($q) => $q->where('id', '!=', $record->id)))
-                                    ->searchable()
+                                    ->relationship(
+                                        'parent', 
+                                        'name', 
+                                        fn (Builder $query, Select $component) => $query
+                                            ->select('categories.*') // ðŸŸ¢ Protects primary model columns from overwrite conflicts
+                                            ->leftJoin('product_filter_tags', 'categories.pet_type_tag_id', '=', 'product_filter_tags.id') // ðŸŸ¢ Explicitly join the tags table
+                                            ->with('petType') // Keeps the badge option label fast and efficient
+                                            ->whereNull('categories.parent_id') // Only show top-level records as parent options
+                                            ->when($component->getRecord(), fn($q, $record) => $q->where('categories.id', '!=', $record->id))
+                                    )
+                                    ->getOptionLabelFromRecordUsing(function ($record) {
+                                        $petTypeName = $record->petType?->name;
+                                        $petTypeBadge = $petTypeName ? '[' . Str::headline($petTypeName) . '] ' : '';
+                                        return "{$petTypeBadge}{$record->name}";
+                                    })
+                                    // ðŸŸ¢ FIXED FOR POSTGRESQL: Use explicit table names to eliminate SQL ambiguities
+                                    ->searchable(['categories.name', 'product_filter_tags.name']) 
                                     ->preload()
                                     ->nullable(),
 
