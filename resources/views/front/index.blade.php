@@ -85,67 +85,39 @@
       {{-- 2. TABBED DEALS LAYOUT (Special Product Slider) --}}
       @if($isTabbed)
         <section class="deals-section mt-5">
-          <div class="container-xxl">
-              <h2 class="fw-bold">{{ $section->title }}</h2>
-              <p class="deals-subtitle">{{ $section->subtitle }}</p>
+            <div class="container-xxl">
+                <h2 class="fw-bold">{{ $section->title }}</h2>
+                <p class="deals-subtitle">{{ $section->subtitle }}</p>
 
-              <ul class="nav deals-tabs" role="tablist">
-                  @foreach($section->items as $index => $item)
-                      <li class="nav-item">
-                          <button class="nav-link {{ $index === 0 ? 'active' : '' }}" 
-                                  data-bs-toggle="tab" 
-                                  data-bs-target="#tab-{{ $section->id }}-{{ $index }}">
-                              {!! $item->title !!}
-                          </button>
-                      </li>
-                  @endforeach
-              </ul>
-          </div>
+                <ul class="nav deals-tabs" role="tablist">
+                    @foreach($section->items as $index => $item)
+                        <li class="nav-item">
+                            <button class="nav-link {{ $index === 0 ? 'active' : '' }}" 
+                                    data-bs-toggle="tab" 
+                                    data-bs-target="#tab-{{ $section->id }}-{{ $index }}">
+                                {!! $item->title !!}
+                            </button>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
 
           <div class="tab-content">
-              @foreach($section->items as $index => $item)
-                  <div class="tab-pane fade {{ $index === 0 ? 'show active' : '' }}" id="tab-{{ $section->id }}-{{ $index }}">
+            @foreach($section->items as $index => $item)
+                <div class="tab-pane fade {{ $index === 0 ? 'show active' : '' }}" id="tab-{{ $section->id }}-{{ $index }}">
                     <div class="container-xxl">
+                        <div class="deals-wrapper">
+                            
+                            {{-- 🟢 REUSED: Dynamic interactive product grid component replaces the hardcoded static loop --}}
+                            @livewire('front.product-grid', [
+                                'mode' => 'featured', 
+                                'categoryId' => (int) $item->item_id 
+                            ], key('deals-tab-grid-' . $item->id . '-' . $index))
 
-                      <div class="deals-wrapper">
-                          <button class="deals-arrow left">❮</button>
-                          
-                          <div class="deals-scroll">
-                              {{-- This is where the manually selected 'is_featured' products from the controller appear --}}
-                              @foreach($item->products as $p)
-                                  <div class="product-card">
-                                    <a href="{{ route('front.singleProduct', $p->slug) }}" class="text-decoration-none">
-                                      <div class="product-image">
-                                          @if($p->sale_price && $p->sale_price < $p->base_price)
-                                              <span class="product-badge">{{ round((($p->base_price - $p->sale_price) / $p->base_price) * 100) }}% OFF</span>
-                                          @endif
-                                          <img src="{{ asset('storage/'.$p->main_image) }}" alt="{{ $p->name }}">
-                                          <span class="product-rating">⭐ 5.0</span>
-                                      </div>
-                                    </a>
-                                      <div class="product-info">
-                                        <a href="{{ route('front.singleProduct', $p->slug) }}" class="text-decoration-none">
-                                          <h6 class="product-brand">{{ $p->brand->name ?? '' }}</h6>
-                                          <p class="product-title text-truncate">{{ $p->name }}</p>
-                                        </a>
-                                          <div class="product-price">
-                                              <div>
-                                                  <span class="price">₹{{ $p->sale_price ?? $p->base_price }}</span>
-                                                  @if($p->sale_price) <span class="old-price">₹{{ $p->base_price }}</span> @endif
-                                              </div>
-                                              <div class="product-action"><button class="add-btn">Add</button></div>
-                                          </div>
-                                      </div>
-                                  </div>
-                              @endforeach
-                          </div>
-
-                          <button class="deals-arrow right">❯</button>
-                      </div>
+                        </div>
                     </div>
-
-                  </div>
-              @endforeach
+                </div>
+            @endforeach
           </div>
         </section>
 

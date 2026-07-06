@@ -60,6 +60,8 @@ class ProductGrid extends Component
         // Dynamic configuration boundaries based on display mode
         if ($this->mode === 'all') {
             $this->hydrateFilters();
+        } elseif ($this->mode === 'featured') {
+            $this->perPage = 12;
         } else {
             $this->perPage = 4; // Caps slider rows to a compact list of cross-sells
         }
@@ -207,8 +209,17 @@ class ProductGrid extends Component
             $query->whereHas('categories', function ($q) {
                 $q->where('categories.id', $this->categoryId);
             })->where('products.id', '!=', $this->parentProductId);
-        } else {
 
+        } elseif ($this->mode === 'featured' && $this->categoryId) {
+            // 🟢 FIXED: Pull products from the selected category OR any of its subcategories
+            $query->whereHas('categories', function ($q) {
+                $q->where(function ($innerQuery) {
+                    $innerQuery->where('categories.id', $this->categoryId)
+                        ->orWhere('categories.parent_id', $this->categoryId);
+                });
+            })->where('products.is_featured', true);
+
+        } else {
             // Search Query
             if (!empty($this->search)) {
 

@@ -24,7 +24,9 @@ class ProductsTable
                     ->label('Categories')
                     ->badge()
                     ->color('primary')
-                    ->searchable(),
+                    ->listWithLineBreaks()
+                    ->searchable()
+                    ->expandableLimitedList(),
                 TextColumn::make('brand.name')
                     ->label('Brand')
                     ->searchable()
