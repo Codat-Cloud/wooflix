@@ -63,7 +63,7 @@ class ProductGrid extends Component
         } elseif ($this->mode === 'featured') {
             $this->perPage = 12;
         } else {
-            $this->perPage = 4; // Caps slider rows to a compact list of cross-sells
+            $this->perPage = 12; // Caps slider rows to a compact list of cross-sells
         }
     }
 

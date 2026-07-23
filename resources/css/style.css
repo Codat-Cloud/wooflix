@@ -214,6 +214,7 @@ body {
 .offcanvas {
   max-width: 90%;
 }
+
 .mobile-search {
   padding: 10px 15px;
 }
@@ -316,7 +317,7 @@ body {
   color: #ff6a00;
 }
 
-.breadcrumb-item + .breadcrumb-item::before {
+.breadcrumb-item+.breadcrumb-item::before {
   content: ">";
   color: #999;
 }
@@ -440,6 +441,10 @@ body {
   padding: 14px;
   flex: 0 0 auto;
   width: 100%;
+}
+
+.product-card-slider {
+  width: 25% !important;
 }
 
 .product-image {
@@ -688,45 +693,69 @@ body {
 
 .deals-wrapper {
   position: relative;
+
+  --container-offset: calc((100vw - 1320px) / 2);
+}
+
+/* Responsive container offset breakpoints */
+@media (max-width: 1400px) {
+  .deals-wrapper {
+    --container-offset: calc((100vw - 1140px) / 2);
+  }
+}
+@media (max-width: 1200px) {
+  .deals-wrapper {
+    --container-offset: calc((100vw - 960px) / 2);
+  }
+}
+@media (max-width: 992px) {
+  .deals-wrapper {
+    --container-offset: 15px; /* Standard Bootstrap gutter */
+  }
 }
 
 .deals-scroll {
-    display: flex;
-    gap: 20px;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    scrollbar-width: none;
-    
-    /* 1. Calculate the distance from the screen edge to the container edge */
-    /* This uses the standard Bootstrap container math */
-    --container-offset: calc((100vw - 1320px) / 2); 
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  flex-wrap: nowrap;
 
-    /* Fallback for smaller screens where container is full width */
-    @media (max-width: 1400px) {
-        --container-offset: calc((100vw - 1140px) / 2);
-    }
-    @media (max-width: 1200px) {
-        --container-offset: calc((100vw - 960px) / 2);
-    }
-    @media (max-width: 992px) {
-        --container-offset: 15px; /* Standard Bootstrap gutter */
-    }
+  /* 1. Calculate the distance from the screen edge to the container edge */
+  /* This uses the standard Bootstrap container math */
+  --container-offset: calc((100vw - 1320px) / 2);
 
-    /* 2. Pull the container to the screen edges */
-    margin-left: calc(-1 * var(--container-offset));
-    margin-right: calc(-1 * var(--container-offset));
+  /* Fallback for smaller screens where container is full width */
+  @media (max-width: 1400px) {
+    --container-offset: calc((100vw - 1140px) / 2);
+  }
 
-    /* 3. Push the content back in to align with the heading */
-    padding-left: var(--container-offset);
-    padding-right: var(--container-offset);
-    
-    /* 4. Ensure it doesn't wrap */
-    flex-wrap: nowrap;
+  @media (max-width: 1200px) {
+    --container-offset: calc((100vw - 960px) / 2);
+  }
+
+  @media (max-width: 992px) {
+    --container-offset: 15px;
+    /* Standard Bootstrap gutter */
+  }
+
+  /* 2. Pull the container to the screen edges */
+  margin-left: calc(-1 * var(--container-offset));
+  margin-right: calc(-1 * var(--container-offset));
+
+  /* 3. Push the content back in to align with the heading */
+  padding-left: var(--container-offset);
+  padding-right: var(--container-offset);
+
+  /* 4. Ensure it doesn't wrap */
+  flex-wrap: nowrap;
 }
 
 .deals-scroll::-webkit-scrollbar {
   display: none;
 }
+
 /* arrows desktop only */
 
 .deals-arrow {
@@ -744,10 +773,11 @@ body {
 }
 
 .deals-arrow.left {
-  left: 20px;
+  left: calc(-1 * var(--container-offset) + 15px);
 }
+
 .deals-arrow.right {
-  right: 20px;
+  right: calc(-1 * var(--container-offset) + 15px);
 }
 
 @media (max-width: 991px) {
@@ -756,9 +786,11 @@ body {
     padding-left: 15px;
     padding-right: 15px;
   }
+
   .deals-arrow {
     display: none;
   }
+
   .deal-card {
     width: 70%;
   }
@@ -1346,7 +1378,7 @@ body {
   border-radius: 4px;
 }
 
-.filter-option input:checked + .checkmark {
+.filter-option input:checked+.checkmark {
   background: #ff6a00;
   border-color: #ff6a00;
 }
@@ -1404,8 +1436,12 @@ body {
   }
 
   .product-card {
-    width: 44vw;
+    width: 44vw !important;
     padding: 0;
+  }
+
+  .product-card-slider {
+    width: 44vw;
   }
 }
 
@@ -1421,6 +1457,7 @@ body {
   0% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0 50%;
   }
@@ -1662,9 +1699,11 @@ body {
   0% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(1.08);
   }
+
   100% {
     transform: scale(1);
   }
@@ -2163,50 +2202,51 @@ body {
 
 /* Star Rating Styling */
 .star-rating i {
-    cursor: pointer;
-    transition: color 0.2s, transform 0.2s;
+  cursor: pointer;
+  transition: color 0.2s, transform 0.2s;
 }
 
 .star-rating i:hover {
-    transform: scale(1.2);
+  transform: scale(1.2);
 }
 
 /* Square Image Previews */
 .review-image-preview {
-    width: 80px;
-    height: 80px;
-    object-fit: cover; /* Keeps aspect ratio while filling the square */
-    border: 1px solid #dee2e6;
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  /* Keeps aspect ratio while filling the square */
+  border: 1px solid #dee2e6;
 }
 
 /* Overlay Close Button */
 .remove-img-btn {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    width: 20px;
-    height: 20px;
-    padding: 0;
-    font-size: 12px;
-    line-height: 1;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  font-size: 12px;
+  line-height: 1;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Custom Wooflix Branding */
 .btn-orange {
-    background-color: #ff6b00;
-    color: #fff;
-    font-weight: 600;
-    border: none;
+  background-color: #ff6b00;
+  color: #fff;
+  font-weight: 600;
+  border: none;
 }
 
 .btn-orange:hover {
-    background-color: #e66000;
-    color: #fff;
+  background-color: #e66000;
+  color: #fff;
 }
 
 /* CART ITEM */
@@ -2791,55 +2831,55 @@ body {
 /* Offcanvas Drwaer Added on 23-04-2026 */
 
 .drawer-forms {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
 }
 
 .profile-section {
-    padding-bottom: 20px;
-    border-bottom: 1px solid #eee;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
 }
 
 .profile-section:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
 .section-header h6 {
-    font-weight: 600;
-    margin-bottom: 2px;
+  font-weight: 600;
+  margin-bottom: 2px;
 }
 
 .section-header p {
-    font-size: 13px;
-    color: #777;
-    margin-bottom: 15px;
+  font-size: 13px;
+  color: #777;
+  margin-bottom: 15px;
 }
 
 .form-group {
-    margin-bottom: 14px;
+  margin-bottom: 14px;
 }
 
 .custom-input {
-    height: 44px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    padding: 10px;
-    transition: 0.2s ease;
+  height: 44px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  transition: 0.2s ease;
 }
 
 .custom-input:focus {
-    border-color: #ff7a00;
-    box-shadow: 0 0 0 2px rgba(255, 122, 0, 0.1);
+  border-color: #ff7a00;
+  box-shadow: 0 0 0 2px rgba(255, 122, 0, 0.1);
 }
 
 .btn-orange {
-    height: 44px;
-    font-weight: 500;
-    border-radius: 8px;
+  height: 44px;
+  font-weight: 500;
+  border-radius: 8px;
 }
 
 .btn-outline-dark {
-    height: 44px;
-    border-radius: 8px;
+  height: 44px;
+  border-radius: 8px;
 }

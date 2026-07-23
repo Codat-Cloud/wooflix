@@ -62,7 +62,7 @@
                                     $isInCart = in_array((int)$selectedId, $cartVariantIds);
                                 @endphp
 
-                                <div class="product-card">
+                                <div class="product-card product-card-slider">
                                     <div class="product-image">
                                         @if($discount > 0)
                                             <span class="product-badge">{{ $discount }}% OFF</span>

@@ -85,6 +85,7 @@
       {{-- 2. TABBED DEALS LAYOUT (Special Product Slider) --}}
       @if($isTabbed)
         <section class="deals-section mt-5">
+            
             <div class="container-xxl">
                 <h2 class="fw-bold">{{ $section->title }}</h2>
                 <p class="deals-subtitle">{{ $section->subtitle }}</p>
@@ -102,23 +103,21 @@
                 </ul>
             </div>
 
-          <div class="tab-content">
-            @foreach($section->items as $index => $item)
-                <div class="tab-pane fade {{ $index === 0 ? 'show active' : '' }}" id="tab-{{ $section->id }}-{{ $index }}">
-                    <div class="container-xxl">
-                        <div class="deals-wrapper">
-                            
-                            {{-- 🟢 REUSED: Dynamic interactive product grid component replaces the hardcoded static loop --}}
-                            @livewire('front.product-grid', [
-                                'mode' => 'featured', 
-                                'categoryId' => (int) $item->item_id 
-                            ], key('deals-tab-grid-' . $item->id . '-' . $index))
+            <div class="tab-content">
+                @foreach($section->items as $index => $item)
+                    <div class="tab-pane fade {{ $index === 0 ? 'show active' : '' }}" id="tab-{{ $section->id }}-{{ $index }}">
+                        <div class="container-xxl">
+                                
+                                {{-- 🟢 REUSED: Dynamic interactive product grid component replaces the hardcoded static loop --}}
+                                @livewire('front.product-grid', [
+                                    'mode' => 'featured', 
+                                    'categoryId' => (int) $item->item_id 
+                                ], key('deals-tab-grid-' . $item->id . '-' . $index))
 
                         </div>
                     </div>
-                </div>
-            @endforeach
-          </div>
+                @endforeach
+            </div>
         </section>
 
       {{-- 3. STANDARD GRID OR SCROLL (Brands & Categories) --}}
