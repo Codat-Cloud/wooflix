@@ -20,6 +20,13 @@
     padding: 3px 0;
     text-decoration: none;
 }
+
+/* 🟢 Active Underline on Hover / Open Dropdown */
+.nav-menu > li:hover > a,
+.nav-menu > li.has-mega:hover > a {
+    color: #ff6b00; /* Matches brand orange (or change to #000 if you prefer solid black) */
+}
+
 </style>
 
 <header class="main-header d-none d-lg-block fixed-top">
@@ -160,7 +167,7 @@
       </li>
 
       <li class="has-mega">
-        <a href="{{ url('/brands') }}">Brands</a>
+        <a href="#">Brands</a>
 
         <div class="mega-menu shadow">
           <div class="mega-inner container-xxl">

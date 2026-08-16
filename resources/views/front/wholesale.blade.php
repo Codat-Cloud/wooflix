@@ -1,17 +1,9 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Wooflix - Wholesale Inquiry</title>
+@extends('layouts.front')
 
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+@section('content')
 
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    {{-- <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script> --}}
 
     <style>
         :root {
@@ -20,14 +12,8 @@
             --bg-soft: #f4f7f6;
         }
 
-        body {
-            background-color: var(--bg-soft);
-            color: var(--primary-dark);
-            font-family: 'Figtree', sans-serif;
-        }
-
         .wholesale-wrapper {
-            min-height: 100vh;
+            min-height: 80vh;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -98,7 +84,6 @@
         .btn-orange {
             background: var(--primary-orange);
             color: white;
-            padding: 12px 30px;
             border-radius: 10px;
             font-weight: 600;
             border: none;
@@ -120,8 +105,8 @@
             font-weight: 600;
             border: 1px solid #ddd;
         }
+        
     </style>
-</head>
 <body class="antialiased">
 
 <div class="wholesale-wrapper" x-data="wholesaleForm()">
@@ -307,5 +292,4 @@ function wholesaleForm() {
     }
 }
 </script>
-</body>
-</html>
+@endsection

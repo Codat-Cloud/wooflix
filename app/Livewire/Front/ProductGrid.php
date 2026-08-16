@@ -209,7 +209,6 @@ class ProductGrid extends Component
             $query->whereHas('categories', function ($q) {
                 $q->where('categories.id', $this->categoryId);
             })->where('products.id', '!=', $this->parentProductId);
-
         } elseif ($this->mode === 'featured' && $this->categoryId) {
             // 🟢 FIXED: Pull products from the selected category OR any of its subcategories
             $query->whereHas('categories', function ($q) {
@@ -218,7 +217,6 @@ class ProductGrid extends Component
                         ->orWhere('categories.parent_id', $this->categoryId);
                 });
             })->where('products.is_featured', true);
-
         } else {
             // Search Query
             if (!empty($this->search)) {
@@ -326,10 +324,29 @@ class ProductGrid extends Component
             }
         }
 
+
+        // 1. Extract selected tag IDs that belong strictly to the 'pet_type' group
+        $selectedPetTypeTagIds = [];
+        if (!empty($this->selectedTags)) {
+            $selectedPetTypeTagIds = ProductFilterTag::whereIn('slug', $this->selectedTags)
+                ->where('type', 'pet_type')
+                ->pluck('id')
+                ->toArray();
+        }
+
+        // 2. Load top-level parent categories ONLY when at least one pet_type is selected
+        $categories = collect();
+        if ($this->mode === 'all' && !empty($selectedPetTypeTagIds)) {
+            $categories = Category::whereNull('parent_id')
+                ->whereIn('pet_type_tag_id', $selectedPetTypeTagIds)
+                ->withCount('products')
+                ->get();
+        }
+
         return view('livewire.front.product-grid', [
             'products' => $query->paginate($this->perPage),
             'brands' => $this->mode === 'all' ? Brand::withCount('products')->get() : collect(),
-            'categories' => $this->mode === 'all' ? Category::whereNull('parent_id')->withCount('products')->get() : collect(),
+            'categories' => $categories,
             'filterGroups' => $this->mode === 'all' ? ProductFilterTag::grouped() : [],
             'seoTitle' => $seoTitle,
             'selectedBrands' => $this->selectedBrands,
