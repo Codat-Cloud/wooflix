@@ -22,12 +22,14 @@ class SiteSetting extends Model
     protected static function booted()
     {
         static::saved(function ($setting) {
-            // Forget the cache for this specific key so the footer updates immediately
+            // 🟢 Invalidate both the individual key and the global bulk cache
             Cache::forget("setting.{$setting->key}");
+            Cache::forget('site_settings_all');
         });
 
         static::deleted(function ($setting) {
             Cache::forget("setting.{$setting->key}");
+            Cache::forget('site_settings_all');
         });
     }
 }

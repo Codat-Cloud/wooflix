@@ -99,7 +99,7 @@ class FormSubmissionsTable
             ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make(),
+                // EditAction::make(),
                 Action::make('toggleRead')
                     ->label(fn(FormSubmission $record) => $record->is_read ? 'Mark Unread' : 'Mark Read')
                     ->icon(fn(FormSubmission $record) => $record->is_read ? 'heroicon-o-envelope' : 'heroicon-o-envelope-open')

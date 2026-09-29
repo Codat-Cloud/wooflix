@@ -149,6 +149,7 @@ $variants = $product->variants->map(function ($v) {
                 mrp: null,
                 adding: false,
                 added: false,
+                buying: false, // 🟢 Tracks Buy Now action
                 isOutOfStock: false,
 
                 init() {
@@ -191,7 +192,15 @@ $variants = $product->variants->map(function ($v) {
                     return Math.round(((this.mrp - this.price) / this.mrp) * 100);
                 }
             }" 
-            @cart-updated.window="inCartVariants = [...($event.detail.variant_ids || [])]; adding = false; added = true; setTimeout(() => added = false, 2000);">
+            @cart-updated.window="inCartVariants = [...($event.detail.variant_ids || [])]; adding = false; added = true; setTimeout(() => added = false, 2000);
+            {{-- 🟢 If triggered via 'Buy Now', redirect immediately to checkout --}}
+            if (buying) {
+                window.location.href = '{{ route('front.checkout') }}';
+            } else {
+                added = true;
+                setTimeout(() => added = false, 2000);
+            }
+            ">
 
               <!-- PRICE -->
               <div class="product-price border-bottom">
@@ -237,6 +246,12 @@ $variants = $product->variants->map(function ($v) {
                                     :class="selected?.id === v.id ? 'active' : ''"
                                     @click="select(v)"
                                 >
+                                    <!-- Checkmark indicator when active -->
+                                    <template x-if="selected?.id === v.id">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="me-1">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                    </template>
 
                                     <span x-text="v.name"></span>
 
@@ -245,7 +260,6 @@ $variants = $product->variants->map(function ($v) {
                                             x-text="Math.round(((v.price - v.sale_price)/v.price)*100) + '% OFF'">
                                         </span>
                                     </template>
-
                                 </button>
 
                             </div>
@@ -264,44 +278,99 @@ $variants = $product->variants->map(function ($v) {
                 </div>
 
 
-                    <button 
-                        class="btn add-cart-btn w-100"
-                        :class="{
-                            'btn-orange': !adding && !isAdded() && !isOutOfStock,
-                            'btn-secondary text-decoration-line-through': isOutOfStock || adding,
-                            'btn-success': isAdded() && !isOutOfStock
-                        }"
-                        :disabled="adding || isAdded() || isOutOfStock"
-                        @click="
-                            if (adding || isAdded() || isOutOfStock) return;
+                    <div class="product-actions-group d-flex flex-column flex-sm-row gap-2 mt-3">
 
-                            if (!selected || !selected.id) {
-                                alert('Please select a variant first');
-                                return;
-                            }
+                        {{-- 1. ADD TO CART BUTTON --}}
+                        <button 
+                            type="button"
+                            class="btn add-cart-btn flex-grow-1"
+                            :class="{
+                                'btn-outline-orange': !adding && !isAdded() && !isOutOfStock,
+                                'btn-secondary text-white': isOutOfStock || adding,
+                                'btn-success text-white': isAdded() && !isOutOfStock
+                            }"
+                            :disabled="adding || isAdded() || isOutOfStock || buying"
+                            @click="
+                                if (adding || isAdded() || isOutOfStock || buying) return;
 
-                            adding = true;
-
-                            window.dispatchEvent(new CustomEvent('add-to-cart', {
-                                detail: {
-                                    variant_id: selected.id,
-                                    product_id: {{ $product->id }}
+                                if (!selected || !selected.id) {
+                                    alert('Please select a variant first');
+                                    return;
                                 }
-                            }));
-                        "
-                    >
-                        <template x-if="isOutOfStock">
-                            <span>Out of Stock</span>
-                        </template>
-                        
-                        <template x-if="!isOutOfStock">
-                            <span>
-                                <span x-show="!adding && !isAdded()">Add To Cart</span>
-                                <span x-show="adding">Adding...</span>
-                                <span x-show="isAdded()">Already in Cart ✓</span>
-                            </span>
-                        </template>
-                    </button>
+
+                                adding = true;
+
+                                window.dispatchEvent(new CustomEvent('add-to-cart', {
+                                    detail: {
+                                        variant_id: selected.id,
+                                        product_id: {{ $product->id }}
+                                    }
+                                }));
+                            "
+                        >
+                            <template x-if="isOutOfStock">
+                                <span>Out of Stock</span>
+                            </template>
+                            
+                            <template x-if="!isOutOfStock">
+                                <span>
+                                    <span x-show="!adding && !isAdded()">Add To Cart</span>
+                                    <span x-show="adding">
+                                        <span class="spinner-border spinner-border-sm me-1" role="status"></span> Adding...
+                                    </span>
+                                    <span x-show="isAdded()">Already in Cart ✓</span>
+                                </span>
+                            </template>
+                        </button>
+
+                        {{-- 2. BUY NOW BUTTON --}}
+                        <button 
+                            type="button"
+                            class="btn buy-now-btn flex-grow-1"
+                            :class="{
+                                'btn-orange': !isOutOfStock && !buying,
+                                'btn-secondary text-white': isOutOfStock || buying
+                            }"
+                            :disabled="isOutOfStock || buying || adding"
+                            @click="
+                                if (isOutOfStock || buying || adding) return;
+
+                                if (!selected || !selected.id) {
+                                    alert('Please select a variant first');
+                                    return;
+                                }
+
+                                // If already in cart, skip adding and go straight to checkout
+                                if (isAdded()) {
+                                    window.location.href = '{{ Route::has('front.checkout') ? route('front.checkout') : (Route::has('checkout') ? route('checkout') : route('front.cart')) }}';
+                                    return;
+                                }
+
+                                buying = true;
+
+                                window.dispatchEvent(new CustomEvent('add-to-cart', {
+                                    detail: {
+                                        variant_id: selected.id,
+                                        product_id: {{ $product->id }}
+                                    }
+                                }));
+                            "
+                        >
+                            <template x-if="isOutOfStock">
+                                <span>Sold Out</span>
+                            </template>
+
+                            <template x-if="!isOutOfStock">
+                                <span>
+                                    <span x-show="!buying">⚡ Buy Now</span>
+                                    <span x-show="buying">
+                                        <span class="spinner-border spinner-border-sm me-1" role="status"></span> Processing...
+                                    </span>
+                                </span>
+                            </template>
+                        </button>
+
+                    </div>
               </div>
 
 

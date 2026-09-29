@@ -27,11 +27,6 @@ Route::get('/send-test-email', function () {
     return 'Test email has been dispatched successfully!';
 });
 
-Route::get('/{slug}', function ($slug) {
-    $page = Page::where('slug', $slug)->where('is_active', true)->firstOrFail();
-    return view('front.page', compact('page'));
-})->name('front.page');
-
 
 Route::post('/contact/send', [ContactController::class, 'send'])->name('contact.send');
 
@@ -112,5 +107,10 @@ Route::middleware('auth')->group(function () {
 Route::get('/login', [EmailAuthController::class, 'showLoginPage'])->name('login');
 Route::post('/auth/send-otp', [EmailAuthController::class, 'sendOtp'])->name('auth.send-otp');
 Route::post('/auth/verify-otp', [EmailAuthController::class, 'verifyOtp'])->name('auth.verify-otp');
+
+Route::get('/{slug}', function ($slug) {
+    $page = Page::where('slug', $slug)->where('is_active', true)->firstOrFail();
+    return view('front.page', compact('page'));
+})->name('front.page');
 
 require __DIR__ . '/auth.php';

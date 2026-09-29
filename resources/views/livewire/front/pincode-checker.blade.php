@@ -7,8 +7,8 @@
 
     <div class="delivery-checker mb-3">
 
+        {{-- 
     <div class="d-flex gap-2">
-
         <input
             type="text"
             wire:model.lazy="pincode"
@@ -25,12 +25,10 @@
             style="min-width: 90px;"
             class="btn btn-warning"
         >
-            {{-- NORMAL TEXT --}}
             <span wire:loading.remove wire:target="check">
                 Check
             </span>
 
-            {{-- LOADER --}}
             <span wire:loading wire:target="check">
 
             <span
@@ -40,8 +38,8 @@
             ></span>
 
             </span>
-        </button>
-
+        </button> 
+        
     </div>
 
     @error('pincode')
@@ -50,7 +48,7 @@
             {{ $message }}
         </small>
 
-    @enderror
+    @enderror --}}
 
 </div>
 

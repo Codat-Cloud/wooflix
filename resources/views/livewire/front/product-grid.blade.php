@@ -1,5 +1,5 @@
 <div>
-    {{-- 1. CATALOG TOPBAR & BREADCRUMBS (Only displays on full shop layout) --}}
+    {{-- 1. CATALOG TOPBAR & BREADCRUMBS --}}
     @if($mode === 'all')
         <nav aria-label="breadcrumb" class="breadcrumb-wrapper">
             <div class="container-xxl">
@@ -62,7 +62,7 @@
                                     $isInCart = in_array((int)$selectedId, $cartVariantIds);
                                 @endphp
 
-                                <div class="product-card product-card-slider">
+                                <div class="product-card product-card-slider" wire:key="slider-product-{{ $product->id }}">
                                     <div class="product-image">
                                         @if($discount > 0)
                                             <span class="product-badge">{{ $discount }}% OFF</span>
@@ -163,7 +163,7 @@
                                 $isInCart = in_array((int)$selectedId, $cartVariantIds);
                             @endphp
 
-                            <div class="col-6 col-md-4 col-lg-3">
+                            <div class="col-6 col-md-4 col-lg-3" wire:key="grid-product-{{ $product->id }}">
                                 <div class="product-card h-100 d-flex flex-column justify-content-between rounded bg-white overflow-hidden">
                                     <div class="product-image">
                                         @if($discount > 0)
@@ -245,7 +245,6 @@
                         @endforelse
                     </div>
 
-                    {{-- Infinite Scroll Observer Sentinel (Only triggers during full directory exploration) --}}
                     @if($mode === 'all' && $products->hasMorePages())
                         <div 
                             x-data 
@@ -264,7 +263,7 @@
         </div>
     </div>
 
-{{-- 3. SIDEBAR OFFCANVAS INTERFACE SLIDER (Global Shop Mode Only) --}}
+    {{-- 3. SIDEBAR OFFCANVAS INTERFACE SLIDER --}}
     @if($mode === 'all')
         <div wire:ignore.self class="offcanvas offcanvas-start" tabindex="-1" id="filterDrawer">
             <div class="offcanvas-header">
@@ -276,11 +275,11 @@
                 <div class="filter-sidebar">
                     
                     {{-- BRANDS FILTER --}}
-                    <div class="filter-group">
+                    <div class="filter-group" wire:key="filter-group-brands">
                         <button class="filter-toggle">Brands <span class="arrow">⌄</span></button>
                         <div class="filter-content">
                             @foreach($brands as $brand)
-                                <label class="filter-option">
+                                <label class="filter-option" wire:key="brand-opt-{{ $brand->slug }}">
                                     <input 
                                         type="checkbox"
                                         wire:click="toggleBrand('{{ $brand->slug }}')"
@@ -293,19 +292,26 @@
                         </div>
                     </div>
 
-                    {{-- FILTER TAGS (Includes Pet Type - Placed first so users see it immediately) --}}
+                    {{-- FILTER TAGS & DYNAMIC CATEGORY INJECTION --}}
+                    @php $categoryRendered = false; @endphp
+
                     @foreach($filterGroups as $type => $tags)
-                        <div class="filter-group">
+                        @php
+                            $isPetType = in_array(strtolower(str_replace(['_', '-'], '', $type)), ['pettype', 'pet', 'pettypes']);
+                        @endphp
+
+                        {{-- Current Tag Group (e.g. Pet Type, Color, Size) --}}
+                        <div class="filter-group" wire:key="filter-group-{{ $type }}">
                             <button class="filter-toggle">
                                 {{ ucfirst(str_replace('_', ' ', $type)) }} <span class="arrow">⌄</span>
                             </button>
                             <div class="filter-content">
                                 @foreach($tags as $tag)
-                                    <label class="filter-option">
+                                    <label class="filter-option" wire:key="tag-opt-{{ $tag->slug }}">
                                         <input 
                                             type="checkbox"
                                             wire:click="toggleTag('{{ $tag->slug }}')"
-                                            @checked(in_array($tag->slug, $selectedTags))
+                                            @checked(in_array($tag->slug, $selectedTags ?? []))
                                         />
                                         <span class="checkmark"></span>
                                         {{ $tag->name }}
@@ -313,31 +319,60 @@
                                 @endforeach
                             </div>
                         </div>
+
+                        {{-- 🟢 CATEGORY FILTER (Rendered immediately below Pet Type) --}}
+                        @if($isPetType)
+                            @php $categoryRendered = true; @endphp
+                            <div class="filter-group" wire:key="filter-group-category-injected">
+                                <button class="filter-toggle">Category <span class="arrow">⌄</span></button>
+                                <div class="filter-content">
+                                    @if($categories->isNotEmpty())
+                                        @foreach($categories as $cat)
+                                            <label class="filter-option" wire:key="cat-opt-{{ $cat->slug }}">
+                                                <input 
+                                                    type="checkbox"
+                                                    wire:click="toggleCategory('{{ $cat->slug }}')"
+                                                    @checked(in_array($cat->slug, $selectedCategories ?? []))
+                                                />
+                                                <span class="checkmark"></span>
+                                                {{ $cat->name }} 
+                                            </label>
+                                        @endforeach
+                                    @else
+                                        <p class="text-muted small my-2 px-1">
+                                            🐾 Select a <strong>Pet Type</strong> above to view relevant categories.
+                                        </p>
+                                    @endif
+                                </div>
+                            </div>
+                        @endif
                     @endforeach
 
-                    {{-- CATEGORY FILTER (Hidden until Pet Type is selected) --}}
-                    <div class="filter-group">
-                        <button class="filter-toggle">Category <span class="arrow">⌄</span></button>
-                        <div class="filter-content">
-                            @if($categories->isNotEmpty())
-                                @foreach($categories as $cat)
-                                    <label class="filter-option">
-                                        <input 
-                                            type="checkbox"
-                                            wire:click="toggleCategory('{{ $cat->slug }}')"
-                                            @checked(in_array($cat->slug, $selectedCategories ?? []))
-                                        />
-                                        <span class="checkmark"></span>
-                                        {{ $cat->name }} 
-                                    </label>
-                                @endforeach
-                            @else
-                                <p class="text-muted small my-2 px-1">
-                                    🐾 Select a <strong>Pet Type</strong> above to view relevant categories.
-                                </p>
-                            @endif
+                    {{-- Fallback: If no group was identified as Pet Type, render Category here --}}
+                    @if(!$categoryRendered)
+                        <div class="filter-group" wire:key="filter-group-category-fallback">
+                            <button class="filter-toggle">Category <span class="arrow">⌄</span></button>
+                            <div class="filter-content">
+                                @if($categories->isNotEmpty())
+                                    @foreach($categories as $cat)
+                                        <label class="filter-option" wire:key="cat-opt-fb-{{ $cat->slug }}">
+                                            <input 
+                                                type="checkbox"
+                                                wire:click="toggleCategory('{{ $cat->slug }}')"
+                                                @checked(in_array($cat->slug, $selectedCategories ?? []))
+                                            />
+                                            <span class="checkmark"></span>
+                                            {{ $cat->name }} 
+                                        </label>
+                                    @endforeach
+                                @else
+                                    <p class="text-muted small my-2 px-1">
+                                        🐾 Select a <strong>Pet Type</strong> above to view relevant categories.
+                                    </p>
+                                @endif
+                            </div>
                         </div>
-                    </div>
+                    @endif
 
                 </div>
             </div>

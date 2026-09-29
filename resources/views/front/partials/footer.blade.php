@@ -1,7 +1,7 @@
     <!-- USP Section -->
     <section class="usp-section">
       <div class="container-xxl">
-        <div class="row text-center g-3">
+        <div class="row g-3">
           <div class="col-12 col-lg">
             <div class="usp-item">
               <!-- FREE SHIPPING -->
@@ -27,8 +27,8 @@
 
               <h6>FREE SHIPPING</h6>
 
-              <p>On Orders Above ₹699</p>
             </div>
+            <p class="usp-text">On Orders Above ₹699</p>
           </div>
 
           <div class="col-12 col-lg">
@@ -52,8 +52,8 @@
 
               <h6>FREE RETURNS</h6>
 
-              <p>Within 7 days (T&C Apply)</p>
             </div>
+            <p class="usp-text">Within 7 days (T&C Apply)</p>
           </div>
 
           <div class="col-12 col-lg">
@@ -90,8 +90,8 @@
 
               <h6>SECURE PAYMENT</h6>
 
-              <p>Your Transaction is Secure</p>
             </div>
+            <p class="usp-text">Your Transaction is Secure</p>
           </div>
 
           <div class="col-12 col-lg">
@@ -117,8 +117,8 @@
 
               <h6>BEST SUPPORT</h6>
 
-              <p>Mon - Fri. 9 AM to 9 PM</p>
             </div>
+            <p class="usp-text">Mon - Fri. 9 AM to 9 PM</p>
           </div>
 
           <div class="col-12 col-lg">
@@ -146,8 +146,8 @@
 
               <h6>FAST DELIVERY</h6>
 
-              <p>We Deliver on Time</p>
             </div>
+            <p class="usp-text">We Deliver on Time</p>
           </div>
         </div>
       </div>
@@ -157,65 +157,38 @@
     <footer class="site-footer">
       <div class="container-xxl">
         <div class="row footer-top">
-          <div class="col-6 col-md-3">
-            <h6>SHOP FOR</h6>
 
-            <ul>
-              <li><a href="#">Dogs</a></li>
-              <li><a href="#">Cats</a></li>
-              <li><a href="#">Birds</a></li>
-              <li><a href="#">Small Animal</a></li>
-              <li><a href="#" class="highlight">Pharmacy</a></li>
-              <li><a href="#">Online Vet Consult</a></li>
-              <li><a href="#">Adoption</a></li>
-            </ul>
-          </div>
+          <div class="col-md-9">
 
-          <div class="col-6 col-md-3">
-            <h6>QUICK LINKS</h6>
+            <div class="row">
+              {{-- Dynamic Footer Groups (Max 3) --}}
+              @foreach($footerGroups as $group)
+                <div class="col-6 col-md-3">
+                  <h6>{{ strtoupper($group->name) }}</h6>
 
-            <ul>
-              <li><a href="#">About Us</a></li>
-              <li><a href="#">Contact Us</a></li>
-              <li><a href="{{route('order.track')}}">Track Your Order</a></li>
-            <ul>
-                @foreach($footerPages as $p)
-                    <li>
-                        <a href="{{ route('front.page', $p->slug) }}">
-                            {{ $p->title }}
+                  <ul>
+                    @foreach($group->children as $link)
+                      <li>
+                        <a href="{{ $link->url ?? '#' }}">
+                          {{ $link->name }}
                         </a>
-                    </li>
-                @endforeach
-            </ul>
-            </ul>
+                      </li>
+                    @endforeach
+                  </ul>
+                </div>
+              @endforeach
+              </div>
           </div>
 
-          <div class="col-6 col-md-3">
-            <h6>EXPLORE IT</h6>
-
-            <ul>
-              <li><a href="#">Careers</a></li>
-              <li><a href="#">Birthday Club</a></li>
-              <li><a href="#">Learn With Wooflix</a></li>
-              <li><a href="#">Customers Love</a></li>
-            </ul>
-          </div>
-
+          {{-- Newsletter Subscription (4th Column) --}}
           <div class="col-md-3">
-            {{-- <h6>DOWNLOAD WOOFLIX APP</h6>
-
-            <div class="app-buttons">
-              <img src="assets/images/google-play.png" />
-
-              <img src="assets/images/app-store.png" />
-            </div> --}}
-
             <h6 class="subscribe-title mt-0">
               SUBSCRIBE FOR LATEST OFFERS AND DISCOUNTS
             </h6>
 
             @livewire('front.newsletter-form')
           </div>
+
         </div>
       </div>
 
