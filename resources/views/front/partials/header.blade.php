@@ -1,43 +1,13 @@
-<style>
-  /* Fluid Masonry Columns for Mega Menu Dropdowns */
-.mega-menu-masonry {
-    column-count: 4;       /* Maintains your balanced 4-column desktop layout */
-    column-gap: 2rem;      /* Creates clean space between column groups */
-    width: 100%;
-    padding: 15px 0;
-}
-
-.mega-masonry-item {
-    display: inline-block; /* Fixes Firefox rendering split alignment glitches */
-    width: 100%;
-    break-inside: avoid;   /* CRUCIAL: Keeps parent and subcategories locked together */
-    margin-bottom: 1.5rem; /* Even spacing between vertically stacked items */
-}
-
-/* Optional styling tweak to make subcategories stack vertically like clean list links */
-.mega-column a {
-    display: block;
-    padding: 3px 0;
-    text-decoration: none;
-}
-
-/* 🟢 Active Underline on Hover / Open Dropdown */
-.nav-menu > li:hover > a,
-.nav-menu > li.has-mega:hover > a {
-    color: #ff6b00; /* Matches brand orange (or change to #000 if you prefer solid black) */
-}
-
-</style>
-
 <header class="main-header d-none d-lg-block fixed-top">
+  @if(!empty($settings['top_bar']))
   <div class="top-strip">
-    <div class="container-xxl d-flex justify-content-between">
-      <div class="top-links d-none d-lg-block">
-        <a href="{{route('order.track')}}">Track Order</a>
+    <div class="container-xxl d-flex justify-content-center">
+      <div>
+        {{ $settings['top_bar' ?? ''] }}
       </div>
-      <div>Sara’s Wholesome - Balanced Nutrition for Dogs</div>
     </div>
   </div>
+  @endif
 
   <div class="pt-3 pb-2">
     <div class="container-xxl">

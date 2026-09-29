@@ -1,7 +1,7 @@
 body {
   font-family: Arial, sans-serif;
   background: #ffffff;
-  padding-bottom: 70px;
+  /* padding-bottom: 70px; */
 }
 
 /* TOP STRIP */
@@ -2882,4 +2882,53 @@ body {
 .btn-outline-dark {
   height: 44px;
   border-radius: 8px;
+}
+
+    /* Fluid Masonry Columns for Mega Menu Dropdowns */
+    .mega-menu-masonry {
+      column-count: 4;
+      /* Maintains your balanced 4-column desktop layout */
+      column-gap: 2rem;
+      /* Creates clean space between column groups */
+      width: 100%;
+      padding: 15px 0;
+    }
+  
+    .mega-masonry-item {
+      display: inline-block;
+      /* Fixes Firefox rendering split alignment glitches */
+      width: 100%;
+      break-inside: avoid;
+      /* CRUCIAL: Keeps parent and subcategories locked together */
+      margin-bottom: 1.5rem;
+      /* Even spacing between vertically stacked items */
+    }
+  
+    /* Optional styling tweak to make subcategories stack vertically like clean list links */
+    .mega-column a {
+      display: block;
+      padding: 3px 0;
+      text-decoration: none;
+    }
+  
+    /* 🟢 Active Underline on Hover / Open Dropdown */
+    .nav-menu>li:hover>a,
+    .nav-menu>li.has-mega:hover>a {
+      color: #ff6b00;
+      /* Matches brand orange (or change to #000 if you prefer solid black) */
+    }
+
+
+.social-icons a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.social-icons a:hover {
+  color: #ff6b00;
+  /* Theme brand color */
+  transform: translateY(-2px);
 }

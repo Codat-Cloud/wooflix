@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\PageBuilderController;
 use App\Http\Controllers\Auth\EmailAuthController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\FrontController;
 use App\Http\Controllers\OrderTrackingController;
 use App\Http\Controllers\PaymentController;
@@ -25,11 +27,13 @@ Route::get('/send-test-email', function () {
     return 'Test email has been dispatched successfully!';
 });
 
-Route::get('/policy/{slug}', function ($slug) {
+Route::get('/{slug}', function ($slug) {
     $page = Page::where('slug', $slug)->where('is_active', true)->firstOrFail();
     return view('front.page', compact('page'));
 })->name('front.page');
 
+
+Route::post('/contact/send', [ContactController::class, 'send'])->name('contact.send');
 
 
 Route::get('/blogs', [FrontController::class, 'blogs'])->name('front.blogs.index');
@@ -63,6 +67,12 @@ Route::prefix('cart')->group(function () {
     Route::post('/add', [CartController::class, 'add'])->name('cart.add');
 });
 
+
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    // GrapesJS Fullscreen Editor
+    Route::get('pages/{page}/builder', [PageBuilderController::class, 'edit'])->name('pages.builder');
+    Route::post('pages/{page}/builder', [PageBuilderController::class, 'update'])->name('pages.builder.update');
+});
 
 Route::middleware('auth')->group(function () {
 

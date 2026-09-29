@@ -124,9 +124,12 @@ class ManageSettings extends Page
                             ]),
 
                         // TAB 4: FOOTER CONTENT
-                        Tab::make('Footer')
+                        Tab::make('Header & Footer')
                             ->icon('heroicon-m-queue-list')
                             ->schema([
+                                TextInput::make('top_bar')
+                                    ->helperText('A short single line for top bar.'),
+
                                 RichEditor::make('footer_about')->columnSpanFull()
                                     ->helperText('A short 2-3 sentence description of Wooflix to build brand trust at the bottom of every page.'),
                                 TextInput::make('popular_searches')

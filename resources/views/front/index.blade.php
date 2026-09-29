@@ -164,35 +164,6 @@
       @endif
   @endforeach
 
-  {{-- Single Category Banner --}}
-  <section class="promo-section">
-    <div class="">
-      <div class="row g-0 promo-wrapper">
-        <div class="col-lg-6">
-          <div class="promo-image">
-            <img src="{{ asset('/images/promo.jpg')}}" alt="Pet With Toy" />
-          </div>
-        </div>
-
-        <div class="col-lg-6">
-          <div class="promo-content">
-            <h3>
-              GET UP TO 25% OFF ON ALL MEDICINES<br />
-              FOR YOUR PET WITH WOOFLIX PHARMACY
-            </h3>
-
-            <p>
-              VACCINATIONS | DEWORMING | AND MANY MORE<br />
-              HEALTH SUPPLEMENTS ARE ALSO AVAILABLE
-            </p>
-
-            <a href="{{route('front.shop')}}" class="promo-btn"> SHOP NOW </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   {{-- Blog Section --}}
   <section class="blog-section">
     <div class="container-xxl">

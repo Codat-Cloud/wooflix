@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Pages\Tables;
 
+use App\Models\Page;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -38,6 +40,13 @@ class PagesTable
             ])
             ->recordActions([
                 EditAction::make(),
+                Action::make('design')
+                    ->label('Design')
+                    ->icon('heroicon-o-paint-brush')
+                    ->color('warning')
+                    ->url(fn(Page $record) => route('admin.pages.builder', $record->id))
+                    ->openUrlInNewTab()
+                    ->visible(fn(Page $record) => $record->isVisualBuilder()),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
