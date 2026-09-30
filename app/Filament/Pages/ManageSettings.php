@@ -44,10 +44,29 @@ class ManageSettings extends Page
     {
         $settings = SiteSetting::pluck('value', 'key')->toArray();
 
-        // 🟢 Decode JSON string for the Repeater so existing items populate properly
+        // 1. Decode Delivery Service Info
         if (! empty($settings['delivery_service_info']) && is_string($settings['delivery_service_info'])) {
             $decoded = json_decode($settings['delivery_service_info'], true);
             $settings['delivery_service_info'] = is_array($decoded) ? $decoded : [];
+        }
+
+        // 2. Decode Popular Searches (with backward compatibility)
+        if (! empty($settings['popular_searches']) && is_string($settings['popular_searches'])) {
+            $decoded = json_decode($settings['popular_searches'], true);
+
+            if (is_array($decoded)) {
+                $settings['popular_searches'] = $decoded;
+            } else {
+                // Convert old comma-separated string to repeater items automatically
+                $settings['popular_searches'] = collect(explode(',', $settings['popular_searches']))
+                    ->map(fn($k) => [
+                        'keyword' => trim($k),
+                        'url'     => '/shop?q=' . urlencode(trim($k)),
+                    ])
+                    ->filter(fn($item) => ! empty($item['keyword']))
+                    ->values()
+                    ->toArray();
+            }
         }
 
         $this->form->fill($settings);
@@ -140,8 +159,26 @@ class ManageSettings extends Page
 
                                 RichEditor::make('footer_about')->columnSpanFull()
                                     ->helperText('A short 2-3 sentence description of Wooflix to build brand trust at the bottom of every page.'),
-                                TextInput::make('popular_searches')
-                                    ->helperText('Separate keywords with commas.'),
+                                Repeater::make('popular_searches')
+                                    ->label('Popular Search Keywords')
+                                    ->schema([
+                                        TextInput::make('keyword')
+                                            ->label('Keyword / Phrase')
+                                            ->placeholder('e.g. Royal Canin Dog Food')
+                                            ->required(),
+
+                                        TextInput::make('url')
+                                            ->label('Target URL')
+                                            ->placeholder('e.g. /shop?q=royal+canin or /collection/dog-food')
+                                            ->required(),
+                                    ])
+                                    ->columns(2)
+                                    ->reorderable()
+                                    ->collapsible()
+                                    ->defaultItems(3)
+                                    ->itemLabel(fn(array $state): ?string => $state['keyword'] ?? 'Search Keyword')
+                                    ->columnSpanFull()
+                                    ->helperText('Add keywords and the destination search or collection page to open when clicked.'),
                             ]),
 
                         // TAB 5: GLOBAL SEO
@@ -299,8 +336,8 @@ class ManageSettings extends Page
         $data = $this->form->getState();
 
         foreach ($data as $key => $value) {
-            // 🟢 Correctly encode Repeater array to JSON; handle file uploads with Arr::first
-            if ($key === 'delivery_service_info') {
+            // Encode repeaters to JSON
+            if (in_array($key, ['delivery_service_info', 'popular_searches'])) {
                 $finalValue = is_array($value) ? json_encode(array_values($value)) : $value;
             } elseif (is_array($value)) {
                 $finalValue = Arr::first($value);
@@ -316,7 +353,6 @@ class ManageSettings extends Page
             Cache::forget("setting.$key");
         }
 
-        // 🟢 Invalidate global settings cache
         Cache::forget('site_settings_all');
 
         $this->mount();

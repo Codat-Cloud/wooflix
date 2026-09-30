@@ -192,25 +192,20 @@
         </div>
       </div>
 
-      @if(!empty($settings['popular_searches']))
-        <div class="popular-search">
-          <div class="container-xxl">
-            <strong>POPULAR SEARCHES:</strong>
-              @foreach(explode(',', $settings['popular_searches']) as $keyword)
-                  @php $trimmed = trim($keyword); @endphp
-                  
-                  @if($trimmed)
-                      <a href="{{ url('/collections?q='.$trimmed) }}" class="popular-link text-decoration-none text-dark">
-                          {{ $trimmed }}
-                      </a>
+      @if(!empty($popularSearches))
+        <div class="popular-search py-3">
+            <div class="container-xxl">
+                <span class="popular-search-label fw-bold me-2">Popular Searches:</span>
 
-                      {{-- Add the pipe separator only if it's NOT the last item --}}
-                      @if (!$loop->last)
-                          <span>|</span>
-                      @endif
-                  @endif
-              @endforeach
-          </div>
+                @foreach($popularSearches as $item)
+                    <a href="{{ $item['url'] ?? '#' }}" class="popular-search-link">
+                        {{ $item['keyword'] }}
+                    </a>
+                    @if(!$loop->last)
+                        <span class="popular-search-separator mx-2 text-muted">|</span>
+                    @endif
+                @endforeach
+            </div>
         </div>
       @endif
 

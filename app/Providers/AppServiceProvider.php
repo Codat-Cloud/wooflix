@@ -99,6 +99,26 @@ class AppServiceProvider extends ServiceProvider
                         ['icon' => 'free',      'text' => 'Enjoy Free Delivery above', 'highlight' => '₹699'],
                     ];
 
+                $rawSearches = $allSettings['popular_searches'] ?? null;
+                $popularSearches = [];
+
+                if (! empty($rawSearches)) {
+                    $decoded = is_array($rawSearches) ? $rawSearches : json_decode($rawSearches, true);
+                    if (is_array($decoded)) {
+                        $popularSearches = $decoded;
+                    } else {
+                        // Fallback for legacy comma-separated string
+                        $popularSearches = collect(explode(',', $rawSearches))
+                            ->map(fn($k) => [
+                                'keyword' => trim($k),
+                                'url'     => '/shop?q=' . urlencode(trim($k)),
+                            ])
+                            ->filter(fn($i) => ! empty($i['keyword']))
+                            ->values()
+                            ->toArray();
+                    }
+                }
+
                 $composerData = [
                     'brands' => Brand::where('is_visible', '1')
                         ->select('name', 'slug', 'logo')
@@ -125,6 +145,8 @@ class AppServiceProvider extends ServiceProvider
                     'footerGroups'  => $footerGroups,
 
                     'deliveryServiceInfo' => $deliveryServiceInfo,
+
+                    'popularSearches' => $popularSearches,
                 ];
             }
 

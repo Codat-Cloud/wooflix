@@ -857,6 +857,27 @@ body {
   background: #eee;
   padding: 15px 0;
   font-size: 13px;
+  line-height: 1.8;
+}
+
+.popular-search-label {
+  color: #333;
+}
+
+.popular-search-link {
+  color: #555;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.popular-search-link:hover {
+  color: var(--brand-orange, #ff6b00);
+  text-decoration: underline;
+}
+
+.popular-search-separator {
+  color: #bbb;
+  font-size: 12px;
 }
 
 .footer-bottom {
