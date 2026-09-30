@@ -87,6 +87,18 @@ class AppServiceProvider extends ServiceProvider
                     ->take(3)
                     ->get();
 
+                // Decode delivery service info with sensible fallbacks
+                $rawDeliveryInfo = $allSettings['delivery_service_info'] ?? null;
+
+                $deliveryServiceInfo = !empty($rawDeliveryInfo)
+                    ? (is_array($rawDeliveryInfo) ? $rawDeliveryInfo : json_decode($rawDeliveryInfo, true))
+                    : [
+                        ['icon' => 'lightning', 'text' => 'Check delivery availability', 'highlight' => ''],
+                        ['icon' => 'truck',     'text' => 'Enter pincode for delivery date', 'highlight' => ''],
+                        ['icon' => 'return',    'text' => 'No Exchange & Returns', 'highlight' => ''],
+                        ['icon' => 'free',      'text' => 'Enjoy Free Delivery above', 'highlight' => '₹699'],
+                    ];
+
                 $composerData = [
                     'brands' => Brand::where('is_visible', '1')
                         ->select('name', 'slug', 'logo')
@@ -111,6 +123,8 @@ class AppServiceProvider extends ServiceProvider
                     'dogCategories' => $dogCategories,
                     'catCategories' => $catCategories,
                     'footerGroups'  => $footerGroups,
+
+                    'deliveryServiceInfo' => $deliveryServiceInfo,
                 ];
             }
 

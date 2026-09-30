@@ -6,19 +6,23 @@ use App\Models\SiteSetting;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
+use Filament\Forms\Get;
 
 class ManageSettings extends Page
 {
@@ -38,10 +42,15 @@ class ManageSettings extends Page
 
     public function mount(): void
     {
-        // Load all settings from DB into the form state
-        $this->form->fill(
-            SiteSetting::pluck('value', 'key')->toArray()
-        );
+        $settings = SiteSetting::pluck('value', 'key')->toArray();
+
+        // 🟢 Decode JSON string for the Repeater so existing items populate properly
+        if (! empty($settings['delivery_service_info']) && is_string($settings['delivery_service_info'])) {
+            $decoded = json_decode($settings['delivery_service_info'], true);
+            $settings['delivery_service_info'] = is_array($decoded) ? $decoded : [];
+        }
+
+        $this->form->fill($settings);
     }
 
     protected function getHeaderActions(): array
@@ -49,8 +58,7 @@ class ManageSettings extends Page
         return [
             Action::make('save')
                 ->label('Save Changes')
-                ->submit('save') // This triggers the save() method in your class
-                ->color('warning') // Match your orange branding
+                ->color('warning')
                 ->formId('form')
                 ->submit('save'),
         ];
@@ -64,7 +72,7 @@ class ManageSettings extends Page
                 Tabs::make('Settings')
                     ->persistTabInQueryString()
                     ->tabs([
-                        // TABS 1: IDENTITY
+                        // TAB 1: IDENTITY
                         Tab::make('Identity')
                             ->icon('heroicon-m-finger-print')
                             ->schema([
@@ -136,7 +144,7 @@ class ManageSettings extends Page
                                     ->helperText('Separate keywords with commas.'),
                             ]),
 
-                        // Tab 5: Inside the tabs array in ManageSettings.php
+                        // TAB 5: GLOBAL SEO
                         Tab::make('Global SEO')
                             ->icon('heroicon-m-globe-alt')
                             ->schema([
@@ -153,7 +161,7 @@ class ManageSettings extends Page
                                         Textarea::make('site_description')
                                             ->label('Meta Description')
                                             ->rows(2)
-                                            ->helperText('Summary for Google search results. Best:2 lines give maximum results.'),
+                                            ->helperText('Summary for Google search results. Best: 2 lines give maximum results.'),
                                         TextInput::make('site_keywords')
                                             ->label('Global Keywords')
                                             ->placeholder('pets, dog food, cat toys, india'),
@@ -166,27 +174,23 @@ class ManageSettings extends Page
                                     ]),
                             ]),
 
-                        // Tab 5: SMTP Settings for email
+                        // TAB 6: SMTP
                         Tab::make('SMTP')
                             ->icon('heroicon-m-envelope')
                             ->schema([
-
                                 Section::make('SMTP Configuration')
                                     ->description('Configure outgoing email settings for order emails, OTPs, notifications, and contact forms.')
                                     ->schema([
-
                                         Grid::make(2)->schema([
-
                                             TextInput::make('smtp_host')
                                                 ->label('SMTP Host')
                                                 ->placeholder('smtp.gmail.com')
                                                 ->helperText('Mail server hostname provided by your email provider.'),
 
-                                                                                            TextInput::make('smtp_from_address')
+                                            TextInput::make('smtp_from_address')
                                                 ->label('From Email Address')
                                                 ->email()
                                                 ->placeholder('noreply@yourdomain.com'),
-
 
                                             TextInput::make('smtp_username')
                                                 ->label('SMTP Username')
@@ -204,7 +208,6 @@ class ManageSettings extends Page
                                                 ->placeholder('tls')
                                                 ->helperText('Use tls or ssl.'),
 
-
                                             TextInput::make('smtp_port')
                                                 ->label('SMTP Port')
                                                 ->numeric()
@@ -214,39 +217,107 @@ class ManageSettings extends Page
                                             TextInput::make('smtp_from_name')
                                                 ->label('From Name')
                                                 ->placeholder('Wooflix'),
-
                                         ]),
+                                    ]),
+                            ]),
 
+                        // TAB 7: DELIVERY & SERVICE INFORMATION
+                        Tab::make('Delivery & Service Information')
+                            ->icon('heroicon-m-truck') // 🟢 Fixed valid Heroicon
+                            ->schema([
+                                Section::make('Delivery & Service Information')
+                                    ->description('Manage the bullet points displayed on the single product page.')
+                                    ->schema([
+                                        Repeater::make('delivery_service_info')
+                                            ->label('Delivery & Service Points')
+                                            ->schema([
+                                                Grid::make(3)->schema([
+                                                    // 1. Icon Selection
+                                                    Select::make('icon')
+                                                        ->label('Icon / Badge')
+                                                        ->options([
+                                                            'lightning' => '⚡ Lightning Bolt (Availability)',
+                                                            'truck'     => '🚚 Delivery Truck (Shipping)',
+                                                            'package'   => '📦 Package Box (Returns)',
+                                                            'free'      => '🆓 "FREE" Badge',
+                                                            'cod'       => '💵 "COD" Cash on Delivery',
+                                                            'shield'    => '🛡️ Shield (100% Genuine / Verified)',
+                                                            'paw'       => '🐾 Paw Print (Pet Safe)',
+                                                            'support'   => '🎧 Headset (Expert Support)',
+                                                            'clock'     => '⏱️ Clock (Fast / Same-Day Dispatch)',
+                                                            'star'      => '⭐ Star (Top Rated)',
+                                                            'custom'    => '✏️ Custom Emoji or Short Text',
+                                                        ])
+                                                        ->default('lightning')
+                                                        ->live()
+                                                        ->required(),
+
+                                                    // Custom text/emoji input (only shown if "custom" is selected)
+                                                    TextInput::make('custom_icon')
+                                                        ->label('Custom Icon / Text')
+                                                        ->placeholder('e.g. 🐶 or 100%')
+                                                        ->maxLength(6)
+                                                        ->visible(fn($get): bool => $get('icon') === 'custom')
+                                                        ->required(fn($get): bool => $get('icon') === 'custom'),
+
+                                                    // Dynamic Livewire Connection
+                                                    Select::make('dynamic_type')
+                                                        ->label('Item Behavior')
+                                                        ->options([
+                                                            'static'               => 'Standard Text (Static Highlight)',
+                                                            'express_availability' => 'Dynamic: Express Availability Check',
+                                                            'delivery_date'        => 'Dynamic: Estimated Delivery Date',
+                                                        ])
+                                                        ->default('static')
+                                                        ->helperText('Select a dynamic option if this item should update when entering a pincode.')
+                                                        ->columnSpan(fn($get): int => $get('icon') === 'custom' ? 1 : 2),
+                                                ]),
+
+                                                Grid::make(2)->schema([
+                                                    TextInput::make('text')
+                                                        ->label('Primary Text')
+                                                        ->placeholder('e.g. Check delivery availability or No Exchange & Returns')
+                                                        ->required(),
+
+                                                    TextInput::make('highlight')
+                                                        ->label('Highlighted Text (Bold)')
+                                                        ->placeholder('e.g. ₹699 (optional)'),
+                                                ]),
+                                            ])
+                                            ->reorderable()
+                                            ->collapsible()
+                                            ->itemLabel(fn(array $state): ?string => ($state['text'] ?? 'Service Point') . (!empty($state['highlight']) ? ' ' . $state['highlight'] : ''))
+                                            ->columnSpanFull()
                                     ]),
                             ]),
                     ]),
             ]);
     }
 
-    // protected function getFormActions(): array
-    // {
-    //     return [
-    //         Action::make('save')
-    //             ->label('Save Settings')
-    //             ->submit('save'),
-    //     ];
-    // }
-
     public function save(): void
     {
         $data = $this->form->getState();
 
         foreach ($data as $key => $value) {
-            // Filament stores multiple uploads as arrays, we need the string
-            $finalValue = is_array($value) ? array_first($value) : $value;
+            // 🟢 Correctly encode Repeater array to JSON; handle file uploads with Arr::first
+            if ($key === 'delivery_service_info') {
+                $finalValue = is_array($value) ? json_encode(array_values($value)) : $value;
+            } elseif (is_array($value)) {
+                $finalValue = Arr::first($value);
+            } else {
+                $finalValue = $value;
+            }
+
             SiteSetting::updateOrCreate(
                 ['key' => $key],
                 ['value' => $finalValue]
             );
 
-            // Clear cache for this specific key
             Cache::forget("setting.$key");
         }
+
+        // 🟢 Invalidate global settings cache
+        Cache::forget('site_settings_all');
 
         $this->mount();
 

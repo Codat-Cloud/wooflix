@@ -52,83 +52,69 @@
 
 </div>
 
-    <div class="delivery-items">
+<div class="delivery-items">
+    @php
+        $deliveryList = $deliveryServiceInfo ?? [
+            ['icon' => 'lightning', 'dynamic_type' => 'express_availability', 'text' => 'Check delivery availability', 'highlight' => ''],
+            ['icon' => 'truck',     'dynamic_type' => 'delivery_date',        'text' => 'Enter pincode for delivery date', 'highlight' => ''],
+            ['icon' => 'package',   'dynamic_type' => 'static',               'text' => 'No Exchange & Returns', 'highlight' => ''],
+            ['icon' => 'free',      'dynamic_type' => 'static',               'text' => 'Enjoy Free Delivery above', 'highlight' => '₹699'],
+        ];
+    @endphp
 
-        {{-- EXPRESS DELIVERY --}}
+    @foreach($deliveryList as $item)
+        @php
+            $type = $item['dynamic_type'] ?? 'static';
+            $icon = $item['icon'] ?? 'lightning';
+            $isBadgeTag = in_array($icon, ['free', 'cod']) || ($icon === 'custom' && strlen($item['custom_icon'] ?? '') > 2);
+        @endphp
+
         <div class="delivery-item">
+            {{-- ICON / BADGE --}}
+            <span class="delivery-icon {{ $isBadgeTag ? 'free' : '' }}">
+                @switch($icon)
+                    @case('lightning') ⚡ @break
+                    @case('truck')     🚚 @break
+                    @case('package')   📦 @break
+                    @case('free')      FREE @break
+                    @case('cod')       COD @break
+                    @case('shield')    🛡️ @break
+                    @case('paw')       🐾 @break
+                    @case('support')   🎧 @break
+                    @case('clock')     ⏱️ @break
+                    @case('star')      ⭐ @break
+                    @case('custom')    {{ $item['custom_icon'] ?? '⚡' }} @break
+                    @default           ⚡
+                @endswitch
+            </span>
 
-            <span class="delivery-icon">⚡</span>
-
+            {{-- TEXT CONTENT --}}
             <span>
-
-                @if($deliveryAvailable === false)
-
-                    Express delivery unavailable
-
-                @elseif($deliveryDate)
-
-                    Get it
-                    <strong class="text-success">{{ $deliveryText }}</strong>
-
+                @if($type === 'express_availability')
+                    @if($deliveryAvailable === false)
+                        Express delivery unavailable
+                    @elseif($deliveryDate)
+                        Get it <strong class="text-success">{{ $deliveryText }}</strong>
+                    @else
+                        {{ $item['text'] }}
+                    @endif
+                @elseif($type === 'delivery_date')
+                    @if($deliveryAvailable === false)
+                        Delivery not available
+                    @elseif($deliveryDate)
+                        Expected delivery date – <strong class="text-success">{{ $deliveryDate }}</strong>
+                    @else
+                        {{ $item['text'] }}
+                    @endif
                 @else
-
-                    Check delivery availability
-
+                    {{ $item['text'] }}
+                    @if(!empty($item['highlight']))
+                        <strong>{{ $item['highlight'] }}</strong>
+                    @endif
                 @endif
-
             </span>
-
         </div>
-
-        {{-- DELIVERY DATE --}}
-        <div class="delivery-item">
-
-            <span class="delivery-icon">🚚</span>
-
-            <span>
-
-                @if($deliveryAvailable === false)
-
-                    Delivery not available
-
-                @elseif($deliveryDate)
-
-                    Expected delivery date –
-                    <strong class="text-success">{{ $deliveryDate }}</strong>
-
-                @else
-
-                    Enter pincode for delivery date
-
-                @endif
-
-            </span>
-
-        </div>
-
-        {{-- RETURN POLICY --}}
-        <div class="delivery-item">
-
-            <span class="delivery-icon">📦</span>
-
-            <span>No Exchange & Returns</span>
-
-        </div>
-
-        {{-- FREE DELIVERY --}}
-        <div class="delivery-item">
-
-            <span class="delivery-icon free">FREE</span>
-
-            <span>
-
-                Enjoy Free Delivery above
-                <strong>₹699</strong>
-
-            </span>
-
-        </div>
-
-    </div>
+    @endforeach
+</div>
 
 </div>
