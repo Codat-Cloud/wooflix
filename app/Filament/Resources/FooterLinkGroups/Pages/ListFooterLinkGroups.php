@@ -17,10 +17,11 @@ class ListFooterLinkGroups extends ListRecords
     {
         return [
             CreateAction::make()
-                ->mutateFormDataBeforeCreate(function (array $data): array {
-                    // Check if attempting to create a 4th top-level group
+                // 🟢 mutateDataUsing is the non-deprecated method on CreateAction
+                ->mutateDataUsing(function (array $data): array {
                     if (empty($data['parent_id'])) {
                         $currentGroupCount = FooterLinkGroup::whereNull('parent_id')->count();
+
                         if ($currentGroupCount >= 3) {
                             Notification::make()
                                 ->title('Maximum 3 Groups Allowed')
