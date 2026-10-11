@@ -17,15 +17,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [FrontController::class, 'index'])->name('front.index');
 
-Route::get('/send-test-email', function () {
-    $recipientEmail = 'customer@example.com';
-    $customerName = 'Alex';
+// Route::get('/send-test-email', function () {
+//     $recipientEmail = 'customer@example.com';
+//     $customerName = 'Alex';
 
-    // Using the Mail facade to dispatch the mailable instantly
-    Mail::to($recipientEmail)->send(new WelcomeEmail($customerName));
+//     // Using the Mail facade to dispatch the mailable instantly
+//     Mail::to($recipientEmail)->send(new WelcomeEmail($customerName));
 
-    return 'Test email has been dispatched successfully!';
-});
+//     return 'Test email has been dispatched successfully!';
+// });
 
 
 Route::post('/contact/send', [ContactController::class, 'send'])->name('contact.send');
@@ -75,6 +75,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [ProfileController::class, 'dashboard'])->name('dashboard');
     Route::get('/dashboard/orders', [ProfileController::class, 'orders'])->name('user.orders');
     Route::get('/dashboard/wishlist', [ProfileController::class, 'wishlist'])->name('user.wishlist');
+    Route::get('/dashboard/reviews', [ProfileController::class, 'reviews'])->name('user.reviews');
 
     Route::delete('/wishlist/{id}/remove', [ProfileController::class, 'wishlistRemove'])
     ->name('front.wishlistRemove');

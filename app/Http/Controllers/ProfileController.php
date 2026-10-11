@@ -20,6 +20,7 @@ class ProfileController extends Controller
     {
         $orders = Order::with(['items.product:id,slug,name,main_image'])
             ->where('user_id', auth()->id())
+            ->where('status', 'confirmed')
             ->latest()
             ->take(2)
             ->get();
@@ -174,5 +175,15 @@ class ProfileController extends Controller
         $settings = SiteSetting::pluck('value', 'key')->toArray();
 
         return view('invoices.shipping-label', compact('order', 'settings'));
+    }
+
+    public function reviews()
+    {
+        $reviews = Review::with(['product', 'images'])
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->paginate(8);
+
+        return view('profile.reviews', compact('reviews'));
     }
 }

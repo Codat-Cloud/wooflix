@@ -100,7 +100,7 @@
 
                     @if($item && $product)
 
-                        <div class="order-card">
+                        <div class="order-card mb-2">
 
                             <img 
                                 src="{{ asset('storage/' . $product->main_image) }}"
@@ -188,7 +188,7 @@
           <div class="profile-section">
             <div class="section-header">
               <h6>Your Reviews</h6>
-              <a href="#">View All</a>
+              <a href="{{ route('user.reviews') }}">View All</a>
             </div>
 
             @if($latestReview)
