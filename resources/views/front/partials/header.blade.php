@@ -70,7 +70,8 @@
   </div>
 </header>
 
-<nav class="main-nav d-none d-lg-block shadow">
+
+<nav class="main-nav d-none d-lg-block shadow" @if(!empty($settings['top_bar'])) style="margin-top: 115px" @endif>
   <div class="container-xxl">
     <ul class="nav-menu">
         
@@ -195,7 +196,8 @@
     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
   </div>
 
-<div class="offcanvas-body">
+
+  <div class="offcanvas-body">
   <div class="mobile-nav">
       
       <div class="mobile-nav-group mb-3">
@@ -295,7 +297,7 @@
           </a>
       </div>
   </div>
-</div>
+  </div>
 
 
 </div>
