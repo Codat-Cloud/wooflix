@@ -32,59 +32,59 @@
                 @endauth
 
                 {{-- GUEST DETAILS FORM --}}
-                @guest
-                    <div class="checkout-card bg-white p-4">
-                        <h6 class="lead mb-3 text-dark d-flex align-items-center gap-2">
-                            <span>Checkout Details</span>
-                            <span class="badge bg-light text-dark font-normal small fw-normal border ms-auto" style="font-size: 0.75rem;">Guest Mode</span>
-                        </h6>
-                        <p class="text-muted small mb-4">Provide your information below. A permanent account will be initialized and verified upon completing checkout payment securely.</p>
+@guest
+    <div class="checkout-card bg-white p-4">
+        <h6 class="lead mb-3 text-dark d-flex align-items-center gap-2">
+            <span>Checkout Details</span>
+            <span class="badge bg-light text-dark font-normal small fw-normal border ms-auto" style="font-size: 0.75rem;">Guest Mode</span>
+        </h6>
+        <p class="text-muted small mb-4">Provide your information below. A permanent account will be initialized and verified upon completing checkout payment securely.</p>
 
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label small text-muted mb-1">Your Full Name</label>
-                                <input wire:model.blur="guest_name" type="text" class="form-control shadow-none @error('guest_name') is-invalid @enderror" placeholder="Alex Logan" required>
-                                @error('guest_name') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                            </div>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label small text-muted mb-1">Your Full Name</label>
+                <input wire:model.live.blur="guest_name" type="text" class="form-control shadow-none @error('guest_name') is-invalid @enderror" placeholder="Alex Logan" required>
+                @error('guest_name') <div class="invalid-feedback">{{ $message }}</div> @enderror
+            </div>
 
-                            <div class="col-md-6">
-                                <label class="form-label small text-muted mb-1">Email Address</label>
-                                <input wire:model.blur="guest_email" type="email" class="form-control shadow-none @error('guest_email') is-invalid @enderror" placeholder="name@example.com" required>
-                                @error('guest_email') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                            </div>
+            <div class="col-md-6">
+                <label class="form-label small text-muted mb-1">Email Address</label>
+                <input wire:model.live.blur="guest_email" type="email" class="form-control shadow-none @error('guest_email') is-invalid @enderror" placeholder="name@example.com" required>
+                @error('guest_email') <div class="invalid-feedback">{{ $message }}</div> @enderror
+            </div>
 
-                            <div class="col-md-12">
-                                <label class="form-label small text-muted mb-1">Contact Phone Number</label>
-                                <input wire:model.blur="guest_phone" type="tel" class="form-control shadow-none @error('guest_phone') is-invalid @enderror" placeholder="9876543210" required pattern="[0-9]{10}">
-                                @error('guest_phone') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                            </div>
+            <div class="col-md-12">
+                <label class="form-label small text-muted mb-1">Contact Phone Number</label>
+                <input wire:model.live.blur="guest_phone" type="tel" class="form-control shadow-none @error('guest_phone') is-invalid @enderror" placeholder="9876543210" required pattern="[0-9]{10}">
+                @error('guest_phone') <div class="invalid-feedback">{{ $message }}</div> @enderror
+            </div>
 
-                            <div class="col-md-12">
-                                <label class="form-label small text-muted mb-1">Street Delivery Address Details</label>
-                                <input wire:model.blur="guest_address" type="text" class="form-control shadow-none @error('guest_address') is-invalid @enderror" placeholder="Flat, House no., Apartment, Street Lane" required>
-                                @error('guest_address') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                            </div>
+            <div class="col-md-12">
+                <label class="form-label small text-muted mb-1">Street Delivery Address Details</label>
+                <input wire:model.live.blur="guest_address" type="text" class="form-control shadow-none @error('guest_address') is-invalid @enderror" placeholder="Flat, House no., Apartment, Street Lane" required>
+                @error('guest_address') <div class="invalid-feedback">{{ $message }}</div> @enderror
+            </div>
 
-                            <div class="col-md-4">
-                                <label class="form-label small text-muted mb-1">City</label>
-                                <input wire:model.blur="guest_city" type="text" class="form-control shadow-none @error('guest_city') is-invalid @enderror" placeholder="New Delhi" required>
-                                @error('guest_city') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                            </div>
+            <div class="col-md-4">
+                <label class="form-label small text-muted mb-1">City</label>
+                <input wire:model.live.blur="guest_city" type="text" class="form-control shadow-none @error('guest_city') is-invalid @enderror" placeholder="New Delhi" required>
+                @error('guest_city') <div class="invalid-feedback">{{ $message }}</div> @enderror
+            </div>
 
-                            <div class="col-md-4">
-                                <label class="form-label small text-muted mb-1">State</label>
-                                <input wire:model.blur="guest_state" type="text" class="form-control shadow-none @error('guest_state') is-invalid @enderror" placeholder="Delhi" required>
-                                @error('guest_state') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                            </div>
+            <div class="col-md-4">
+                <label class="form-label small text-muted mb-1">State</label>
+                <input wire:model.live.blur="guest_state" type="text" class="form-control shadow-none @error('guest_state') is-invalid @enderror" placeholder="Delhi" required>
+                @error('guest_state') <div class="invalid-feedback">{{ $message }}</div> @enderror
+            </div>
 
-                            <div class="col-md-4">
-                                <label class="form-label small text-muted mb-1">Pincode / Postal Code</label>
-                                <input wire:model.blur="guest_postal_code" type="text" class="form-control shadow-none @error('guest_postal_code') is-invalid @enderror" placeholder="110016" required maxlength="6">
-                                @error('guest_postal_code') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                            </div>
-                        </div>
-                    </div>
-                @endguest
+            <div class="col-md-4">
+                <label class="form-label small text-muted mb-1">Pincode / Postal Code</label>
+                <input wire:model.live.blur="guest_postal_code" type="text" class="form-control shadow-none @error('guest_postal_code') is-invalid @enderror" placeholder="110016" required maxlength="6">
+                @error('guest_postal_code') <div class="invalid-feedback">{{ $message }}</div> @enderror
+            </div>
+        </div>
+    </div>
+@endguest
 
                 {{-- DELIVERY OPTIONS --}}
                 <div class="checkout-card mt-4">
