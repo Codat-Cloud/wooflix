@@ -52,7 +52,7 @@ Route::post('/wholesale/save', [FrontController::class, 'wholesaleSave'])->name(
 
 
 Route::get('/payment/verify', [PaymentController::class, 'verify'])->name('payment.verify');
-Route::get('/order-success/{order}', [PaymentController::class, 'success'])->name('front.success');
+Route::get('/order-success/{order}', [PaymentController::class, 'success'])->name('front.payments.success');
 
 Route::get('/track-order', [OrderTrackingController::class, 'index'])->name('order.track');
 

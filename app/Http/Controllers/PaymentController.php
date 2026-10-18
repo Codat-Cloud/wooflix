@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\OrderPlaced;
+use App\Models\AbandonedCheckout; // 🟢 Imported AbandonedCheckout
 use App\Models\CartItem;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -19,29 +20,32 @@ class PaymentController extends Controller
         $api = new Api(config('services.razorpay.key'), config('services.razorpay.secret'));
 
         // Log incoming data for debugging
-        Log::info('Verification Payload:', $request->all());
+        Log::info('Razorpay Verification Payload:', $request->all());
 
         try {
             // 2. Cryptographic Signature Verification
-            // This ensures the data actually came from Razorpay and matches the Order ID
             $attributes = [
                 'razorpay_order_id'   => $request->razorpay_order_id,
                 'razorpay_payment_id' => $request->razorpay_payment_id,
-                'razorpay_signature'  => $request->razorpay_signature
+                'razorpay_signature'  => $request->razorpay_signature,
             ];
 
-            // This throws an exception if the signature is invalid
+            // Throws an exception if the signature is invalid or tampered with
             $api->utility->verifyPaymentSignature($attributes);
 
-            // 3. Fetch the order from your DB
-            // We use your DB 'id' (from order_id) and ensure ownership
-            $order = Order::where('id', $request->order_id)
+            // 3. Fetch the order from DB (Ensuring user owns the pending order)
+            $order = Order::with('items.product', 'items.variant')
+                ->where('id', $request->order_id)
                 ->where('user_id', auth()->id())
                 ->where('payment_status', 'pending')
                 ->firstOrFail();
 
+            $sessionId = session()->getId();
+            $userId = auth()->id();
+
             // 4. Update DB within a Transaction for data integrity
-            DB::transaction(function () use ($order, $request) {
+            DB::transaction(function () use ($order, $request, $sessionId, $userId) {
+                // Confirm Order & Record Gateway Payment ID
                 $order->update([
                     'payment_status'      => 'paid',
                     'status'              => 'confirmed',
@@ -49,37 +53,52 @@ class PaymentController extends Controller
                     'paid_at'             => now(),
                 ]);
 
-                // Clear the cart for the logged-in user
-                CartItem::where('user_id', auth()->id())->delete();
+                // 🟢 A. PURGE ABANDONED CHECKOUT RECORD IMMEDIATELY
+                AbandonedCheckout::query()
+                    ->where('session_id', $sessionId)
+                    ->orWhere('user_id', $userId)
+                    ->delete();
 
+                // 🟢 B. PURGE SHOPPING CART (Both Session & User ID)
+                CartItem::query()
+                    ->where(function ($query) use ($sessionId, $userId) {
+                        $query->where('user_id', $userId)
+                            ->orWhere('session_id', $sessionId);
+                    })
+                    ->delete();
+
+                // C. Mark newly created guest user account verified
                 $user = $order->user;
                 if ($user && is_null($user->email_verified_at)) {
                     $user->update([
-                        'email_verified_at' => now() // Set verified timestamp without triggering OTPs
+                        'email_verified_at' => now(),
                     ]);
-                }
-
-                // TRIGGER THE MAIL HERE: Pull user relation dynamically to acquire their destination account address
-                if ($order->user?->email) {
-                    Mail::to($order->user->email)->send(new OrderPlaced($order));
                 }
             });
 
+            // 5. Send Confirmation Email (Executed outside transaction so SMTP timeouts don't revert payment records)
+            try {
+                if ($order->user?->email) {
+                    Mail::to($order->user->email)->send(new OrderPlaced($order));
+                }
+            } catch (\Exception $mailEx) {
+                Log::error('Order Confirmation Email Failed: ' . $mailEx->getMessage());
+            }
 
-            // 5. Redirect to your success page
+            // 6. Redirect to success page
             return redirect()->route('front.payments.success', ['order' => $order->id]);
         } catch (\Exception $e) {
-            // Log the specific error (e.g., Signature mismatch or Order not found)
-            Log::error("Razorpay Error: " . $e->getMessage());
+            Log::error('Razorpay Verification Error: ' . $e->getMessage());
 
-            // Redirect back to checkout with a user-friendly message
-            return redirect()->route('front.checkout')->with('error', 'Payment verification failed. Please contact support if your money was deducted.');
+            return redirect()
+                ->route('front.checkout')
+                ->with('error', 'Payment verification failed. If your account was debited, please contact support with order reference #' . ($request->order_id ?? 'N/A'));
         }
     }
 
     public function success(Order $order)
     {
-        // Basic security check: only the owner can see their success page
+        // Security check: only the order owner can view their invoice/confirmation
         if ($order->user_id !== auth()->id()) {
             abort(403);
         }

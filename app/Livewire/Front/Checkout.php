@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Front;
 
+use App\Models\AbandonedCheckout;
 use Livewire\Component;
 use App\Models\CartItem;
 use App\Models\Address;
@@ -42,7 +43,10 @@ class Checkout extends Component
     public $guest_postal_code;
 
     // Define the listener
-    protected $listeners = ['cartUpdated' => 'refreshCheckout'];
+    protected $listeners = [
+        'cartUpdated' => 'refreshCheckout',
+        'paymentSuccess' => 'handlePaymentSuccess',
+    ];
 
     // Razorpay
     public $razorpay_order_id;
@@ -56,6 +60,70 @@ class Checkout extends Component
     {
         $this->loadCart();
         $this->loadAddresses();
+
+        // 🟢 1-Click Recovery Link Pre-fill
+        if (!Auth::check() && ($token = request()->query('recover'))) {
+            $abandoned = AbandonedCheckout::where('recovery_token', $token)->first();
+
+            if ($abandoned) {
+                $this->guest_name        = $abandoned->name;
+                $this->guest_email       = $abandoned->email;
+                $this->guest_phone       = $abandoned->phone;
+                $this->guest_address     = $abandoned->address_line1;
+                $this->guest_city        = $abandoned->city;
+                $this->guest_state       = $abandoned->state;
+                $this->guest_postal_code = $abandoned->postal_code;
+            }
+        }
+    }
+
+    // 🟢 Automatically sync whenever any guest field is updated
+    public function updated($propertyName)
+    {
+        if (str_starts_with($propertyName, 'guest_')) {
+            $this->syncAbandonedCheckout();
+        }
+    }
+
+    // 🟢 Background Sync to temporary abandoned_checkouts table
+    public function syncAbandonedCheckout()
+    {
+        // Don't log if user hasn't provided contact info yet
+        if (blank($this->guest_email) && blank($this->guest_phone)) {
+            return;
+        }
+
+        $sessionId = session()->getId();
+        $userId = Auth::id();
+
+        if ($this->items->isEmpty()) {
+            return;
+        }
+
+        $snapshot = $this->items->map(fn($i) => [
+            'product_name' => $i->product?->name,
+            'variant_name' => $i->variant?->name,
+            'quantity'     => $i->quantity,
+            'price'        => $i->price,
+        ])->toArray();
+
+        AbandonedCheckout::updateOrCreate(
+            ['session_id' => $sessionId],
+            [
+                'user_id'        => $userId,
+                'name'           => $this->guest_name ?: (Auth::user()?->name ?? null),
+                'email'          => $this->guest_email ?: (Auth::user()?->email ?? null),
+                'phone'          => $this->guest_phone ?? null,
+                'address_line1'  => $this->guest_address ?? null,
+                'city'           => $this->guest_city ?? null,
+                'state'          => $this->guest_state ?? null,
+                'postal_code'    => $this->guest_postal_code ?? null,
+                'total_qty'      => $this->items->sum('quantity'),
+                'total_value'    => $this->total,
+                'cart_snapshot'  => $snapshot,
+                'last_active_at' => now(),
+            ]
+        );
     }
 
     // ================= CART =================
@@ -100,6 +168,7 @@ class Checkout extends Component
     public function updatedDeliveryType()
     {
         $this->calculateTotal();
+        $this->syncAbandonedCheckout();
     }
 
     public function calculateTotal()
@@ -125,8 +194,6 @@ class Checkout extends Component
 
     public function applyCoupon()
     {
-        // dd('clicked');
-
         $this->couponError = '';
         $this->discount = 0;
         $this->appliedCoupon = null;
@@ -338,5 +405,24 @@ class Checkout extends Component
                 'message' => 'Payment gateway connection error. Please try again.'
             ]);
         }
+    }
+
+    // 🟢 SUCCESSFUL CHECKOUT CLEANUP
+    public function handlePaymentSuccess($orderId)
+    {
+        $sessionId = session()->getId();
+        $userId = Auth::id();
+
+        // 1. Permanently delete the temporary abandoned cart record
+        AbandonedCheckout::where('session_id', $sessionId)
+            ->when($userId, fn($q) => $q->orWhere('user_id', $userId))
+            ->delete();
+
+        // 2. Clear out cart items
+        CartItem::where('session_id', $sessionId)
+            ->when($userId, fn($q) => $q->orWhere('user_id', $userId))
+            ->delete();
+
+        return redirect()->route('front.orderSuccess', $orderId);
     }
 }
